@@ -57,6 +57,8 @@ pub mod shulginsigning;
 /// FALCON1024
 pub mod hybridfalconsigning;
 
+pub mod utils;
+
 
 /// One-Time Signatures (Lamport Signatures, Winternitz-OTS)
 #[cfg(feature = "experimental")]

@@ -40,6 +40,17 @@
 //!     - [X] Derive From Seed (ChaCha20 RNG)
 //!     - [X] Verifiable Random Functions (Schnorr-VRF)
 //!     - [X] BIP39 (Mnemonic)
+//! 
+//! ## TODO
+//! 
+//! - [ ] Slugencoding for all algs
+//! - [ ] HybridFalcon
+//! - [ ] ShulginSigning
+//! - [ ] Hedged Signatures (0x20CB-style)
+//! - [ ] Add ed448
+//! - [ ] Add P256, P521 others
+//! - [ ] Oint-Wallet
+//! - [ ] BIP32
 
 /// SlugCrypt Library
 pub mod slugcrypt;

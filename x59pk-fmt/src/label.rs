@@ -36,6 +36,8 @@ use fixedstr::str64;
 use fixedstr::str256;
 use std::str::FromStr;
 
+use slugencode::prelude::*;
+
 /// # X59 Label
 /// 
 /// ## Description
@@ -91,8 +93,53 @@ pub struct X59Label {
     pub attribute: str256,
 }
 
+/// # X59 Data Type
+/// 
+/// - [X] Contains easy conversions
+/// - [ ] Contains checksum
+/// - [ ] Contains Default function
+/// - [ ] Contains Default for attribute/data type function formatting
 pub struct X59Value {
-    bytes: Vec<u8>,
+    pub data: Vec<u8>,
+}
+
+impl X59Value {
+    pub fn from_str<T: AsRef<str>>(s: T) -> Self {
+        Self {
+            data: s.as_ref().as_bytes().to_vec()
+        }
+    }
+    pub fn from_bytes<T: AsRef<[u8]>>(s: T) -> Self {
+        let x = s.as_ref().to_vec();
+
+        Self {
+            data: x,
+        }
+    }
+    /// # Encode Data
+    pub fn encode(&self, encoding: SlugEncodings) -> Result<String,SlugEncodingError> {
+        let x = SlugEncodingUsage::new(encoding);
+        return x.encode(&self.data)
+    }
+    pub fn decode<T: AsRef<str>>(s: T, encoding: SlugEncodings) -> Result<Self,SlugEncodingError> {
+        let x = SlugEncodingUsage::new(encoding);
+        let x_2 = x.decode(s.as_ref())?;
+        return Ok(Self {
+            data:  x_2
+        }
+        )
+    } 
+}
+
+
+/// # X59 Data Type
+/// 
+/// - [ ] Contains easy conversions
+/// - [ ] Contains checksum
+/// - [ ] Contains Default function
+/// - [ ] Contains Default for attribute/data type function formatting
+pub struct X59StructuredDataFormat {
+    pub data: String,
 }
 
 /// # X59 Source (`@`)
@@ -228,7 +275,10 @@ impl X59Source {
 impl Default for X59Source {
     fn default() -> Self {
         return Self {
-            source: String::from("X59System")
+            source: str256::from_str("X59System").unwrap(),
+            parser_protocol: 0u32,
+            communication_protocol: 0u8, // 1 = HTTP
+            provider: str256::from_str("Default-Resolver").unwrap(),
         }
     }
 }
@@ -251,25 +301,25 @@ impl X59Label {
 
         return Self {
             pieces: output,
-            attribute: attribute.as_ref().to_string(),
+            attribute: str256::from_str(attribute.as_ref()).unwrap(),
         }
     }
     /// # Add Piece To X59Label
     /// 
     /// Adds a singular piece to the path of an X59Label
     pub fn add_piece<T: AsRef<str>>(&mut self, piece: T) {
-        self.pieces.push(piece.as_ref().to_string())
+        self.pieces.push(str256::from_str(piece.as_ref()).unwrap())
     }
     /// # Add Pieces To X59Label (Using a Vector)
     /// 
     /// Adds multiple pieces to the path of the X59 Label
     pub fn add_pieces<T: AsRef<str>>(&mut self, pieces: Vec<T>) {
         for x in pieces {
-            self.pieces.push(x.as_ref().to_string())
+            self.pieces.push(str256::from_str(x.as_ref()).unwrap())
         }
     }
     pub fn add_attribute<T: AsRef<str>>(&mut self, attribute: T) {
-        self.attribute = attribute.as_ref().to_string();
+        self.attribute = str256::from_str(attribute.as_ref()).unwrap();
     }
     /// # As Label
     /// 
@@ -353,8 +403,8 @@ impl fmt::Display for X59Label {
 #[test]
 fn label_test() {
     let x = X59Label {
-        pieces: vec![String::from("libslug"),String::from("shulginsigning"),String::from("v1")],
-        attribute: String::from("assert"),
+        pieces: vec![str256::from_str("example").unwrap(),str256::from_str("data").unwrap(),str256::from_str("end").unwrap()],
+        attribute: str256::from_str("An Optional Attribute").unwrap(),
     };
     let output = x.as_label();
 

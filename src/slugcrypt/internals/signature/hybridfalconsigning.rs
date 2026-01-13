@@ -1,3 +1,15 @@
+//! # HybridFalcon Signing
+//! 
+//! HybridFalcon signing is signing using ED25519 for the classical key and FALCON1024 for the post-quantum key.
+//! 
+//! ## TODO
+//! 
+//! - [ ] Serialization
+//! - [ ] Examples
+//! - [ ] Tests
+//! - [ ] Encodings
+//! - [ ] Add Randominzed Signing
+
 use crate::slugcrypt::internals::messages::Message;
 use crate::slugcrypt::internals::signature::ed25519::{ED25519SecretKey,ED25519PublicKey,ED25519Signature};
 use crate::slugcrypt::internals::signature::falcon::*;
@@ -6,6 +18,8 @@ use crate::errors::SlugErrorAlgorithms;
 
 use serde::{Serialize,Deserialize};
 use zeroize::{ZeroizeOnDrop,Zeroize};
+
+use slugencode::prelude::*;
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
 pub struct HybridFalconKeypair {

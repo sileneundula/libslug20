@@ -14,9 +14,9 @@ fn encrypt_ecies() {
 
 
     // Ciphertext to be decoded by Bob encrypted by Alice (not using secret key)
-    let ciphertext = ECIESEncrypt::encrypt(pk_2, message).unwrap();
+    let ciphertext = ECIESEncrypt::encrypt(&pk_2, message).unwrap();
 
-    let decoded_message = ECIESDecrypt::decrypt(sk_2, ciphertext).unwrap();
+    let decoded_message = ECIESDecrypt::decrypt(&sk_2, &ciphertext).unwrap();
 
     assert_eq!(decoded_message.message().unwrap(),message);
 }
@@ -35,9 +35,9 @@ fn encrypt_ecies_wrong_message() {
     
     
         // Ciphertext to be decoded by Bob encrypted by Alice (not using secret key)
-        let ciphertext = ECIESEncrypt::encrypt(pk_2, message).unwrap();
+        let ciphertext = ECIESEncrypt::encrypt(&pk_2, message).unwrap();
     
-        let decoded_message = ECIESDecrypt::decrypt(sk_2, ciphertext).unwrap();
+        let decoded_message = ECIESDecrypt::decrypt(&sk_2, &ciphertext).unwrap();
     
         assert_eq!(decoded_message.message().unwrap(),wrong_message);
 }
@@ -55,9 +55,9 @@ fn encrypt_wrong_sk() {
     
     
         // Ciphertext to be decoded by Bob encrypted by Alice (not using secret key)
-        let ciphertext = ECIESEncrypt::encrypt(pk_2, message).unwrap();
+        let ciphertext = ECIESEncrypt::encrypt(&pk_2, message).unwrap();
     
-        let decoded_message = ECIESDecrypt::decrypt(sk_1, ciphertext).unwrap();
+        let decoded_message = ECIESDecrypt::decrypt(&sk_1, &ciphertext).unwrap();
     
         assert_eq!(decoded_message.message().unwrap(),message);
 }
