@@ -1065,6 +1065,50 @@ dependencies = [
 [[package]]
 name = "libslug"
 version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "508f42363340c371472698574d0f5b0ea91c9912cd31f96b5d0e680818b5b65f"
+dependencies = [
+ "aes-gcm",
+ "argon2",
+ "base32",
+ "base58",
+ "blake2",
+ "blake3",
+ "chacha20poly1305 0.10.1",
+ "digest 0.10.7",
+ "ecdsa",
+ "ecies-ed25519-silene",
+ "ed25519-dalek",
+ "ed448",
+ "hybrid-array 0.2.3",
+ "hybrid-array 0.3.1",
+ "k256",
+ "leslie_lamport",
+ "ml-dsa",
+ "ml-kem",
+ "morus",
+ "pqcrypto-falcon",
+ "pqcrypto-sphincsplus",
+ "pqcrypto-traits",
+ "rand",
+ "schnorrkel",
+ "securerand-rs",
+ "serde",
+ "serde-big-array",
+ "serde-encrypt",
+ "serde_yaml 0.9.34+deprecated",
+ "sha2 0.10.9",
+ "subtle",
+ "subtle-encoding",
+ "tiny-bip39",
+ "tiny-keccak",
+ "winternitz-ots",
+ "zeroize",
+]
+
+[[package]]
+name = "libslug"
+version = "0.6.0"
 dependencies = [
  "aes-gcm",
  "argon2",
@@ -1107,50 +1151,6 @@ dependencies = [
  "subtle",
  "subtle-encoding",
  "thiserror 2.0.17",
- "tiny-bip39",
- "tiny-keccak",
- "winternitz-ots",
- "zeroize",
-]
-
-[[package]]
-name = "libslug"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "508f42363340c371472698574d0f5b0ea91c9912cd31f96b5d0e680818b5b65f"
-dependencies = [
- "aes-gcm",
- "argon2",
- "base32",
- "base58",
- "blake2",
- "blake3",
- "chacha20poly1305 0.10.1",
- "digest 0.10.7",
- "ecdsa",
- "ecies-ed25519-silene",
- "ed25519-dalek",
- "ed448",
- "hybrid-array 0.2.3",
- "hybrid-array 0.3.1",
- "k256",
- "leslie_lamport",
- "ml-dsa",
- "ml-kem",
- "morus",
- "pqcrypto-falcon",
- "pqcrypto-sphincsplus",
- "pqcrypto-traits",
- "rand",
- "schnorrkel",
- "securerand-rs",
- "serde",
- "serde-big-array",
- "serde-encrypt",
- "serde_yaml 0.9.34+deprecated",
- "sha2 0.10.9",
- "subtle",
- "subtle-encoding",
  "tiny-bip39",
  "tiny-keccak",
  "winternitz-ots",
@@ -1240,7 +1240,7 @@ name = "oint-keys"
 version = "0.1.0"
 dependencies = [
  "fixedstr",
- "libslug 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libslug 0.5.0",
  "serde",
 ]
 
