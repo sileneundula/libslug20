@@ -52,6 +52,9 @@ use bip39::ErrorKind;
 use base32;
 use base58::{FromBase58,ToBase58,FromBase58Error};
 use serde_big_array::BigArray;
+use slugencode::prelude::*;
+use pem::Pem;
+
 
 
 /// # ED25519: Public Key (Verifying Key)
@@ -192,6 +195,24 @@ impl ED25519SecretKey {
 
         return Ok(ED25519Signature(signature.to_bytes()))
     }
+    /// # To PEM
+    /// 
+    /// Encode to PEM format
+    pub fn to_pem(&self) -> String {
+        let pem = Pem::new("ED25519 Secret Key", &self.0);
+        let x = pem::encode(&pem);
+        return x
+    }
+    /// # From PEM
+    /// 
+    /// Decode from PEM format
+    pub fn from_pem<T: AsRef<str>>(pem_str: T) -> Result<Self,SlugErrors> {
+        let pem = pem::parse(pem_str.as_ref()).unwrap();
+        if pem.tag() != "ED25519 Secret Key" {
+            return Err(SlugErrors::Other(String::from("ED25519 From Pem Failure")))
+        }
+        ED25519SecretKey::from_bytes(&pem.contents())
+    }
 }
 
 impl ED25519PublicKey {
@@ -247,6 +268,20 @@ impl ED25519PublicKey {
         let bytes = base32::decode(base32::Alphabet::Crockford, bs32_str.as_ref()).unwrap();
         return bytes
     }
+    /// # To PEM
+    pub fn to_pem(&self) -> String {
+        let pem = Pem::new("ED25519 Public Key", &self.0);
+        let x = pem::encode(&pem);
+        return x
+    }
+    /// # From PEM
+    pub fn from_pem<T: AsRef<str>>(pem_str: T) -> Result<Self,SlugErrors> {
+        let pem = pem::parse(pem_str.as_ref()).unwrap();
+        if pem.tag() != "ED25519 Public Key" {
+            return Err(SlugErrors::Other(String::from("ED25519 From Pem Failure")))
+        }
+        return Ok(ED25519PublicKey::from_slice(&pem.contents()).unwrap())
+    }
 }
 
 impl ED25519Signature {
@@ -291,6 +326,18 @@ impl ED25519Signature {
     pub fn from_hex_string<T: AsRef<str>>(hex_str: T) -> Result<Vec<u8>,Error> {
         let bytes = hex::decode_upper(hex_str.as_ref().as_bytes())?;
         Ok(bytes)
+    }
+    pub fn from_pem<T: AsRef<str>>(pem_str: T) -> Result<Self,SlugErrors> {
+        let pem = pem::parse(pem_str.as_ref()).unwrap();
+        if pem.tag() != "ED25519 Signature" {
+            return Err(SlugErrors::Other(String::from("ED25519 From Pem Failure")))
+        }
+        ED25519Signature::from_bytes(&pem.contents())
+    }
+    pub fn to_pem(&self) -> String {
+        let pem = Pem::new("ED25519 Signature", &self.0);
+        let x = pem::encode(&pem);
+        return x
     }
 }
 
