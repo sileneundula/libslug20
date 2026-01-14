@@ -21,6 +21,19 @@ use zeroize::{ZeroizeOnDrop,Zeroize};
 
 use slugencode::prelude::*;
 
+pub mod protocol_info {
+    pub const PROTOCOL_NAME: &str = "libslug20/HybridFalconSignature";
+    
+    pub const CLASSICALALGORITHM: &str = "ed25519";
+    pub const POSTQUANTUMALGORITHM: &str = "Falcon1024";
+    pub const FALCON1024_PK_SIZE: usize = 1_793;
+    pub const FALCON1024_SK_SIZE: usize = 2_305;
+    pub const FALCON1024_SIG_SIZE: usize = 1_280;
+    pub const ED25519_PK_SIZE: usize = 32;
+    pub const ED25519_SK_SIZE: usize = 32;
+    pub const ED25519_SIG_SIZE: usize = 64;
+}
+
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
 pub struct HybridFalconKeypair {
     pub clpk: ED25519PublicKey,
@@ -177,4 +190,15 @@ impl HybridFalconKeypair {
         })
 
     }
+}
+
+impl HybridFalconSignature {
+    /// # To Bytes
+    /// 
+    /// 1. ED25519
+    /// 2. FALCON1024
+    pub fn to_bytes(&self) -> (Vec<u8>,Vec<u8>) {
+        return (self.clsig.as_bytes().to_vec(),self.pqsig.as_bytes().to_vec())
+    }
+    
 }

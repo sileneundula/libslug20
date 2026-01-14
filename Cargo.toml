@@ -51,7 +51,7 @@ tiny-keccak = {version = "2.0.2", features=["sha3","shake"], optional=true}
 sha2 = {version = "0.10.9", optional=true}
 blake2 = {version = "0.10.6", optional=true}
 digest = {version = "0.10.7", optional=true}
-blake3 = {version = "1.6.1", optional=true}
+blake3 = {version = "1.8.3", optional=true}
 
 # ML-KEM
 ml-kem = {version = "0.2.1", optional=true}
@@ -97,6 +97,10 @@ bip32 = { version = "0.5.3", optional=true}
 thiserror = "2.0.17"
 
 fixedstr = {version="0.5.10",features=["serde"]}
+
+# DER + PEM
+der = "0.7.10"
+pem = "3.0.6"
 
 [features]
 default = ["full"]

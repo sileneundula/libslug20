@@ -59,6 +59,8 @@ pub mod hybridfalconsigning;
 
 pub mod utils;
 
+pub mod bls;
+
 
 /// One-Time Signatures (Lamport Signatures, Winternitz-OTS)
 #[cfg(feature = "experimental")]

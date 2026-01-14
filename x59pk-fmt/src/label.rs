@@ -248,12 +248,6 @@ impl Default for TypeLibrary {
 }
 
 impl X59Source {
-    /// # Parser Source
-    pub fn new<T: AsRef<str>>(source: T) -> Self {
-        return Self {
-            source: source.as_ref().to_string(),
-        }
-    }
     pub fn as_source_label(&self) -> String {
         let mut output: String = String::new();
 
@@ -293,10 +287,10 @@ impl X59Label {
     pub fn from_str<T: AsRef<str>>(s_path: T, attribute: T) -> Self {
         let x: Vec<&str> = s_path.as_ref().split("/").collect();
 
-        let mut output: Vec<String> = Vec::new();
+        let mut output: Vec<str256> = Vec::new();
 
         for i in x {
-            output.push(i.to_owned());
+            output.push(str256::from_str(i).unwrap());
         }
 
         return Self {

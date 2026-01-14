@@ -6,19 +6,19 @@
 //! 
 //! ### Generation
 //! 
-//! - Operating System Randomness
-//! 
-//! - SecureRand
-//! 
-//! - BIP39
+//! - [X] Operating System Randomness
+//! - [X] SecureRand
+//! - [X] SecureRand with determinstic generation
+//! - [X] BIP39
 //! 
 //! ### Signing
 //! 
-//! - Sign
+//! - [X] Sign
+//! - [ ] Sign with Hedged Signatures
 //! 
 //! ### Verification
 //! 
-//! - Verify
+//! - [X] Verify
 //! 
 //! ### Encodings
 //! 
@@ -96,6 +96,16 @@ pub struct ED25519SecretKey([u8;32]);
 #[derive(Zeroize,ZeroizeOnDrop,Debug,Serialize,Deserialize, Clone)]
 pub struct ED25519Signature(#[serde(with = "BigArray")][u8;64]);
 
+
+pub mod protocol_info {
+    pub const PROTOCOL_NAME: &str = "libslug20/ed25519";
+    pub const PK_SIZE: usize = 32;
+    pub const SK_SIZE: usize = 32;
+    pub const SIG_SIZE: usize = 64;
+    pub const DERIVES_PUBLIC_KEY_FROM_SECRET: bool = true;
+    pub const RANDOMNESS: [&str;4] = ["Operating-System CSPRNG","SecureRand","Deterministic With Password","BIP39"];
+}
+
 impl ED25519SecretKey {
     /// Generates from OS-Generated Random Seed
     /// 
@@ -128,9 +138,9 @@ impl ED25519SecretKey {
         return ED25519SecretKey(signing_key.to_bytes());
     }
     /// From BIP39 (Generation or From)
-    pub fn from_bip39(mnemonic: SlugMnemonic, language: bip39::Language, password: &str) -> Result<Vec<u8>,ErrorKind> {
+    pub fn from_bip39(mnemonic: SlugMnemonic, language: bip39::Language, password: &str) -> Result<Self,ErrorKind> {
         let seed = mnemonic.to_seed(password, language)?;
-        Ok(seed)
+        Ok(Self::from_bytes(&seed).unwrap())
     }
     /// to byte array of 32 bytes
     pub fn to_bytes(&self) -> [u8;32] {
@@ -139,6 +149,9 @@ impl ED25519SecretKey {
     /// as bytes
     pub fn as_bytes(&self) -> &[u8] {
         &self.0
+    }
+    pub fn to_vec(&self) -> Vec<u8> {
+        self.0.to_vec()
     }
     /// [Encoding] UPPER-HEXADECIMAL
     pub fn to_hex_string(&self) -> String {
