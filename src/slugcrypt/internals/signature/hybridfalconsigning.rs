@@ -131,4 +131,50 @@ impl HybridFalconKeypair {
             clsk: None,
         })
     }
+    /// # X59 To Secret Key
+    /// 
+    /// Converts To Secret Key Format
+    pub fn to_x59_secret_key(&self) -> Result<String,SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+
+        let mut s: String = String::new();
+
+        let clpk = encoder.encode(self.clpk.as_bytes())?;
+        let pqpk = encoder.encode(self.pqpk.as_bytes())?;
+        let pqsk = encoder.encode(self.pqsk.clone().unwrap().as_bytes())?;
+        let clsk = encoder.encode(self.clsk.clone().unwrap().as_bytes())?;
+
+        s.push_str(&clsk);
+        s.push_str(":");
+        s.push_str(&clpk);
+        s.push_str(":");
+        s.push_str(&pqsk);
+        s.push_str(":");
+        s.push_str(&pqpk);
+
+        Ok(s)
+
+
+    }
+    /// # From X59 Secret Key
+    /// 
+    /// `ED25519SK`:`ED25519PK`:`FALCON1024SK`:`FALCON1024PK`
+    pub fn from_x59_secret_key<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+
+        let x: Vec<&str> = s.as_ref().split(":").collect();
+
+        let clpk = encoder.decode(x[0])?;
+        let clsk = encoder.decode(x[1])?;
+        let pqsk = encoder.decode(x[2])?;
+        let pqpk = encoder.decode(x[3])?;
+
+        Ok(Self {
+            clpk: ED25519PublicKey::from_slice(&clpk).unwrap(),
+            pqpk: Falcon1024PublicKey::from_bytes(&pqsk).unwrap(),
+            pqsk: Some(Falcon1024SecretKey::from_bytes(&pqsk).unwrap()),
+            clsk: Some(ED25519SecretKey::from_bytes(&clsk).unwrap())
+        })
+
+    }
 }
