@@ -25,7 +25,6 @@ use rand::rngs::OsRng;
 
 
 
-
 pub mod protocol_info {
     pub const PROTOCOL_NAME: &str = "libslug20/bls12-381";
     // Common BLS12-381 sizes (compressed forms):
@@ -40,7 +39,98 @@ pub mod protocol_info {
     pub const FEATURES: [&str;3] = ["Aggregate Signatures","Fast Verification","Deterministic Signing"];
 }
 
-#[derive(Debug, Zeroize, ZeroizeOnDrop, Serialize, Deserialize, Clone, Hash, PartialEq)]
+impl BLSSignature {
+    /// Aggregate multiple BLS signatures into a single signature.
+    pub fn aggregate(signatures: &[BLSSignature]) -> Result<BLSSignature, SlugErrors> {
+        let mut sigs = Vec::with_capacity(signatures.len());
+        for s in signatures {
+            let s0 = bls_signatures::Signature::from_bytes(&s.signature)
+                .map_err(|_| SlugErrors::SigningFailure)?;
+            sigs.push(s0);
+        }
+        let agg = bls_signatures::aggregate(&sigs)
+            .map_err(|_| SlugErrors::SigningFailure)?;
+        let bytes = agg.as_bytes();
+        if bytes.len() != protocol_info::BLS_SIG_SIZE {
+            return Err(SlugErrors::SigningFailure);
+        }
+        let mut out = [0u8; protocol_info::BLS_SIG_SIZE];
+        out.copy_from_slice(&bytes);
+        Ok(BLSSignature { signature: out })
+    }
+}
+
+/*
+impl BLSPublicKey {
+    /*
+    pub fn aggregate(pubkeys: &[BLSPublicKey]) -> Result<BLSPublicKey, SlugErrors> {
+        let mut pks = Vec::with_capacity(pubkeys.len());
+        for pk in pubkeys {
+            let pk0 = bls_signatures::PublicKey::from_bytes(&pk.pk)
+                .map_err(|_| SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
+            pks.push(pk0);
+        }
+        let agg = bls_signatures::aggregate(&pks)
+            .map_err(|_| SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
+        let bytes = agg.as_bytes();
+        if bytes.len() != protocol_info::BLS_PK_SIZE {
+            return Err(SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_BLS));
+        }
+        let mut out = [0u8; protocol_info::BLS_PK_SIZE];
+        out.copy_from_slice(bytes);
+        Ok(BLSPublicKey { pk: out })
+    }
+    */
+/*
+    /// Verify an aggregated signature created for the same message by aggregating signatures from multiple signers.
+    pub fn verify_aggregated_same_message<T: AsRef<[u8]>>(
+        pubkeys: &[BLSPublicKey],
+        message: T,
+        aggregate_signature: &BLSSignature,
+    ) -> Result<bool, SlugErrors> {
+        // Aggregate public keys then verify the aggregate signature against the single message.
+        let pk = bls_signatures::PublicKey::from_bytes(&agg_pk.pk)
+            .map_err(|_| SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
+        let sig = bls_signatures::Signature::from_bytes(&aggregate_signature.signature)
+            .map_err(|_| SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
+        Ok(pk.verify(sig, message.as_ref()))
+    }
+
+    /// Verify an aggregated signature over multiple distinct messages (one per public key).
+    ///
+    /// messages must have the same length and ordering as pubkeys.
+    pub fn verify_aggregated_multiple_messages<T: AsRef<[u8]>>(
+        pubkeys: &[BLSPublicKey],
+        messages: &[T],
+        aggregate_signature: &BLSSignature,
+    ) -> Result<bool, SlugErrors> {
+        if pubkeys.len() != messages.len() || pubkeys.is_empty() {
+            return Err(SlugErrors::InvalidLengthFromBytes);
+        }
+
+        let mut pks = Vec::with_capacity(pubkeys.len());
+        for pk in pubkeys {
+            let pk0 = bls_signatures::PublicKey::from_bytes(&pk.pk)
+                .map_err(|_| SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
+            pks.push(pk0);
+        }
+
+        // Convert messages to slice-of-slices
+        let msg_slices: Vec<&[u8]> = messages.iter().map(|m| m.as_ref()).collect();
+
+        let sig = bls_signatures::Signature::from_bytes(&aggregate_signature.signature)
+            .map_err(|_| SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
+
+        // Use the bls-signatures crate helper for multi-message aggregate verification.
+        // Expected signature: bls_signatures::verify_messages(&[&[u8]], &[PublicKey], &Signature) -> bool
+        // Map any false/true into Result accordingly.
+        let ok = bls_signatures::verify_messages(&msg_slices, &pks, &sig);
+        Ok(ok)
+    }
+    */
+}
+*/
+#[derive(Debug, Zeroize, ZeroizeOnDrop, Serialize, Deserialize, Clone, PartialEq, Hash)]
 pub struct BLSSecretKey {
     #[serde(with = "BigArray")]
     sk: [u8; protocol_info::BLS_SK_SIZE],
