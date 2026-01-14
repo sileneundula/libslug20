@@ -130,6 +130,7 @@ sphincs_plus = ["dep:pqcrypto-sphincsplus","dep:pqcrypto-traits"]
 falcon = ["dep:pqcrypto-falcon","dep:pqcrypto-traits"]
 ml-dsa = ["dep:ml-dsa"]
 ed448 = ["dep:ed448","dep:ed448-goldilocks-plus"]
+bls = ["dep:bls-signatures"]
 
 
 # Other
@@ -140,7 +141,7 @@ csprng = ["dep:rand","dep:securerand-rs","dep:argon2"]
 
 # Containers
 full-digests = ["sha3","sha2","blake2","blake3","digest"]
-full-signatures = ["schnorr","ed25519","ecdsa","sphincs_plus","falcon","ml-dsa","ed448"]
+full-signatures = ["schnorr","ed25519","ecdsa","sphincs_plus","falcon","ml-dsa","ed448","bls"]
 
 
 # Experimental
