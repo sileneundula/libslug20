@@ -93,4 +93,42 @@ impl HybridFalconKeypair {
             }
         }
     }
+    /// # X59 Public Key
+    /// 
+    /// `X59 Public Key` is a hex-encoded, constant-time encoder, that is in the following format:
+    /// 
+    /// **Format:** `CL_PK` + `:` + `FALCON1024_PK`
+    pub fn to_x59_public_key(&self) -> Result<String, SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+
+        let mut s: String = String::new();
+
+        let classical_key = encoder.encode(self.clpk.as_bytes())?;
+        let post_quantum = encoder.encode(self.pqpk.as_bytes())?;
+
+        s.push_str(&classical_key);
+        s.push_str(":");
+        s.push_str(&post_quantum);
+
+        return Ok(s)
+    }
+    /// # From X59 Public Key
+    /// 
+    /// **Format:** `cl_pk` + `:` + `pq_pk`
+    pub fn from_x59_public_key<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+
+        let x: Vec<&str> = s.as_ref().split(":").collect();
+        
+        let output_cl = encoder.decode(x[0])?;
+        let output_pq = encoder.decode(x[1])?;
+
+        Ok(Self {
+            clpk: ED25519PublicKey::from_slice(&output_cl).unwrap(),
+            pqpk: Falcon1024PublicKey::from_bytes(&output_pq).unwrap(),
+
+            pqsk: None,
+            clsk: None,
+        })
+    }
 }

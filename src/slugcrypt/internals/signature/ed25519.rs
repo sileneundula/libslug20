@@ -194,6 +194,17 @@ impl ED25519PublicKey {
     pub fn from_bytes(bytes: [u8;32]) -> Self {
         Self(bytes)
     }
+    pub fn from_slice(bytes: &[u8]) -> Result<Self,SlugErrors> {
+        let mut x: [u8;32] = [0u8;32];
+
+        if bytes.len() == 32 {
+            x.copy_from_slice(bytes);
+        }
+        else {
+            return Err(SlugErrors::InvalidLengthFromBytes)
+        }
+        Ok(Self::from_bytes(x))
+    }
     /// to usable type
     fn to_usable_type(&self) -> Result<VerifyingKey,SignatureError> {
         VerifyingKey::from_bytes(&self.0)
