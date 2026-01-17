@@ -15,6 +15,7 @@
 //! - Hexadecimal (prefered)
 //! - Base32
 //! - Base58
+//! - Base64
 
 /// # Attribute
 /// 
@@ -37,3 +38,5 @@ pub mod label;
 pub mod errors;
 
 pub mod prelude;
+
+pub mod derive;
