@@ -13,6 +13,14 @@
 //! ED25519 (Upper-Hex) | : | SPHINCS+ Signature (Base58)
 //! 
 //! It is created by Joseph P. Tortorelli (silene/0x20CB)
+//! 
+//! ## TODO:
+//! 
+//! - [ ] REFACTOR
+//! - [ ] ENCODINGS
+//! - [ ] PUBLIC KEY
+//! - [ ] PRIVATE KEY
+//! - [ ] ADD PEM ENCODING
 
 use std::f32::consts::E;
 use std::string::FromUtf8Error;
@@ -23,22 +31,43 @@ use crate::slugcrypt::internals::signature::sphincs_plus::{SPHINCSPublicKey,SPHI
 use crate::errors::SlugErrors;
 use crate::errors::SlugErrorAlgorithms;
 
+use fixedstr::str128;
+
 use k256::pkcs8;
-use slugencode::SlugEncodingUsage;
-use slugencode::SlugEncodings;
+use slugencode::prelude::*;
+use pem::Pem;
 
 use serde::{Serialize,Deserialize};
 use zeroize::{ZeroizeOnDrop,Zeroize};
 
+/// # ShulginKeypair
+/// 
+/// Contains an ED25519 Keypair and a SPHINCS+ Keypair
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
 pub struct ShulginKeypair {
-    pub clpk: ED25519PublicKey,
-    pub pqpk: SPHINCSPublicKey,
+    //=====Public-Keys=====//
+    pub ed25519pk: ED25519PublicKey,
+    pub sphincspk: SPHINCSPublicKey, // Post-Quantum
     
-    pub clsk: Option<ED25519SecretKey>,
-    pub pqsk: Option<SPHINCSSecretKey>,
+    //=====Secret-Keys=====//
+    pub ed25519sk: Option<ED25519SecretKey>,
+    pub sphincssk: Option<SPHINCSSecretKey>,
 }
 
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+pub struct ShulginSigningPublicKey {
+    pub clpk: ED25519PublicKey,
+    pub pqpk: SPHINCSPublicKey,
+}
+
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+pub struct ShulginSigningSecretKey {
+    pub clsk: ED25519SecretKey,
+    pub pqpk: SPHINCSPublicKey,
+    pub pqsk: SPHINCSSecretKey,
+}
+
+/// # ShulginSigning Compact
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
 pub struct ShulginKeypairCompact {
     pub public_key: String,
@@ -101,9 +130,16 @@ impl ShulginKeypairCompact {
 pub struct ShulginSignature {
     pub clsig: ED25519Signature,
     pub pqsig: SPHINCSSignature,
-    
-    //pub rng: Option<[u8;32]>,
 }
+/*
+/// # Compact Signature
+/// 
+/// SPHINCS+ is compact due to using hash to find signature.
+pub struct ShulginSignatureCompact {
+    pub clsig: ED25519Signature,
+    pub pqsig_location: str128,
+}
+    */
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
 pub struct ShulginSignatureCompact {
@@ -171,16 +207,16 @@ impl ShulginSignatureCompact {
 
 impl ShulginKeypair {
     pub fn add_secret(&mut self, ed25519secret: ED25519SecretKey, sphincssecret: SPHINCSSecretKey) {
-        self.clsk = Some(ed25519secret);
-        self.pqsk = Some(sphincssecret);
+        self.ed25519sk = Some(ed25519secret);
+        self.sphincssk = Some(sphincssecret);
     }
     pub fn from_public_key(ed25519pk: ED25519PublicKey, sphincspk: SPHINCSPublicKey) -> Self {
         return Self {
-            clpk: ed25519pk,
-            pqpk: sphincspk,
+            ed25519pk: ed25519pk,
+            sphincspk: sphincspk,
 
-            clsk: None,
-            pqsk: None,
+            ed25519sk: None,
+            sphincssk: None,
         }
     }
     pub fn generate() -> Self {
@@ -189,17 +225,17 @@ impl ShulginKeypair {
         let (pq_pk,pq_sk) = SPHINCSSecretKey::generate();
 
         return Self {
-            clpk: clpk,
-            pqpk: pq_pk,
+            ed25519pk: clpk,
+            sphincspk: pq_pk,
 
-            clsk: Some(cl),
-            pqsk: Some(pq_sk)
+            ed25519sk: Some(cl),
+            sphincssk: Some(pq_sk)
         }
     }
     pub fn sign<T: AsRef<[u8]>>(&self, data: T) -> Result<ShulginSignature,SlugErrors> {
-        if self.pqsk.is_some() && self.pqsk.is_some() {
-            let cl_sig = self.clsk.clone().unwrap().sign(data.as_ref());
-            let pq_sig = self.pqsk.clone().unwrap().sign(data.as_ref());
+        if self.ed25519sk.is_some() && self.sphincssk.is_some() {
+            let cl_sig = self.ed25519sk.clone().unwrap().sign(data.as_ref());
+            let pq_sig = self.sphincssk.clone().unwrap().sign(data.as_ref());
 
             if cl_sig.is_err() || pq_sig.is_err() {
                 return Err(SlugErrors::SigningFailure)
@@ -221,8 +257,8 @@ impl ShulginKeypair {
         }
     }
     pub fn verify<T: AsRef<[u8]>>(&self, data: T, signature: ShulginSignature) -> Result<bool,SlugErrors> {
-        let cl_is_valid = self.clpk.verify(signature.clsig.clone(),data.as_ref());
-        let pq_is_valid = self.pqpk.verify(data.as_ref(), signature.pqsig.clone());
+        let cl_is_valid = self.ed25519pk.verify(signature.clsig.clone(),data.as_ref());
+        let pq_is_valid = self.sphincspk.verify(data.as_ref(), signature.pqsig.clone());
 
         if cl_is_valid.is_err() {
             return Err(SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_ED25519))
@@ -250,7 +286,7 @@ impl ShulginKeypair {
         return Ok(x)
     }
     pub fn into_compact(&self) -> Result<ShulginKeypairCompact,FromUtf8Error> {
-        if self.clsk.is_some() && self.pqsk.is_some() {
+        if self.ed25519sk.is_some() && self.sphincssk.is_some() {
             let pk = key_to_compact(&self)?;
             let sk = secret_key_to_compact(&self)?;
 
@@ -266,6 +302,14 @@ impl ShulginKeypair {
                 secret_key: None,
             })
         }
+    }
+    pub fn into_secret_pem(&self) -> Result<String,FromUtf8Error> {
+        let x = Pem::new("SHULGINSIGNING-SECRET-KEY",self.into_compact()?.to_str_sk()).to_string();
+        return Ok(x)
+    }
+    pub fn into_pem(&self) -> Result<String,FromUtf8Error> {
+        let x = Pem::new("SHULGINSIGNING-PUBLIC-KEY", self.into_compact()?.to_str_pk()).to_string();
+        return Ok(x)
     }
 }
 
@@ -354,8 +398,8 @@ fn key_to_compact(keypair: &ShulginKeypair) -> Result<String, FromUtf8Error> {
     
     let delimiter = ":";
     
-    let ed25519_pk = &keypair.clpk;
-    let sphincs_pk = &keypair.pqpk;
+    let ed25519_pk = &keypair.ed25519pk;
+    let sphincs_pk = &keypair.sphincspk;
 
     output.push_str(&ed25519_pk.to_hex_string());
     output.push_str(delimiter);
@@ -380,11 +424,11 @@ fn from_public_key_compact<T: AsRef<str>>(ss_pk: T) -> Result<ShulginKeypair,Slu
     if keys.len() == 2 {
         if keys[0].len() == 64 && keys[1].len() == 128 {
             return Ok(ShulginKeypair {
-                clpk: ED25519PublicKey::from_bytes(byte_array),
-                pqpk: SPHINCSPublicKey::from_hex_string_final(keys[1])?,
+                ed25519pk: ED25519PublicKey::from_bytes(byte_array),
+                sphincspk: SPHINCSPublicKey::from_hex_string_final(keys[1])?,
 
-                clsk: None,
-                pqsk: None,
+                sphincssk: None,
+                ed25519sk: None,
             })
         }
         else {
@@ -428,8 +472,8 @@ fn secret_key_to_compact(keypair: &ShulginKeypair) -> Result<String, FromUtf8Err
     
     let delimiter = ":";
     
-    let ed25519_sk = keypair.clsk.clone().unwrap();
-    let sphincs_sk = keypair.pqsk.clone().unwrap();
+    let ed25519_sk = keypair.ed25519sk.clone().unwrap();
+    let sphincs_sk = keypair.sphincssk.clone().unwrap();
 
     output.push_str(&ed25519_sk.to_hex_string());
     output.push_str(delimiter);
@@ -458,6 +502,10 @@ fn shulginsigning() {
     let compact = keypair.into_compact().unwrap();
     let pk_str = compact.as_str_pk();
     let sk_str = compact.to_str_sk();
+
+    let pem = keypair.into_pem().unwrap();
+
+    println!("PEM: {}", pem);
 
     println!("Public Key: {}",pk_str);
     println!("Secret Key: {}",sk_str.clone());

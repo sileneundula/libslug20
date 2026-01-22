@@ -18,6 +18,7 @@ use crate::errors::SlugErrorAlgorithms;
 
 use serde::{Serialize,Deserialize};
 use zeroize::{ZeroizeOnDrop,Zeroize};
+use pem::Pem;
 
 use slugencode::prelude::*;
 
@@ -50,6 +51,29 @@ pub struct HybridFalconSignature {
 }
 
 impl HybridFalconKeypair {
+    /// # From Keys
+    /// 
+    /// Imports Public Key From Keys
+    pub fn from_keys(ed: &ED25519PublicKey, falcon: &Falcon1024PublicKey) -> Self {
+        Self {
+            clpk: ed.to_owned(),
+            pqpk: falcon.to_owned(),
+            clsk: None,
+            pqsk: None,
+        }
+    }
+    /// # From Secret Keys
+    pub fn from_keys_secret(ed_pk: &ED25519PublicKey, ed_sk: &ED25519SecretKey, falcon_pk: &Falcon1024PublicKey, falcon_sk: &Falcon1024SecretKey) -> Self {
+        Self {
+            clpk: ed_pk.to_owned(),
+            clsk: Some(ed_sk.to_owned()),
+            pqpk: falcon_pk.to_owned(),
+            pqsk: Some(falcon_sk.to_owned()),
+        }
+    }
+    /// # Generate a HybridFalconSignature Scheme
+    /// 
+    /// Generates an ED25519 + FALCON1024 digital signature scheme using OSCSPRNG.
     pub fn generate() -> Self {
         let cl = ED25519SecretKey::generate();
         let clpk = cl.public_key().unwrap();
@@ -87,7 +111,7 @@ impl HybridFalconKeypair {
             return Err(SlugErrors::SigningFailure)
         }
     }
-    pub fn verify<T: AsRef<[u8]>>(&self, data: T, signature: HybridFalconSignature) -> Result<bool,SlugErrors> {
+    pub fn verify<T: AsRef<[u8]>>(&self, data: T, signature: &HybridFalconSignature) -> Result<bool,SlugErrors> {
         let cl_is_valid = self.clpk.verify(signature.clsig.clone(),data.as_ref());
         let pq_is_valid = self.pqpk.verify(data.as_ref(), &signature.pqsig);
 
@@ -199,6 +223,33 @@ impl HybridFalconSignature {
     /// 2. FALCON1024
     pub fn to_bytes(&self) -> (Vec<u8>,Vec<u8>) {
         return (self.clsig.as_bytes().to_vec(),self.pqsig.as_bytes().to_vec())
+    }
+    /// # To X59 Signature (HybridFalcon)
+    /// 
+    /// **Encoding:** Hexadecimal
+    pub fn to_x59_signature(&self) -> Result<String,SlugEncodingError> {
+        let mut output = String::new();
+
+        output.push_str(&self.clsig.to_hexadecimal()?);
+        output.push_str(":");
+        output.push_str(&self.pqsig.to_hex()?);
+
+        return Ok(output)
+    }
+    /// # From X59 Signature (HybridFalcon)
+    /// 
+    /// **Encoding:** Hexadecimal
+    pub fn from_x59_signature<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError> {
+        let x = s.as_ref();
+        let output: Vec<&str> = x.split(":").collect();
+
+        let clsig = ED25519Signature::from_hex(output[0])?;
+        let pqsig = Falcon1024Signature::from_hex(output[1])?;
+
+        return Ok(Self {
+            clsig: clsig,
+            pqsig: pqsig,
+        })
     }
     
 }
