@@ -34,7 +34,7 @@ use std::string::FromUtf8Error;
 
 use crate::slugcrypt::internals::messages::Message;
 use crate::slugcrypt::internals::signature::ed25519::{ED25519SecretKey,ED25519PublicKey,ED25519Signature};
-use crate::slugcrypt::internals::signature::shulginsigning::protocol_values::{SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION, SHULGIN_SIGNING_X59_FORMAT_ED25519_HEX_LENGTH, SHULGIN_SIGNING_X59_FORMAT_LENGTH, SHULGIN_SIGNING_X59_FORMAT_SPHINCS_HEX_LENGTH};
+use crate::slugcrypt::internals::signature::shulginsigning::protocol_values::{SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION, SHULGIN_SIGNING_X59_FORMAT_ED25519_HEX_LENGTH, SHULGIN_SIGNING_X59_FORMAT_FULL_DELIMITER_FOR_SK, SHULGIN_SIGNING_X59_FORMAT_FULL_LENGTH, SHULGIN_SIGNING_X59_FORMAT_FULL_SPLIT, SHULGIN_SIGNING_X59_FORMAT_LENGTH, SHULGIN_SIGNING_X59_FORMAT_SPHINCS_HEX_LENGTH, SHULGIN_SIGNING_X59_LABEL};
 use crate::slugcrypt::internals::signature::sphincs_plus::{SPHINCSPublicKey,SPHINCSSecretKey,SPHINCSSignature};
 use crate::errors::SlugErrors;
 use crate::errors::SlugErrorAlgorithms;
@@ -57,11 +57,20 @@ pub mod protocol_values {
     pub const PROTOCOL_NAME_SIGNATURE: &str = "ShulginSigning-Signature";
 
     pub const SHULGIN_SIGNING_X59_FORMAT_LENGTH: usize = 193;
+    pub const SHULGIN_SIGNING_X59_FORMAT_FULL_SPLIT: usize = 193;
+
+
+    pub const SHULGIN_SIGNING_X59_FORMAT_FULL_DELIMITER_FOR_SK: usize = 64;
     // Delimiter is a colon
     pub const SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION: usize = 64;
     
     pub const SHULGIN_SIGNING_X59_FORMAT_ED25519_HEX_LENGTH: usize = 64;
     pub const SHULGIN_SIGNING_X59_FORMAT_SPHINCS_HEX_LENGTH: usize = 128;
+
+    pub const SHULGIN_SIGNING_X59_FORMAT_FULL_LENGTH: usize = 515;
+
+    pub const SHULGIN_SIGNING_X59_LABEL: &str = "[libslug20/ShulginSigning]";
+    pub const SHULGIN_SIGNING_X59_SUITE: &str = "ed25519_with_sphincs_shake256_255s_signature_scheme";
 }
 
 /// # ShulginKeypair
@@ -151,6 +160,85 @@ impl ShulginKeypair {
         }
         else {
             return Err(SlugErrors::Other(String::from("Incorrect X59 Format For Parsing ShulginSigning Public Key")))
+        }
+    }
+    /// # X59 Metadata
+    /// 
+    /// Contains: `[libslug20/ShulginSigning]`
+    pub fn into_x59_metadata() -> String {
+        return SHULGIN_SIGNING_X59_LABEL.to_string()
+    }
+    /// # X59 Secret
+    /// 
+    /// ED25519PK:SPHINCSPK/ED25519SK:SPHINCSSK
+    pub fn to_x59_format_full(&self) -> Result<String,SlugErrors> {
+        if self.ed25519sk.is_none() || self.sphincssk.is_none() {
+            return Err(SlugErrors::Other(String::from("There are no secret keys provided.")))
+        }
+        else {
+            //
+        }
+        let mut output: String = String::new();
+
+        output.push_str(&self.ed25519pk.to_hexadecimal().expect("Failed To Get ED25519 Public Key"));
+        output.push_str(":");
+        output.push_str(&self.sphincspk.to_hex().expect("Failed To Convert To Hexadecimal For SPHINCS+ Public Key"));
+
+        output.push_str("/");
+
+        output.push_str(&self.ed25519sk.clone().unwrap().to_hexadecimal().unwrap());
+        output.push_str(":");
+        output.push_str(&self.sphincssk.clone().unwrap().to_hex().unwrap());
+
+        return Ok(output)
+    }
+    pub fn from_x59_format_full<T: AsRef<str>>(full_encoded_x59_string: T) -> Result<Self,SlugErrors> {
+        let x = full_encoded_x59_string.as_ref();
+        
+        if x.len() == SHULGIN_SIGNING_X59_FORMAT_FULL_LENGTH && x.contains(":") == true && x.contains("/") == true {
+            let (pk,sk) = x.split_at(SHULGIN_SIGNING_X59_FORMAT_FULL_SPLIT);
+            println!("Pub: {}", pk);
+            println!("Secret: {}",sk);
+
+            let (ed25519, sphincs) = pk.split_at(SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION);
+            let (ed25519_sk, sphincs_sk) = sk.split_at(SHULGIN_SIGNING_X59_FORMAT_FULL_DELIMITER_FOR_SK);
+
+            let x = ED25519PublicKey::from_hex(ed25519);
+            let y = SPHINCSPublicKey::from_hex_string_final(sphincs);
+
+            let output_ed25519: ED25519PublicKey = match x {
+                Ok(x) => x,
+                Err(_) => return Err(SlugErrors::Other(String::from("ED25519 Public Key Failure")))
+            };
+            let output_sphincs: SPHINCSPublicKey = match y {
+                Ok(y) => y,
+                Err(_) => return Err(SlugErrors::Other(String::from("SPHINCS+ Public Key Failure")))
+            };
+
+            let n = ED25519SecretKey::from_hex(ed25519_sk);
+            let m = SPHINCSSecretKey::from_hex(sphincs_sk);
+
+            let output_ed25519_sk = match n {
+                Ok(v) => v,
+                Err(_) => return Err(SlugErrors::Other(String::from("Issue With ED25519 Parsing")))
+            };
+
+            let output_sphincs_sk = match m {
+                Ok(v) => v,
+                Err(_) => return Err(SlugErrors::Other(String::from("Issue With SPHINCS+ Parsing")))
+            };
+
+            return Ok(
+                Self {
+                    ed25519pk: output_ed25519,
+                    sphincspk: output_sphincs,
+                    ed25519sk: Some(output_ed25519_sk),
+                    sphincssk: Some(output_sphincs_sk)
+                }
+            )
+        }
+        else {
+            return Err(SlugErrors::Other(String::from("Could Not Parse. Error In Parsing For ShulginSigning X59 Format.")))
         }
     }
 }
@@ -630,6 +718,12 @@ fn shulginsigning() {
 #[test]
 fn check_len() {
     let keypair = ShulginKeypair::generate();
+    let msg: &str = "Message that is signed";
+    let signature = keypair.sign(msg).unwrap();
     let format = keypair.to_x59_pk_format();
-    ShulginKeypair::from_x59_pk_format(format.unwrap());
+    //ShulginKeypair::from_x59_pk_format(format.unwrap());
+    let output = keypair.to_x59_format_full().unwrap();
+    let keypair_2 = ShulginKeypair::from_x59_format_full(output).unwrap();
+    let is_valid = keypair_2.verify(msg, signature).unwrap();
+    println!("{}",is_valid)
 }
