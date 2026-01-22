@@ -324,6 +324,12 @@ impl IntoPem for HybridFalconKeypair {
             }
         }
     }
+    fn get_pem_label_for_public() -> String {
+        return PROTOCOL_NAME_FOR_PEM_PUBLIC.to_string()
+    }
+    fn get_pem_label_for_secret() -> String {
+        return PROTOCOL_NAME_FOR_PEM_SECRET.to_string()
+    }
 }
 
 impl HybridFalconSignature {

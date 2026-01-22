@@ -32,6 +32,8 @@ pub trait IntoPem: Sized {
     fn into_pem_private(&self) -> String;
     fn from_pem_public<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
     fn from_pem_private<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn get_pem_label_for_public() -> String;
+    fn get_pem_label_for_secret() -> String;
 }
 
 

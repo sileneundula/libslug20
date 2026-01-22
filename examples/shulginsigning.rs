@@ -10,6 +10,6 @@ fn main() {
 
     let is_valid = keypair.verify(msg, signature.clone()).unwrap();
 
-    let compact = signature.clone().into_ss_format();
+    let compact = signature.clone().into_x59_format();
     let compact_pk = ShulginKeypairCompact::from_pk(&keypair).unwrap();
 }
