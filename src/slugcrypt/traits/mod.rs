@@ -27,7 +27,7 @@ pub trait IntoX59Encoding {
 /// # IntoPem Trait
 /// 
 /// The IntoPem trait handles all serialiazing of data structures using the PEM format.
-pub trait IntoPem {
+pub trait IntoPem: Sized {
     fn into_pem_public(&self) -> String;
     fn into_pem_private(&self) -> String;
     fn from_pem_public<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
