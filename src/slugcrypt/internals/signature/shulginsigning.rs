@@ -196,12 +196,11 @@ impl ShulginKeypair {
         let x = full_encoded_x59_string.as_ref();
         
         if x.len() == SHULGIN_SIGNING_X59_FORMAT_FULL_LENGTH && x.contains(":") == true && x.contains("/") == true {
-            let (pk,sk) = x.split_at(SHULGIN_SIGNING_X59_FORMAT_FULL_SPLIT);
-            println!("Pub: {}", pk);
-            println!("Secret: {}",sk);
+            let (pk, sk) = x.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_FULL_SPLIT).unwrap();
+            let pk_2 = pk.replace("/","");
 
-            let (ed25519, sphincs) = pk.split_at(SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION);
-            let (ed25519_sk, sphincs_sk) = sk.split_at(SHULGIN_SIGNING_X59_FORMAT_FULL_DELIMITER_FOR_SK);
+            let (ed25519, sphincs) = pk_2.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION).unwrap();
+            let (ed25519_sk, sphincs_sk) = sk.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_FULL_DELIMITER_FOR_SK).unwrap();
 
             let x = ED25519PublicKey::from_hex(ed25519);
             let y = SPHINCSPublicKey::from_hex_string_final(sphincs);
