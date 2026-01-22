@@ -2,6 +2,10 @@
 
 use slugencode::errors::SlugEncodingError;
 
+use crate::slugcrypt::internals::signature::hybridfalconsigning::HybridFalconKeypair;
+
+use crate::errors::SlugErrors;
+
 /// # Recoverable Public Key
 /// 
 /// This type can recover its public key from its secret key.
@@ -20,6 +24,15 @@ pub trait IntoX59Encoding {
     fn from_x59_base58<T: AsRef<str>>(encoded_str: T) -> Self;
 }
 
+/// # IntoPem Trait
+/// 
+/// The IntoPem trait handles all serialiazing of data structures using the PEM format.
+pub trait IntoPem {
+    fn into_pem_public(&self) -> String;
+    fn into_pem_private(&self) -> String;
+    fn from_pem_public<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn from_pem_private<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+}
 
 
 /// # Into Encoding

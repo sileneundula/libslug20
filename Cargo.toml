@@ -98,6 +98,8 @@ thiserror = "2.0.17"
 
 fixedstr = {version="0.5.10",features=["serde"]}
 
+log = "0.4.29"
+
 # DER + PEM
 der = "0.7.10"
 pem = "3.0.6"

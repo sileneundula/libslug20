@@ -1,6 +1,13 @@
 //! # HybridFalcon Signing
 //! 
+//! ## Description
+//! 
 //! HybridFalcon signing is signing using ED25519 for the classical key and FALCON1024 for the post-quantum key.
+//! 
+//! ## Encoding
+//! 
+//! Encoding type is **Hexadecimal** with a colon seperating the keys, with the ed25519 being first and falcon1024 being second.
+//! 
 //! 
 //! ## TODO
 //! 
@@ -15,17 +22,25 @@ use crate::slugcrypt::internals::signature::ed25519::{ED25519SecretKey,ED25519Pu
 use crate::slugcrypt::internals::signature::falcon::*;
 use crate::errors::SlugErrors;
 use crate::errors::SlugErrorAlgorithms;
+use crate::slugcrypt::internals::signature::hybridfalconsigning::protocol_values::{PROTOCOL_NAME_FOR_PEM, PROTOCOL_NAME_FOR_PEM_PUBLIC, PROTOCOL_NAME_FOR_PEM_SECRET};
 
 use serde::{Serialize,Deserialize};
 use zeroize::{ZeroizeOnDrop,Zeroize};
 use pem::Pem;
+use std::str::FromStr;
+use std::string::ToString;
+use log::debug;
+use log::warn;
+use log::info;
+
+// Trait
+use crate::slugcrypt::traits::IntoPem;
 
 use slugencode::prelude::*;
 
 pub mod protocol_info {
-    pub const PROTOCOL_NAME: &str = "libslug20/HybridFalconSignature";
-    pub const PROTOCOL_NAME_2: &str = "libslug20/Somana";
-    pub const PROTOCOL_NAME_3: &str = "libslug20/AboniSignature";
+    pub const PROTOCOL_NAME_OLD: &str = "libslug20/HybridFalconSignature";
+    pub const PROTOCOL_NAME: &str = "libslug20/Adonis";
     
     pub const CLASSICALALGORITHM: &str = "ed25519";
     pub const POSTQUANTUMALGORITHM: &str = "Falcon1024";
@@ -35,6 +50,13 @@ pub mod protocol_info {
     pub const ED25519_PK_SIZE: usize = 32;
     pub const ED25519_SK_SIZE: usize = 32;
     pub const ED25519_SIG_SIZE: usize = 64;
+}
+
+pub mod protocol_values {
+    /// Adonis
+    pub const PROTOCOL_NAME_FOR_PEM: &str = "libslug20/Adonis";
+    pub const PROTOCOL_NAME_FOR_PEM_SECRET: &str = "ADONIS-SIGNATURE-SECRET-KEY";
+    pub const PROTOCOL_NAME_FOR_PEM_PUBLIC: &str = "ADONIS-SIGNATURE-PUBLIC-KEY";
 }
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
@@ -215,6 +237,92 @@ impl HybridFalconKeypair {
             clsk: Some(ED25519SecretKey::from_bytes(&clsk).unwrap())
         })
 
+    }
+}
+
+impl IntoPem for HybridFalconKeypair {
+    /// # Into PEM (Secret Key)
+    /// 
+    /// Converts to X59 Secret Key And Encodes As Pem
+    fn into_pem_private(&self) -> String {
+        let x = self.to_x59_secret_key().unwrap();
+        let output = Pem::new(PROTOCOL_NAME_FOR_PEM_SECRET, x).to_string();
+        return output
+    }
+    fn into_pem_public(&self) -> String {
+        let x = self.to_x59_public_key().unwrap();
+        let output = Pem::new(PROTOCOL_NAME_FOR_PEM_PUBLIC, x).to_string();
+        return output
+    }
+    fn from_pem_private<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let parsed_adonis: Result<Pem, pem::PemError> = pem::parse(s.as_ref());
+
+        match parsed_adonis {
+            Ok(v) => {
+                if v.tag().to_string() == PROTOCOL_NAME_FOR_PEM_SECRET {
+                    log::info!("[Libslug] Adonis PEM matches for Secret Key");
+                    let y: Result<HybridFalconKeypair, SlugEncodingError> = HybridFalconKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert to string"));
+                    
+                    if y.is_ok() {
+                        return Ok(y.unwrap())
+                    }
+                    else {
+                        return Err(SlugErrors::Other(String::from("Could not parse PEM for Adonis")))
+                    }
+
+                }
+                else {
+                    log::warn!("[Libslug] Adonis PEM does not match the tag for Secret Key");
+
+                    let output: Result<HybridFalconKeypair, SlugEncodingError> = HybridFalconKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert X59 Private Key"));
+                    
+                    if output.is_ok() {
+                        return Ok(output.unwrap())
+                    }
+                    else {
+                        return Err(SlugErrors::Other(String::from("Failure in Signing For Adonis Signature")))
+                    }
+                }
+            }
+            Err(_) => {
+                return Err(SlugErrors::Other(String::from("Could Not Parse PEM For Adonis.")))
+            }
+        }
+    }
+    fn from_pem_public<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let parsed_adonis: Result<Pem, pem::PemError> = pem::parse(s.as_ref());
+
+        match parsed_adonis {
+            Ok(v) => {
+                if v.tag().to_string() == PROTOCOL_NAME_FOR_PEM_PUBLIC {
+                    log::info!("[Libslug] Adonis PEM matches for Public Key");
+                    let y: Result<HybridFalconKeypair, SlugEncodingError> = HybridFalconKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert to string"));
+                    
+                    if y.is_ok() {
+                        return Ok(y.unwrap())
+                    }
+                    else {
+                        return Err(SlugErrors::Other(String::from("Could not parse PEM for Adonis")))
+                    }
+
+                }
+                else {
+                    log::warn!("[Libslug] Adonis PEM does not match the tag for Public Key");
+
+                    let output = HybridFalconKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).unwrap());
+                    
+                    if output.is_ok() {
+                        return Ok(output.unwrap())
+                    }
+                    else {
+                        return Err(SlugErrors::Other(String::from("Failure in Signing For Adonis Signature")))
+                    }
+                }
+            }
+            Err(_) => {
+                return Err(SlugErrors::Other(String::from("Could Not Parse PEM For Adonis.")))
+            }
+        }
     }
 }
 
