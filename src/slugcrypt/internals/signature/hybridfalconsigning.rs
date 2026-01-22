@@ -24,6 +24,8 @@ use slugencode::prelude::*;
 
 pub mod protocol_info {
     pub const PROTOCOL_NAME: &str = "libslug20/HybridFalconSignature";
+    pub const PROTOCOL_NAME_2: &str = "libslug20/Somana";
+    pub const PROTOCOL_NAME_3: &str = "libslug20/AboniSignature";
     
     pub const CLASSICALALGORITHM: &str = "ed25519";
     pub const POSTQUANTUMALGORITHM: &str = "Falcon1024";

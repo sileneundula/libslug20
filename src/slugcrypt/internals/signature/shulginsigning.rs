@@ -219,6 +219,9 @@ impl ShulginKeypair {
             sphincssk: None,
         }
     }
+    /// # Generate ShulginSigning
+    /// 
+    /// Generates a new `ShulginSigning` Keypair that uses SPHINCS+ and ED25519
     pub fn generate() -> Self {
         let cl = ED25519SecretKey::generate();
         let clpk = cl.public_key().unwrap();
@@ -275,9 +278,13 @@ impl ShulginKeypair {
             }
         }
     }
+    /// # From X59 Public Key Format
+    /// 
+    /// Public Key Only
     pub fn from_compact_pk<T: AsRef<str>>(pk: T) -> Result<ShulginKeypair, SlugErrors> {
         return from_public_key_compact(pk.as_ref())
     }
+    /// # From X59 Public Key and Secret Key
     pub fn from_compact_keypair<T: AsRef<str>>(pk: T, sk: T) -> Result<ShulginKeypair, SlugErrors> {
         let mut x = from_public_key_compact(pk.as_ref())?;
         let z = from_secret_key_compact(sk.as_ref())?;
@@ -323,7 +330,8 @@ impl ShulginSignature {
     pub fn import(signature_compact: ShulginSignatureCompact) {
         return 
     }
-    pub fn into_ss_format(&self) -> String {
+    /// TODO: Refactor to use slugencode
+    pub fn into_x59_format(&self) -> String {
         let mut output: String = String::new();
         
         let delimiter = ":";
@@ -337,7 +345,8 @@ impl ShulginSignature {
 
         return output
     }
-    pub fn from_ss_format<T: AsRef<str>>(ss_format: T) -> Result<Self,SlugErrors> {
+    /// TODO: Refactor to use slugencode
+    pub fn from_x59_format<T: AsRef<str>>(ss_format: T) -> Result<Self,SlugErrors> {
         let manipulated_string = ss_format.as_ref().to_string();
 
         let keys: Vec<&str> = manipulated_string.split(":").collect();
@@ -488,7 +497,7 @@ fn run() {
     let signature = keypair.sign("This message is being signed.").unwrap();
 
 
-    let sig = signature.into_ss_format();
+    let sig = signature.into_x59_format();
 
     let compact = ShulginKeypairCompact::from_pk(&keypair).unwrap();
     
