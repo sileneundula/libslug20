@@ -1,5 +1,14 @@
 pub use crate::slugcrypt::api::*;
 
+/// # Core Usage
+/// 
+/// This is where all the internal stuff occurs. It is lower-level and useful to use. It can be found in the slugcrypt module.
+pub mod core {
+    pub use crate::errors::{SlugErrors,SlugErrorAlgorithms};
+    pub use crate::slugcrypt::internals;
+    pub use crate::slugcrypt::traits;
+}
+
 /// # Symmetric Encryption
 /// 
 /// ## Description
