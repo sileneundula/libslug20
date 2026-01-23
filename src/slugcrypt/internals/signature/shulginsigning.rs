@@ -173,6 +173,17 @@ impl ShulginKeypair {
     /// # X59 Secret
     /// 
     /// ED25519PK:SPHINCSPK/ED25519SK:SPHINCSSK
+    /// 
+    /// **X59 Format Length:** 515 bytes
+    /// **Constant-Time-Encoding:** True
+    /// **ED25519 PK Length (In Hexadecimal):** 64 bytes
+    /// **SPHINCS+ PK Length (In Hexadecimal):** 128 bytes
+    /// **ED25519 SK Length (In Hexadecimal): 64 bytes
+    /// **SPHINCS+ SK Length (In Hexadecimal): 256 bytes.
+    /// **Total Bytes: 512**
+    /// **Additional Bytes:** 3 (`: / :`)
+    /// **Delimiter For Public Key vs. Private Key:** `/`
+    /// **Delimiter For Other:** `:`
     pub fn to_x59_format_full(&self) -> Result<String,SlugErrors> {
         if self.ed25519sk.is_none() || self.sphincssk.is_none() {
             return Err(SlugErrors::Other(String::from("There are no secret keys provided.")))
@@ -194,6 +205,20 @@ impl ShulginKeypair {
 
         return Ok(output)
     }
+    /// # From X59 Secret
+    /// 
+    /// ED25519PK:SPHINCSPK/ED25519SK:SPHINCSSK
+    /// 
+    /// **X59 Format Length:** 515 bytes
+    /// **Constant-Time-Encoding:** True
+    /// **ED25519 PK Length (In Hexadecimal):** 64 bytes
+    /// **SPHINCS+ PK Length (In Hexadecimal):** 128 bytes
+    /// **ED25519 SK Length (In Hexadecimal): 64 bytes
+    /// **SPHINCS+ SK Length (In Hexadecimal): 256 bytes.
+    /// **Total Bytes: 512**
+    /// **Additional Bytes:** 3 (`: / :`)
+    /// **Delimiter For Public Key vs. Private Key:** `/`
+    /// **Delimiter For Other:** `:`
     pub fn from_x59_format_full<T: AsRef<str>>(full_encoded_x59_string: T) -> Result<Self,SlugErrors> {
         let x = full_encoded_x59_string.as_ref();
         
