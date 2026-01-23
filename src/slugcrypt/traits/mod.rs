@@ -32,7 +32,7 @@ pub trait IntoPem: Sized {
 pub trait IntoX59PublicKey: Sized {
     fn into_x59_pk(&self) -> Result<String,SlugErrors>;
     fn from_x59_pk<T: AsRef<str>>(x59_encoded: T) -> Result<Self,SlugErrors>;
-    fn x59_metadata() -> String;
+    fn x59_metadata_pk() -> String;
 }
 
 pub trait IntoX59SecretKey: Sized {
@@ -45,6 +45,12 @@ pub trait IntoX59Signature: Sized {
     fn into_x59(&self) -> Result<String,SlugErrors>;
     fn from_x59<T: AsRef<str>>(x59_encoded_signature: T) -> Result<Self,SlugErrors>;
     fn x59_metadata() -> String;
+}
+
+pub trait IsMessage {
+    fn as_str(&self) -> &str;
+    fn to_str(&self) -> String;
+    fn as_bytes(&self) -> &[u8];
 }
 
 

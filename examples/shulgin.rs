@@ -5,7 +5,7 @@ fn main() {
 
     let keypair = ShulginKeypair::generate();
     let signature = keypair.sign(message).unwrap();
-    let is_valid = keypair.verify(message, signature).unwrap();
+    let is_valid = keypair.verify(message, &signature).unwrap();
 
     assert_eq!(is_valid, true)
 }

@@ -8,7 +8,7 @@ fn main() {
     
     let signature = keypair.sign(msg).unwrap();
 
-    let is_valid = keypair.verify(msg, signature.clone()).unwrap();
+    let is_valid = keypair.verify(msg, &signature).unwrap();
 
     let compact = signature.clone().into_x59_format();
     let compact_pk = ShulginKeypairCompact::from_pk(&keypair).unwrap();

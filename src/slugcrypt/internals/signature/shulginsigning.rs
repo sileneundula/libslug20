@@ -28,8 +28,24 @@
 //! - [ ] PUBLIC KEY
 //! - [ ] PRIVATE KEY
 //! - [ ] ADD PEM ENCODING
+//! 
+//! ## TODO:
+//! - [X] Implement ShulgingSigning Scheme (with secure, hedged signatures)
+//!     - [X] Argon2id/Rand
+//! - [X] Signing with CSPRNG
+//! - [X] Signing with Secure Entropy
+//! 
+//! ## Signing Suites
+//! 
+//! - [X] ShulginSigning
+//!     - [X] Standard Signing
+//! - [X] ShulginSigning-With-OSCSPRNG
+//! - [X] Shulgin-Signing-With-Hedged-Signatures (default; most secure) (0x20CB/silene version)
+//!     - [X] Ephermal Password Hashed With OS_SALT, Put Through Argon2id, Then Fed Into CHACHA20RNG For Randomness
+//! - [ ] Shulgin-Signing-With-Hedged-Signatures-And-VRF
 
 use std::f32::consts::E;
+use std::str::FromStr;
 use std::string::FromUtf8Error;
 
 use crate::slugcrypt::internals::messages::Message;
@@ -51,6 +67,11 @@ use zeroize::{ZeroizeOnDrop,Zeroize};
 // IntoPem
 use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
+
+use securerand_rs::securerand::SecureRandom;
+use securerand_rs::rngs::FuschineCSPRNG;
+
+use serde_json;
 
 pub mod protocol_values {
     pub const PROTOCOL_NAME_PUBLIC: &str = "ShulginSigning-Public-Key";
@@ -100,7 +121,7 @@ impl IntoX59PublicKey for ShulginKeypair {
     fn from_x59_pk<T: AsRef<str>>(x59_encoded: T) -> Result<Self,SlugErrors> {
         return Self::from_x59_pk_format(x59_encoded)
     }
-    fn x59_metadata() -> String {
+    fn x59_metadata_pk() -> String {
         return String::from("libslug20/ShulginSigning")
     }
 }
@@ -370,6 +391,89 @@ pub struct ShulginSignature {
     pub clsig: ED25519Signature,
     pub pqsig: SPHINCSSignature,
 }
+
+/// # Implemented
+/// 
+/// ## Encoding
+/// 
+/// - Use Base32 (unpadded encoding)
+/// 
+/// ## Secure Randomness
+/// 
+/// - [ ] VRF
+/// - [ ] OS_RANDOMNESS
+/// - [ ] ARGON2ID (Password-Derived Ephermal ShulginSigning 0x20CB/Silene style)
+#[derive(Clone, Serialize,Deserialize,PartialEq,PartialOrd,Eq,Ord)]
+pub struct ShulginSignatureSigningInfo {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    message: Option<Vec<u8>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    vrf: Option<str128>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    os_randomness: Option<str128>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    argon2id: Option<str128>,
+}
+
+impl ShulginSignatureSigningInfo {
+    pub fn new() -> Self {
+        let os_randomness = Self::generate_oscsprng();
+
+        return Self {
+            message: None,
+            vrf: None,
+            os_randomness: Some(os_randomness),
+            argon2id: None
+        }
+    }
+    /// # Serialize
+    /// 
+    /// Serializes To JSON. Used for Signing/Verifying.
+    pub fn serialize(&self) -> Result<String,SlugErrors> {
+        let x = serde_json::to_string(&self);
+
+        match x {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::Other(String::from("Parsing Error In JSON")))
+        }
+    }
+    pub fn new_with_hedged_signatures<T: AsRef<str>>(ephermal_pass: T) -> Self {
+        let os_randomness = Self::generate_oscsprng();
+        let argon2id = Self::generate_securerand(ephermal_pass);
+
+        return Self {
+            message: None,
+            vrf: None,
+            os_randomness: Some(os_randomness),
+            argon2id: Some(argon2id),
+        }
+    }
+    pub fn new_with_hedged_signatures_oscsprng() -> Self {
+        let os_randomness = Self::generate_oscsprng();
+        let seed = Self::generate_oscsprng();
+        let argon2id = Self::generate_securerand(seed);
+
+        return Self {
+            message: None,
+            vrf: None,
+            os_randomness: Some(os_randomness),
+            argon2id: Some(argon2id)
+        }
+    }
+    fn generate_oscsprng() -> str128 {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let os_randomness = FuschineCSPRNG::new_32();
+        let output = encoder.encode(os_randomness).expect("Failed to encode randomness");
+        let output_csprng = fixedstr::str128::from_str(&output).unwrap();
+        return output_csprng
+    }
+    fn generate_securerand<T: AsRef<str>>(pass: T) -> str128 {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let randomness = SecureRandom::new(pass.as_ref());
+        let output = str128::from_str(&encoder.encode(randomness).unwrap()).unwrap();
+        return output
+    }
+}
 /*
 /// # Compact Signature
 /// 
@@ -449,10 +553,10 @@ impl ShulginKeypair {
         self.ed25519sk = Some(ed25519secret);
         self.sphincssk = Some(sphincssecret);
     }
-    pub fn from_public_key(ed25519pk: ED25519PublicKey, sphincspk: SPHINCSPublicKey) -> Self {
+    pub fn from_public_key(ed25519pk: &ED25519PublicKey, sphincspk: &SPHINCSPublicKey) -> Self {
         return Self {
-            ed25519pk: ed25519pk,
-            sphincspk: sphincspk,
+            ed25519pk: ed25519pk.to_owned(),
+            sphincspk: sphincspk.to_owned(),
 
             ed25519sk: None,
             sphincssk: None,
@@ -498,7 +602,27 @@ impl ShulginKeypair {
             return Err(SlugErrors::SigningFailure)
         }
     }
-    pub fn verify<T: AsRef<[u8]>>(&self, data: T, signature: ShulginSignature) -> Result<bool,SlugErrors> {
+    pub fn sign_message_with_csprng<T: AsRef<[u8]>>(&self, data: T) -> Result<(ShulginSignature,ShulginSignatureSigningInfo),SlugErrors> {
+        let mut signing = ShulginSignatureSigningInfo::new();
+        signing.message = Some(data.as_ref().to_vec());
+        
+        let output = serde_json::to_string(&signing).expect("Failed To Work");
+
+        let x = self.sign(output)?;
+
+        return Ok((x,signing))
+    }
+    pub fn sign_message_with_hedged_signatures<T: AsRef<[u8]>, S: AsRef<str>>(&self, data: T, pass: S) -> Result<(ShulginSignature,ShulginSignatureSigningInfo),SlugErrors> {
+        let mut signing = ShulginSignatureSigningInfo::new_with_hedged_signatures(pass.as_ref());
+        signing.message = Some(data.as_ref().to_vec());
+
+        let output = serde_json::to_string(&signing).expect("Failed To Work");
+
+        let x = self.sign(output)?;
+
+        return Ok((x,signing))
+    }
+    pub fn verify<T: AsRef<[u8]>>(&self, data: T, signature: &ShulginSignature) -> Result<bool,SlugErrors> {
         let cl_is_valid = self.ed25519pk.verify(signature.clsig.clone(),data.as_ref());
         let pq_is_valid = self.sphincspk.verify(data.as_ref(), signature.pqsig.clone());
 
@@ -516,6 +640,11 @@ impl ShulginKeypair {
                 return Ok(false)
             }
         }
+    }
+    pub fn verify_with_signinginfo(&self, signatureinfo: &ShulginSignatureSigningInfo, signature: &ShulginSignature) -> Result<bool,SlugErrors> {
+        let x = signatureinfo.serialize()?;
+        let is_valid = self.verify(x,&signature)?;
+        Ok(is_valid)
     }
     /// # From X59 Public Key Format
     /// 
@@ -766,7 +895,7 @@ fn shulginsigning() {
 
     let keypair2 = ShulginKeypair::from_compact_keypair(pk_str, &sk_str).unwrap();
 
-    let is_valid = keypair2.verify("Data", signature).unwrap();
+    let is_valid = keypair2.verify("Data", &signature).unwrap();
 
     println!("Is Valid: {}", is_valid);
 }
@@ -780,7 +909,7 @@ fn check_len() {
     let keypair2 = ShulginKeypair::from_x59_pk_format(format.unwrap()).unwrap();
     let output = keypair.to_x59_format_full().unwrap();
     let keypair_2 = ShulginKeypair::from_x59_format_full(output).unwrap();
-    let is_valid = keypair_2.verify(msg, signature).unwrap();
+    let is_valid = keypair_2.verify(msg, &signature).unwrap();
     println!("{}",is_valid);
 
 }
