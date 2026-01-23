@@ -50,6 +50,7 @@ use zeroize::{ZeroizeOnDrop,Zeroize};
 
 // IntoPem
 use crate::slugcrypt::traits::IntoPem;
+use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 
 pub mod protocol_values {
     pub const PROTOCOL_NAME_PUBLIC: &str = "ShulginSigning-Public-Key";
@@ -85,6 +86,23 @@ pub struct ShulginKeypair {
     //=====Secret-Keys=====//
     pub ed25519sk: Option<ED25519SecretKey>,
     pub sphincssk: Option<SPHINCSSecretKey>,
+}
+
+impl IntoX59PublicKey for ShulginKeypair {
+    fn into_x59_pk(&self) -> Result<String,SlugErrors> {
+        let x = self.to_x59_pk_format();
+
+        match x {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::Other(String::from("Failed To Convert ShulginSigning Into X59 Public Key Format.")))
+        }
+    }
+    fn from_x59_pk<T: AsRef<str>>(x59_encoded: T) -> Result<Self,SlugErrors> {
+        return Self::from_x59_pk_format(x59_encoded)
+    }
+    fn x59_metadata() -> String {
+        return String::from("libslug20/ShulginSigning")
+    }
 }
 
 impl ShulginKeypair {
