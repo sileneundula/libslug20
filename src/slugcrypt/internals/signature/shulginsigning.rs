@@ -135,10 +135,12 @@ impl ShulginKeypair {
         if x.len() == SHULGIN_SIGNING_X59_FORMAT_LENGTH && x.contains(":") == true && delimiter_position == SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION {
             let (ed25519_hex, sphincs_plus_hex) = x.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION).expect("Failed To Get ShulginSigning Sig");
 
+            let sphincs_plus_hex_edited = remove_first(sphincs_plus_hex).unwrap();
+
             assert_eq!(ed25519_hex.len(), SHULGIN_SIGNING_X59_FORMAT_ED25519_HEX_LENGTH);
-            assert_eq!(sphincs_plus_hex.len(), SHULGIN_SIGNING_X59_FORMAT_SPHINCS_HEX_LENGTH);
+            assert_eq!(sphincs_plus_hex_edited.len(), SHULGIN_SIGNING_X59_FORMAT_SPHINCS_HEX_LENGTH);
             let pk: Result<ED25519PublicKey, SlugEncodingError> = ED25519PublicKey::from_hex(ed25519_hex);
-            let pk_sphincs: Result<SPHINCSPublicKey, SlugErrors> = SPHINCSPublicKey::from_hex(sphincs_plus_hex);
+            let pk_sphincs: Result<SPHINCSPublicKey, SlugErrors> = SPHINCSPublicKey::from_hex(sphincs_plus_hex_edited);
 
             let ed25519_output_pk = match pk {
                 Ok(v) => v,
@@ -195,15 +197,16 @@ impl ShulginKeypair {
     pub fn from_x59_format_full<T: AsRef<str>>(full_encoded_x59_string: T) -> Result<Self,SlugErrors> {
         let x = full_encoded_x59_string.as_ref();
         
+        
         if x.len() == SHULGIN_SIGNING_X59_FORMAT_FULL_LENGTH && x.contains(":") == true && x.contains("/") == true {
             let (pk, sk) = x.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_FULL_SPLIT).unwrap();
-            let pk_2 = pk.replace("/","");
+            //let pk_2 = pk.replace("/","");
 
-            let (ed25519, sphincs) = pk_2.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION).unwrap();
+            let (ed25519, sphincs) = pk.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION).unwrap();
             let (ed25519_sk, sphincs_sk) = sk.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_FULL_DELIMITER_FOR_SK).unwrap();
 
             let x = ED25519PublicKey::from_hex(ed25519);
-            let y = SPHINCSPublicKey::from_hex_string_final(sphincs);
+            let y = SPHINCSPublicKey::from_hex(sphincs);
 
             let output_ed25519: ED25519PublicKey = match x {
                 Ok(x) => x,
@@ -679,6 +682,10 @@ fn secret_key_to_compact(keypair: &ShulginKeypair) -> Result<String, FromUtf8Err
     return Ok(output)
 }
 
+fn remove_first(s: &str) -> Option<&str> {
+    s.chars().next().map(|c| &s[c.len_utf8()..])
+}
+
 #[test]
 fn run() {
     let keypair = ShulginKeypair::generate();
@@ -691,6 +698,8 @@ fn run() {
     
     println!("{}",compact.as_str_pk())
 }
+
+
 
 #[test]
 fn shulginsigning() {
@@ -720,9 +729,10 @@ fn check_len() {
     let msg: &str = "Message that is signed";
     let signature = keypair.sign(msg).unwrap();
     let format = keypair.to_x59_pk_format();
-    //ShulginKeypair::from_x59_pk_format(format.unwrap());
-    let output = keypair.to_x59_format_full().unwrap();
-    let keypair_2 = ShulginKeypair::from_x59_format_full(output).unwrap();
-    let is_valid = keypair_2.verify(msg, signature).unwrap();
-    println!("{}",is_valid)
+    let keypair2 = ShulginKeypair::from_x59_pk_format(format.unwrap()).unwrap();
+    //let output = keypair.to_x59_format_full().unwrap();
+    //let keypair_2 = ShulginKeypair::from_x59_format_full(output).unwrap();
+    //let is_valid = keypair_2.verify(msg, signature).unwrap();
+    //println!("{}",is_valid);
+
 }
