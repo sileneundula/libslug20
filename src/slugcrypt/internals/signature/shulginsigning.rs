@@ -90,7 +90,7 @@ pub struct ShulginKeypair {
 
 impl IntoX59PublicKey for ShulginKeypair {
     fn into_x59_pk(&self) -> Result<String,SlugErrors> {
-        let x = self.to_x59_pk_format();
+        let x: Result<String, SlugEncodingError> = self.to_x59_pk_format();
 
         match x {
             Ok(v) => return Ok(v),

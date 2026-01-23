@@ -36,7 +36,9 @@ pub trait IntoPem: Sized {
     fn get_pem_label_for_secret() -> String;
 }
 
-/// # Into X59 Trait
+/// # Into X59 Trait (Public Key)
+/// 
+/// Into X59 Format for Public Key
 pub trait IntoX59PublicKey: Sized {
     fn into_x59_pk(&self) -> Result<String,SlugErrors>;
     fn from_x59_pk<T: AsRef<str>>(x59_encoded: T) -> Result<Self,SlugErrors>;
@@ -44,13 +46,13 @@ pub trait IntoX59PublicKey: Sized {
 }
 
 pub trait IntoX59SecretKey: Sized {
-    fn into_x59(&self) -> String;
+    fn into_x59(&self) -> Result<String,SlugErrors>;
     fn from_x59<T: AsRef<str>>(x59_encoded_secret_key: T) -> Result<Self,SlugErrors>;
     fn x59_metadata() -> String;
 }
 
 pub trait IntoX59Signature: Sized {
-    fn into_x59(&self) -> String;
+    fn into_x59(&self) -> Result<String,SlugErrors>;
     fn from_x59<T: AsRef<str>>(x59_encoded_signature: T) -> Result<Self,SlugErrors>;
     fn x59_metadata() -> String;
 }
