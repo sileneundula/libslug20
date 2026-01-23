@@ -70,8 +70,7 @@ pub trait IntoEncoding {
     fn to_base64_url_safe(&self) -> Result<String,SlugEncodingError>;
 }
 
-/*
-pub trait FromEncoding {
+pub trait FromEncoding: Sized {
     fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError>;
     fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError>;
     fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError>;
@@ -79,7 +78,6 @@ pub trait FromEncoding {
     fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError>;
     fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError>;
 }
-     */
 
 
 
