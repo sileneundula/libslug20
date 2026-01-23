@@ -13,16 +13,6 @@ pub trait RecoverablePublicKey {
 
 }
 
-/// # X59 Format
-/// 
-/// A Standard-Format For Encoding Cryptography.
-pub trait IntoX59Encoding {
-    fn to_x59(&self) -> String;
-    
-    fn from_x59<T: AsRef<str>>(encoded_str: T) -> Self;
-    fn from_x59_hex<T: AsRef<str>>(encoded_str: T) -> Self;
-    fn from_x59_base58<T: AsRef<str>>(encoded_str: T) -> Self;
-}
 
 /// # IntoPem Trait
 /// 
