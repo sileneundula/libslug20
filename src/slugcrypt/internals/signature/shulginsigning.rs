@@ -199,11 +199,16 @@ impl ShulginKeypair {
         
         
         if x.len() == SHULGIN_SIGNING_X59_FORMAT_FULL_LENGTH && x.contains(":") == true && x.contains("/") == true {
-            let (pk, sk) = x.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_FULL_SPLIT).unwrap();
+            let (pk, _sk) = x.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_FULL_SPLIT).unwrap();
+
+            let sk = remove_first(_sk).unwrap();
             //let pk_2 = pk.replace("/","");
 
-            let (ed25519, sphincs) = pk.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION).unwrap();
-            let (ed25519_sk, sphincs_sk) = sk.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_FULL_DELIMITER_FOR_SK).unwrap();
+            let (ed25519, _sphincs) = pk.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_DELIMITER_POSITION).unwrap();
+            let (ed25519_sk, _sphincs_sk) = sk.split_at_checked(SHULGIN_SIGNING_X59_FORMAT_FULL_DELIMITER_FOR_SK).unwrap();
+
+            let sphincs = remove_first(_sphincs).unwrap();
+            let sphincs_sk = remove_first(_sphincs_sk).unwrap();
 
             let x = ED25519PublicKey::from_hex(ed25519);
             let y = SPHINCSPublicKey::from_hex(sphincs);
@@ -730,9 +735,9 @@ fn check_len() {
     let signature = keypair.sign(msg).unwrap();
     let format = keypair.to_x59_pk_format();
     let keypair2 = ShulginKeypair::from_x59_pk_format(format.unwrap()).unwrap();
-    //let output = keypair.to_x59_format_full().unwrap();
-    //let keypair_2 = ShulginKeypair::from_x59_format_full(output).unwrap();
-    //let is_valid = keypair_2.verify(msg, signature).unwrap();
-    //println!("{}",is_valid);
+    let output = keypair.to_x59_format_full().unwrap();
+    let keypair_2 = ShulginKeypair::from_x59_format_full(output).unwrap();
+    let is_valid = keypair_2.verify(msg, signature).unwrap();
+    println!("{}",is_valid);
 
 }
