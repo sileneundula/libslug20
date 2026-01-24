@@ -56,6 +56,7 @@ pub mod protocol_info {
 pub mod protocol_values {
     /// Adonis
     pub const PROTOCOL_NAME_FOR_PEM: &str = "libslug20/Adonis";
+    pub const PROTOCOL_NAME_FOR_PEM_2: &str = "libslug20/ZelosSignature";
     pub const PROTOCOL_NAME_FOR_PEM_SECRET: &str = "ADONIS-SIGNATURE-SECRET-KEY";
     pub const PROTOCOL_NAME_FOR_PEM_PUBLIC: &str = "ADONIS-SIGNATURE-PUBLIC-KEY";
 }
@@ -123,6 +124,13 @@ impl IntoX59PublicKey for HybridFalconKeypair {
 }
 
 impl IntoX59SecretKey for HybridFalconKeypair {
+    /// # Into X59 Format
+    /// 
+    /// This converts the HybridFalconKeypair into X59 Format.
+    /// 
+    /// ## Definition
+    /// 
+    /// `ED25519_PK:ED25519_SK/FALCON1024PK:FALCON1024SK`
     fn into_x59(&self) -> Result<String,SlugErrors> {
         if self.clsk.is_none() || self.pqsk.is_none() {
             return Err(SlugErrors::EncodingError { 
@@ -130,7 +138,25 @@ impl IntoX59SecretKey for HybridFalconKeypair {
                 encoding: crate::errors::EncodingError::X59_fmt, 
                 other: Some(String::from("No Secret Key Found For ED25519 or FALCON1024")) })
         }
+        let mut output = String::new();
+
         let x = self.clpk.to_hexadecimal()?;
+        let x_2 = self.clsk.clone().unwrap().to_hexadecimal()?;
+        let y = self.pqpk.to_hex()?;
+        let y_2 = self.pqsk.clone().unwrap().to_hex()?;
+
+        output.push_str(&x);
+        output.push_str(":");
+        output.push_str(&x_2);
+        output.push_str("/");
+        output.push_str(&y);
+        output.push_str(":");
+        output.push_str(&y_2); 
+
+        return Ok(output)
+        
+    }
+    fn from_x59<T: AsRef<str>>(x59_encoded_secret_key: T) -> Result<Self,SlugErrors> {
         
     }
 }
