@@ -584,7 +584,7 @@ impl ShulginKeypair {
             let pq_sig = self.sphincssk.clone().unwrap().sign(data.as_ref());
 
             if cl_sig.is_err() || pq_sig.is_err() {
-                return Err(SlugErrors::SigningFailure)
+                return Err(SlugErrors::SigningFailure(SlugErrorAlgorithms::SIG_SHULGINSIGNING))
             }
             else {
                 Ok(
@@ -599,7 +599,7 @@ impl ShulginKeypair {
 
         }
         else {
-            return Err(SlugErrors::SigningFailure)
+            return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_SHULGINSIGNING))
         }
     }
     pub fn sign_message_with_csprng<T: AsRef<[u8]>>(&self, data: T) -> Result<(ShulginSignature,ShulginSignatureSigningInfo),SlugErrors> {

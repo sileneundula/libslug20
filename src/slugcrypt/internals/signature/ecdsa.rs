@@ -295,14 +295,14 @@ impl ECDSASecretKey {
         
         let signingkey = match signature {
             Ok(v) => v,
-            Err(_) => return Err(SlugErrors::SigningFailure),
+            Err(_) => return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_SECP256k1)),
         };
 
         let x: Result<(ecdsa::Signature<Secp256k1>, ecdsa::RecoveryId), ecdsa::Error> = signingkey.sign_recoverable(msg.as_ref());
 
         let output = match x {
             Ok(v) => v,
-            Err(_) => return Err(SlugErrors::SigningFailure)
+            Err(_) => return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_SECP256k1))
         };
 
         let output_bytes = output.0.to_bytes();
@@ -313,7 +313,7 @@ impl ECDSASecretKey {
 
         match sig {
             Ok(v) => return Ok((v, ECDSASignatureRecoveryID(recovery_id))),
-            Err(_) => return Err(SlugErrors::SigningFailure),
+            Err(_) => return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_SECP256k1)),
         }
     }
     pub fn sign_prehash<T: AsRef<[u8]>>(&self, msg: T) -> Result<(ECDSASignature, ECDSASignatureRecoveryID), SlugErrors> {
@@ -321,14 +321,14 @@ impl ECDSASecretKey {
 
         let x: ecdsa::SigningKey<Secp256k1> = match pk {
             Ok(v) => v,
-            Err(_) => return Err(SlugErrors::SigningFailure)
+            Err(_) => return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_SECP256k1))
         };
 
         let signature = x.sign_prehash_recoverable(msg.as_ref());
         
         let output = match signature {
             Ok(v) => v,
-            Err(_) => return Err(SlugErrors::SigningFailure)
+            Err(_) => return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_SECP256k1))
         };
 
         let signature_output = ECDSASignature::from_slice(&output.0.to_bytes())?;

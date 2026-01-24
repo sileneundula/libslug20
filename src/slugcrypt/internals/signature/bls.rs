@@ -45,14 +45,14 @@ impl BLSSignature {
         let mut sigs = Vec::with_capacity(signatures.len());
         for s in signatures {
             let s0 = bls_signatures::Signature::from_bytes(&s.signature)
-                .map_err(|_| SlugErrors::SigningFailure)?;
+                .map_err(|_| SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
             sigs.push(s0);
         }
         let agg = bls_signatures::aggregate(&sigs)
-            .map_err(|_| SlugErrors::SigningFailure)?;
+            .map_err(|_| SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
         let bytes = agg.as_bytes();
         if bytes.len() != protocol_info::BLS_SIG_SIZE {
-            return Err(SlugErrors::SigningFailure);
+            return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_BLS));
         }
         let mut out = [0u8; protocol_info::BLS_SIG_SIZE];
         out.copy_from_slice(&bytes);
@@ -190,13 +190,13 @@ impl BLSSecretKey {
     /// Sign a message (detached) and return BLSSignature.
     pub fn sign<T: AsRef<[u8]>>(&self, message: T) -> Result<BLSSignature, SlugErrors> {
         let sk = bls_signatures::PrivateKey::from_bytes(&self.sk)
-            .map_err(|_| SlugErrors::SigningFailure)?;
+            .map_err(|_| SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_BLS))?;
         let sig = sk.sign(message.as_ref());
 
         let sig_bytes = sig.as_bytes();
         let mut sig_array = [0u8; protocol_info::BLS_SIG_SIZE];
         if sig_bytes.len() != protocol_info::BLS_SIG_SIZE {
-            return Err(SlugErrors::SigningFailure);
+            return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_BLS));
         }
         sig_array.copy_from_slice(&sig_bytes);
 

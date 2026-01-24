@@ -35,6 +35,7 @@ use log::info;
 
 // Trait
 use crate::slugcrypt::traits::IntoPem;
+use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 
 use slugencode::prelude::*;
 
@@ -66,6 +67,72 @@ pub struct HybridFalconKeypair {
     
     pub clsk: Option<ED25519SecretKey>,
     pub pqsk: Option<Falcon1024SecretKey>,
+}
+
+impl IntoX59PublicKey for HybridFalconKeypair {
+    fn into_x59_pk(&self) -> Result<String,SlugErrors> {
+        let mut output: String = String::new();
+        
+        let clpk = self.clpk.to_hexadecimal();
+        let pqpk = self.pqpk.to_hex();
+
+        let output_cl = match clpk {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::Other(String::from("Failed To Convert ED25519")))
+        };
+        
+        let output_pq = match pqpk {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::Other(String::from("Failed To Convert ED25519")))
+        };
+
+        output.push_str(&output_cl);
+        output.push_str(":");
+        output.push_str(&output_pq);
+
+        return Ok(output)
+
+
+
+    }
+    fn from_x59_pk<T: AsRef<str>>(x59_encoded: T) -> Result<Self,SlugErrors> {
+        let x = x59_encoded.as_ref();
+        let pk: Vec<&str> = x.split(":").collect();
+        let ed25519_pk: Result<ED25519PublicKey, SlugEncodingError> = ED25519PublicKey::from_hex(pk[0]);
+        let falcon_pk = Falcon1024PublicKey::from_hex(pk[1]);
+
+        let output_ed25519 = match ed25519_pk {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::InvalidLengthFromBytes)
+        };
+        let output_falcon1024 = match falcon_pk {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::InvalidLengthFromBytes)
+        };
+
+        return Ok(Self {
+            clpk: output_ed25519,
+            pqpk: output_falcon1024,
+            pqsk: None,
+            clsk: None,
+        })
+    }
+    fn x59_metadata_pk() -> String {
+        return String::from("ADONIS-SIGNATURE")
+    }
+}
+
+impl IntoX59SecretKey for HybridFalconKeypair {
+    fn into_x59(&self) -> Result<String,SlugErrors> {
+        if self.clsk.is_none() || self.pqsk.is_none() {
+            return Err(SlugErrors::EncodingError { 
+                alg: SlugErrorAlgorithms::SIG_FALCON, 
+                encoding: crate::errors::EncodingError::X59_fmt, 
+                other: Some(String::from("No Secret Key Found For ED25519 or FALCON1024")) })
+        }
+        let x = self.clpk.to_hexadecimal()?;
+        
+    }
 }
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
