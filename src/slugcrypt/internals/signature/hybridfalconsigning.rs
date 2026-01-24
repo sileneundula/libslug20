@@ -35,6 +35,7 @@ use log::warn;
 use log::info;
 
 // Trait
+use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret};
 use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 
@@ -200,6 +201,69 @@ impl IntoX59SecretKey for HybridFalconKeypair {
     }
 }
 
+impl IntoX59Signature for HybridFalconSignature {
+    fn into_x59(&self) -> Result<String,SlugErrors> {
+        let mut output: String = String::new();
+        
+        let ed25519_sig = self.clsig.to_hexadecimal()?;
+        let falcon1024_sig = self.pqsig.to_hex()?;
+
+        output.push_str(&ed25519_sig);
+        output.push_str(":");
+        output.push_str(&falcon1024_sig);
+
+        return Ok(output)
+    }
+    fn from_x59<T: AsRef<str>>(x59_encoded_signature: T) -> Result<Self,SlugErrors> {
+        let x = x59_encoded_signature.as_ref();
+        let signatures: Vec<&str> = x.split(":").collect();
+
+        let ed25519_sig = ED25519Signature::from_hex(signatures[0])?;
+        let falcon_sig = Falcon1024Signature::from_hex(signatures[1])?;
+
+        return Ok(
+            Self {
+                clsig: ed25519_sig,
+                pqsig: falcon_sig,
+            }
+        )
+    }
+    fn x59_metadata() -> String {
+        return protocol_values::NAME_FULL.to_string()
+    }
+}
+
+impl IntoPemPublic for HybridFalconKeypair {
+    fn into_pem(&self) -> Result<String,SlugErrors> {
+        let x = self.into_x59_pk()?;
+        let output = Pem::new(protocol_values::PROTOCOL_NAME_FOR_PEM_PUBLIC, x).to_string();
+        Ok(output)
+    }
+    fn from_pem<T: AsRef<str>>(public_key_in_pem: T) -> Result<Self,SlugErrors> {
+        let x = pem::parse(public_key_in_pem.as_ref());
+
+        let data = match x {
+            Ok(v) => {
+                v
+            }
+            Err(_) => return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None })
+        };
+
+        let n = String::from_utf8(data.into_contents());
+
+        let x59 = match n {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None })
+        };
+        let output = Self::from_x59_pk(x59)?;
+        Ok(output)
+    }
+    fn get_pem_label() -> String {
+        return protocol_values::PROTOCOL_NAME_FOR_PEM_PUBLIC.to_string()
+    }
+}
+
+
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
 pub struct HybridFalconSignature {
     pub clsig: ED25519Signature,
@@ -249,7 +313,7 @@ impl HybridFalconKeypair {
             let pq_sig = self.pqsk.clone().unwrap().sign(data.as_ref());
 
             if cl_sig.is_err() || pq_sig.is_err() {
-                return Err(SlugErrors::SigningFailure)
+                return Err(SlugErrors::SigningFailure(SlugErrorAlgorithms::SIG_FALCON))
             }
             else {
                 Ok(
@@ -264,7 +328,7 @@ impl HybridFalconKeypair {
 
         }
         else {
-            return Err(SlugErrors::SigningFailure)
+            return Err(SlugErrors::SigningFailure(SlugErrorAlgorithms::SIG_FALCON))
         }
     }
     pub fn verify<T: AsRef<[u8]>>(&self, data: T, signature: &HybridFalconSignature) -> Result<bool,SlugErrors> {
