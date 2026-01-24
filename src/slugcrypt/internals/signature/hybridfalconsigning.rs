@@ -27,6 +27,7 @@ use crate::slugcrypt::internals::signature::hybridfalconsigning::protocol_values
 use serde::{Serialize,Deserialize};
 use zeroize::{ZeroizeOnDrop,Zeroize};
 use pem::Pem;
+use std::f32::consts::E;
 use std::str::FromStr;
 use std::string::ToString;
 use log::debug;
@@ -51,6 +52,7 @@ pub mod protocol_info {
     pub const ED25519_PK_SIZE: usize = 32;
     pub const ED25519_SK_SIZE: usize = 32;
     pub const ED25519_SIG_SIZE: usize = 64;
+    pub const X59_SIZE_SECRET: usize = 4229;
 }
 
 pub mod protocol_values {
@@ -157,6 +159,14 @@ impl IntoX59SecretKey for HybridFalconKeypair {
         
     }
     fn from_x59<T: AsRef<str>>(x59_encoded_secret_key: T) -> Result<Self,SlugErrors> {
+        let x = x59_encoded_secret_key.as_ref();
+
+        if x.len() == 4229 && x.contains("/") == true && x.contains(":") = true {
+            //
+        }
+        else {
+            return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::X59_fmt, other: None })
+        }
         
     }
 }
