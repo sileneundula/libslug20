@@ -41,9 +41,13 @@ use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signatur
 use slugencode::prelude::*;
 
 pub mod protocol_info {
-    pub const PROTOCOL_NAME_OLD: &str = "libslug20/HybridFalconSignature";
-    pub const PROTOCOL_NAME: &str = "libslug20/Adonis";
-    
+    //pub const PROTOCOL_NAME_OLD: &str = "libslug20/HybridFalconSignature";
+    //pub const PROTOCOL_NAME: &str = "libslug20/Adonis";
+    pub const PROTOCOL_NAME: &str = "libslug20/EsphandSignature";
+    pub const NAME: &str = "Esphand";
+    pub const NAME_FULL: &str = "slug20_EsphandSignature_ED25519_with_FALCON1024";
+
+
     pub const CLASSICALALGORITHM: &str = "ed25519";
     pub const POSTQUANTUMALGORITHM: &str = "Falcon1024";
     pub const FALCON1024_PK_SIZE: usize = 1_793;
@@ -57,10 +61,11 @@ pub mod protocol_info {
 
 pub mod protocol_values {
     /// Adonis
-    pub const PROTOCOL_NAME_FOR_PEM: &str = "libslug20/Adonis";
-    pub const PROTOCOL_NAME_FOR_PEM_2: &str = "libslug20/ZelosSignature";
-    pub const PROTOCOL_NAME_FOR_PEM_SECRET: &str = "ADONIS-SIGNATURE-SECRET-KEY";
-    pub const PROTOCOL_NAME_FOR_PEM_PUBLIC: &str = "ADONIS-SIGNATURE-PUBLIC-KEY";
+    pub const PROTOCOL_NAME_FOR_PEM: &str = "libslug20/Esphand";
+    pub const PROTOCOL_NAME_FOR_PEM_2: &str = "libslug20/EsphandSignature";
+    pub const PROTOCOL_NAME_FOR_PEM_SECRET: &str = "ESPHAND-SIGNATURE-SECRET-KEY";
+    pub const NAME_FULL: &str = "slug20_EsphandSignature_ED25519_with_FALCON1024";
+    pub const PROTOCOL_NAME_FOR_PEM_PUBLIC: &str = "ESPHAND-SIGNATURE-PUBLIC-KEY";
 }
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
@@ -121,7 +126,7 @@ impl IntoX59PublicKey for HybridFalconKeypair {
         })
     }
     fn x59_metadata_pk() -> String {
-        return String::from("ADONIS-SIGNATURE")
+        return protocol_values::NAME_FULL.to_string()
     }
 }
 
@@ -161,13 +166,37 @@ impl IntoX59SecretKey for HybridFalconKeypair {
     fn from_x59<T: AsRef<str>>(x59_encoded_secret_key: T) -> Result<Self,SlugErrors> {
         let x = x59_encoded_secret_key.as_ref();
 
-        if x.len() == 4229 && x.contains("/") == true && x.contains(":") = true {
-            //
+        if x.len() == 4229 && x.contains("/") == true && x.contains(":") == true {
+            let x = 0;
         }
         else {
             return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::X59_fmt, other: None })
         }
-        
+        let pkandsk: Vec<&str> = x.split("/").collect();
+        assert_eq!(pkandsk.len(),2);
+        let ed25519 = pkandsk[0];
+        let falcon = pkandsk[1];
+
+        let keypair_ed25519_hex: Vec<&str> = ed25519.split(":").collect();
+        let keypair_falcon_hex: Vec<&str> = falcon.split(":").collect();
+
+        let output_ed25519 = ED25519PublicKey::from_hex(keypair_ed25519_hex[0])?;
+        let output_ed25519_sk = ED25519SecretKey::from_hex(keypair_ed25519_hex[1])?;
+
+        let output_falcon1024 = Falcon1024PublicKey::from_hex(keypair_falcon_hex[0])?;
+        let output_falcon1024_sk = Falcon1024SecretKey::from_hex(keypair_falcon_hex[0])?;
+
+        return Ok(
+            Self {
+                clpk: output_ed25519,
+                pqpk: output_falcon1024,
+                clsk: Some(output_ed25519_sk),
+                pqsk: Some(output_falcon1024_sk)
+            }
+        )
+    }
+    fn x59_metadata() -> String {
+        return protocol_values::NAME_FULL.to_string()
     }
 }
 
