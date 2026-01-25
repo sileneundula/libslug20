@@ -35,8 +35,15 @@ pub trait IntoPemPublic: Sized {
 pub trait IntoPemSecret: Sized {
     fn into_pem_secret(&self) -> Result<String,SlugErrors>;
     fn from_pem_secret<T: AsRef<str>>(secret_key_in_pem: T) -> Result<Self,SlugErrors>;
-    fn get_pem_label_secret() -> Result<String,SlugErrors>;
+    fn get_pem_label_secret() -> String;
 }
+
+pub trait IntoPemSignature: Sized {
+    fn into_pem(&self) -> Result<String,SlugErrors>;
+    fn from_pem<T: AsRef<str>>(signature_in_pem: T) -> Result<Self,SlugErrors>;
+    fn get_pem_label_signature() -> String;
+}
+
 /// # Into X59 Trait (Public Key)
 /// 
 /// Into X59 Format for Public Key

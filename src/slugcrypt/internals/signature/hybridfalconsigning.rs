@@ -8,6 +8,15 @@
 //! 
 //! Encoding type is **Hexadecimal** with a colon seperating the keys, with the ed25519 being first and falcon1024 being second.
 //! 
+//! ## Implemented Traits
+//! - [X] IntoX59
+//!     - [X] IntoX59PublicKey
+//!     - [X] IntoX59SecretKey
+//!     - [X] IntoX59Signature
+//! - [X] IntoPEM
+//!     - [X] IntoPemPublicKey
+//!     - [X] IntoPemSecretKey
+//!     - [X] IntoPemSignature
 //! 
 //! ## TODO
 //! 
@@ -22,7 +31,7 @@ use crate::slugcrypt::internals::signature::ed25519::{ED25519SecretKey,ED25519Pu
 use crate::slugcrypt::internals::signature::falcon::*;
 use crate::errors::SlugErrors;
 use crate::errors::SlugErrorAlgorithms;
-use crate::slugcrypt::internals::signature::hybridfalconsigning::protocol_values::{PROTOCOL_NAME_FOR_PEM, PROTOCOL_NAME_FOR_PEM_PUBLIC, PROTOCOL_NAME_FOR_PEM_SECRET};
+use crate::slugcrypt::internals::signature::hybridfalconsigning::protocol_values::{PROTOCOL_NAME_FOR_PEM, PROTOCOL_NAME_FOR_PEM_PUBLIC, PROTOCOL_NAME_FOR_PEM_SECRET, PROTOCOL_NAME_FOR_PEM_SIGNATURE};
 
 use serde::{Serialize,Deserialize};
 use zeroize::{ZeroizeOnDrop,Zeroize};
@@ -35,15 +44,13 @@ use log::warn;
 use log::info;
 
 // Trait
-use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret};
+use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret, IntoPemSignature};
 use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 
 use slugencode::prelude::*;
 
 pub mod protocol_info {
-    //pub const PROTOCOL_NAME_OLD: &str = "libslug20/HybridFalconSignature";
-    //pub const PROTOCOL_NAME: &str = "libslug20/Adonis";
     pub const PROTOCOL_NAME: &str = "libslug20/EsphandSignature";
     pub const NAME: &str = "Esphand";
     pub const NAME_FULL: &str = "slug20_EsphandSignature_ED25519_with_FALCON1024";
@@ -64,9 +71,10 @@ pub mod protocol_values {
     /// Adonis
     pub const PROTOCOL_NAME_FOR_PEM: &str = "libslug20/Esphand";
     pub const PROTOCOL_NAME_FOR_PEM_2: &str = "libslug20/EsphandSignature";
-    pub const PROTOCOL_NAME_FOR_PEM_SECRET: &str = "ESPHAND-SIGNATURE-SECRET-KEY";
+    pub const PROTOCOL_NAME_FOR_PEM_SECRET: &str = "EsphandSignature-SecretKey";
     pub const NAME_FULL: &str = "slug20_EsphandSignature_ED25519_with_FALCON1024";
-    pub const PROTOCOL_NAME_FOR_PEM_PUBLIC: &str = "ESPHAND-SIGNATURE-PUBLIC-KEY";
+    pub const PROTOCOL_NAME_FOR_PEM_PUBLIC: &str = "EsphandSignature-PublicKey";
+    pub const PROTOCOL_NAME_FOR_PEM_SIGNATURE: &str = "EsphandSignature-Signature";
 }
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
@@ -260,6 +268,66 @@ impl IntoPemPublic for HybridFalconKeypair {
     }
     fn get_pem_label() -> String {
         return protocol_values::PROTOCOL_NAME_FOR_PEM_PUBLIC.to_string()
+    }
+}
+
+impl IntoPemSecret for HybridFalconKeypair {
+    fn into_pem_secret(&self) -> Result<String,SlugErrors> {
+        let x = self.into_x59()?;
+        let output = Pem::new(PROTOCOL_NAME_FOR_PEM_SECRET,x.as_bytes()).to_string();
+        return Ok(output)
+    }
+    fn from_pem_secret<T: AsRef<str>>(secret_key_in_pem: T) -> Result<Self,SlugErrors> {
+        let x = secret_key_in_pem.as_ref();
+
+        let x = pem::parse(x);
+
+        let output = match x {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None, })
+        };
+        let x59_encoded = String::from_utf8(output.contents().to_vec());
+
+        let x59_encoded_data = match x59_encoded {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None })
+        };
+        let y = Self::from_x59(x59_encoded_data)?;
+        return Ok(y)
+    }
+    fn get_pem_label_secret() -> String {
+        return PROTOCOL_NAME_FOR_PEM_SECRET.to_string()
+    }
+}
+
+impl IntoPemSignature for HybridFalconSignature {
+    fn into_pem(&self) -> Result<String,SlugErrors> {
+        let x = self.into_x59()?;
+        let output = Pem::new(PROTOCOL_NAME_FOR_PEM_SIGNATURE, x.as_bytes()).to_string();
+        return Ok(output)
+    }
+    fn from_pem<T: AsRef<str>>(signature_in_pem: T) -> Result<Self,SlugErrors> {
+        let x = signature_in_pem.as_ref();
+        let pem_decoded = pem::parse(x);
+
+        let pem_output = match pem_decoded {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: Some(String::from("Signature PEM Decoding Failure")) })
+        };
+
+        let output = String::from_utf8(pem_output.into_contents());
+
+        let x59 = match output {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: Some(String::from("Signature PEM Decoding Failure")) })
+        };
+
+        let keypair = Self::from_x59(x59)?;
+
+        return Ok(keypair)
+    }
+    fn get_pem_label_signature() -> String {
+        return PROTOCOL_NAME_FOR_PEM_SIGNATURE.to_string()
     }
 }
 
