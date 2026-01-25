@@ -1,8 +1,8 @@
-//! # HybridFalcon Signing
+//! # Esphand Signing
 //! 
 //! ## Description
 //! 
-//! HybridFalcon signing is signing using ED25519 for the classical key and FALCON1024 for the post-quantum key.
+//! Esphand signing is signing using ED25519 for the classical key and FALCON1024 for the post-quantum key.
 //! 
 //! ## Encoding
 //! 
@@ -31,7 +31,7 @@ use crate::slugcrypt::internals::signature::ed25519::{ED25519SecretKey,ED25519Pu
 use crate::slugcrypt::internals::signature::falcon::*;
 use crate::errors::SlugErrors;
 use crate::errors::SlugErrorAlgorithms;
-use crate::slugcrypt::internals::signature::hybridfalconsigning::protocol_values::{PROTOCOL_NAME_FOR_PEM, PROTOCOL_NAME_FOR_PEM_PUBLIC, PROTOCOL_NAME_FOR_PEM_SECRET, PROTOCOL_NAME_FOR_PEM_SIGNATURE};
+use crate::slugcrypt::internals::signature::esphand_signature::protocol_values::{PROTOCOL_NAME_FOR_PEM, PROTOCOL_NAME_FOR_PEM_PUBLIC, PROTOCOL_NAME_FOR_PEM_SECRET, PROTOCOL_NAME_FOR_PEM_SIGNATURE};
 
 use serde::{Serialize,Deserialize};
 use zeroize::{ZeroizeOnDrop,Zeroize};
@@ -78,7 +78,7 @@ pub mod protocol_values {
 }
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
-pub struct HybridFalconKeypair {
+pub struct EsphandKeypair {
     pub clpk: ED25519PublicKey,
     pub pqpk: Falcon1024PublicKey,
     
@@ -86,7 +86,7 @@ pub struct HybridFalconKeypair {
     pub pqsk: Option<Falcon1024SecretKey>,
 }
 
-impl IntoX59PublicKey for HybridFalconKeypair {
+impl IntoX59PublicKey for EsphandKeypair {
     fn into_x59_pk(&self) -> Result<String,SlugErrors> {
         let mut output: String = String::new();
         
@@ -139,10 +139,10 @@ impl IntoX59PublicKey for HybridFalconKeypair {
     }
 }
 
-impl IntoX59SecretKey for HybridFalconKeypair {
+impl IntoX59SecretKey for EsphandKeypair {
     /// # Into X59 Format
     /// 
-    /// This converts the HybridFalconKeypair into X59 Format.
+    /// This converts the EsphandKeypair into X59 Format.
     /// 
     /// ## Definition
     /// 
@@ -209,7 +209,7 @@ impl IntoX59SecretKey for HybridFalconKeypair {
     }
 }
 
-impl IntoX59Signature for HybridFalconSignature {
+impl IntoX59Signature for EsphandSignature {
     fn into_x59(&self) -> Result<String,SlugErrors> {
         let mut output: String = String::new();
         
@@ -241,7 +241,7 @@ impl IntoX59Signature for HybridFalconSignature {
     }
 }
 
-impl IntoPemPublic for HybridFalconKeypair {
+impl IntoPemPublic for EsphandKeypair {
     fn into_pem(&self) -> Result<String,SlugErrors> {
         let x = self.into_x59_pk()?;
         let output = Pem::new(protocol_values::PROTOCOL_NAME_FOR_PEM_PUBLIC, x).to_string();
@@ -271,7 +271,7 @@ impl IntoPemPublic for HybridFalconKeypair {
     }
 }
 
-impl IntoPemSecret for HybridFalconKeypair {
+impl IntoPemSecret for EsphandKeypair {
     fn into_pem_secret(&self) -> Result<String,SlugErrors> {
         let x = self.into_x59()?;
         let output = Pem::new(PROTOCOL_NAME_FOR_PEM_SECRET,x.as_bytes()).to_string();
@@ -300,7 +300,7 @@ impl IntoPemSecret for HybridFalconKeypair {
     }
 }
 
-impl IntoPemSignature for HybridFalconSignature {
+impl IntoPemSignature for EsphandSignature {
     fn into_pem(&self) -> Result<String,SlugErrors> {
         let x = self.into_x59()?;
         let output = Pem::new(PROTOCOL_NAME_FOR_PEM_SIGNATURE, x.as_bytes()).to_string();
@@ -333,12 +333,12 @@ impl IntoPemSignature for HybridFalconSignature {
 
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
-pub struct HybridFalconSignature {
+pub struct EsphandSignature {
     pub clsig: ED25519Signature,
     pub pqsig: Falcon1024Signature,
 }
 
-impl HybridFalconKeypair {
+impl EsphandKeypair {
     /// # From Keys
     /// 
     /// Imports Public Key From Keys
@@ -359,7 +359,7 @@ impl HybridFalconKeypair {
             pqsk: Some(falcon_sk.to_owned()),
         }
     }
-    /// # Generate a HybridFalconSignature Scheme
+    /// # Generate a EsphandSignature Scheme
     /// 
     /// Generates an ED25519 + FALCON1024 digital signature scheme using OSCSPRNG.
     pub fn generate() -> Self {
@@ -375,7 +375,7 @@ impl HybridFalconKeypair {
             pqsk: Some(pq_sk)
         }
     }
-    pub fn sign<T: AsRef<[u8]>>(&self, data: T) -> Result<HybridFalconSignature,SlugErrors> {
+    pub fn sign<T: AsRef<[u8]>>(&self, data: T) -> Result<EsphandSignature,SlugErrors> {
         if self.pqsk.is_some() && self.pqsk.is_some() {
             let cl_sig = self.clsk.clone().unwrap().sign(data.as_ref());
             let pq_sig = self.pqsk.clone().unwrap().sign(data.as_ref());
@@ -385,7 +385,7 @@ impl HybridFalconKeypair {
             }
             else {
                 Ok(
-                    HybridFalconSignature {
+                    EsphandSignature {
                     clsig: cl_sig.unwrap(),
                     pqsig: pq_sig.unwrap(),
                     }
@@ -399,7 +399,7 @@ impl HybridFalconKeypair {
             return Err(SlugErrors::SigningFailure(SlugErrorAlgorithms::SIG_FALCON))
         }
     }
-    pub fn verify<T: AsRef<[u8]>>(&self, data: T, signature: &HybridFalconSignature) -> Result<bool,SlugErrors> {
+    pub fn verify<T: AsRef<[u8]>>(&self, data: T, signature: &EsphandSignature) -> Result<bool,SlugErrors> {
         let cl_is_valid = self.clpk.verify(signature.clsig.clone(),data.as_ref());
         let pq_is_valid = self.pqpk.verify(data.as_ref(), &signature.pqsig);
 
@@ -504,7 +504,7 @@ impl HybridFalconKeypair {
     }
 }
 
-impl IntoPem for HybridFalconKeypair {
+impl IntoPem for EsphandKeypair {
     /// # Into PEM (Secret Key)
     /// 
     /// Converts to X59 Secret Key And Encodes As Pem
@@ -525,7 +525,7 @@ impl IntoPem for HybridFalconKeypair {
             Ok(v) => {
                 if v.tag().to_string() == PROTOCOL_NAME_FOR_PEM_SECRET {
                     log::info!("[Libslug] Adonis PEM matches for Secret Key");
-                    let y: Result<HybridFalconKeypair, SlugEncodingError> = HybridFalconKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert to string"));
+                    let y: Result<EsphandKeypair, SlugEncodingError> = EsphandKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert to string"));
                     
                     if y.is_ok() {
                         return Ok(y.unwrap())
@@ -538,7 +538,7 @@ impl IntoPem for HybridFalconKeypair {
                 else {
                     log::warn!("[Libslug] Adonis PEM does not match the tag for Secret Key");
 
-                    let output: Result<HybridFalconKeypair, SlugEncodingError> = HybridFalconKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert X59 Private Key"));
+                    let output: Result<EsphandKeypair, SlugEncodingError> = EsphandKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert X59 Private Key"));
                     
                     if output.is_ok() {
                         return Ok(output.unwrap())
@@ -560,7 +560,7 @@ impl IntoPem for HybridFalconKeypair {
             Ok(v) => {
                 if v.tag().to_string() == PROTOCOL_NAME_FOR_PEM_PUBLIC {
                     log::info!("[Libslug] Adonis PEM matches for Public Key");
-                    let y: Result<HybridFalconKeypair, SlugEncodingError> = HybridFalconKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert to string"));
+                    let y: Result<EsphandKeypair, SlugEncodingError> = EsphandKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).expect("Failed to convert to string"));
                     
                     if y.is_ok() {
                         return Ok(y.unwrap())
@@ -573,7 +573,7 @@ impl IntoPem for HybridFalconKeypair {
                 else {
                     log::warn!("[Libslug] Adonis PEM does not match the tag for Public Key");
 
-                    let output = HybridFalconKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).unwrap());
+                    let output = EsphandKeypair::from_x59_secret_key(String::from_utf8(v.contents().to_vec()).unwrap());
                     
                     if output.is_ok() {
                         return Ok(output.unwrap())
@@ -596,7 +596,7 @@ impl IntoPem for HybridFalconKeypair {
     }
 }
 
-impl HybridFalconSignature {
+impl EsphandSignature {
     /// # To Bytes
     /// 
     /// 1. ED25519
@@ -604,7 +604,7 @@ impl HybridFalconSignature {
     pub fn to_bytes(&self) -> (Vec<u8>,Vec<u8>) {
         return (self.clsig.as_bytes().to_vec(),self.pqsig.as_bytes().to_vec())
     }
-    /// # To X59 Signature (HybridFalcon)
+    /// # To X59 Signature (Esphand)
     /// 
     /// **Encoding:** Hexadecimal
     pub fn to_x59_signature(&self) -> Result<String,SlugEncodingError> {
@@ -616,7 +616,7 @@ impl HybridFalconSignature {
 
         return Ok(output)
     }
-    /// # From X59 Signature (HybridFalcon)
+    /// # From X59 Signature (Esphand)
     /// 
     /// **Encoding:** Hexadecimal
     pub fn from_x59_signature<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError> {

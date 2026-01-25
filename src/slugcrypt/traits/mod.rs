@@ -2,7 +2,7 @@
 
 use slugencode::errors::SlugEncodingError;
 
-use crate::slugcrypt::internals::signature::hybridfalconsigning::HybridFalconKeypair;
+use crate::slugcrypt::internals::signature::esphand_signature::EsphandKeypair;
 
 use crate::errors::SlugErrors;
 

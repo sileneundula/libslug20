@@ -55,7 +55,7 @@ pub mod ed448;
 pub mod shulginsigning;
 
 /// FALCON1024
-pub mod hybridfalconsigning;
+pub mod esphand_signature;
 
 pub mod utils;
 
