@@ -4,7 +4,7 @@ members = ["oint-keys","x59pk-fmt"]
 
 [package]
 name = "libslug"
-version = "0.6.0"
+version = "0.7.0"
 edition = "2021"
 keywords = ["crypto","cryptography","encryption","digest","signature"]
 categories = ["cryptography"]

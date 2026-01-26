@@ -93,6 +93,10 @@ pub trait FromEncoding: Sized {
     fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugEncodingError>;
 }
 
+pub trait SignatureDigest {
+    fn as_digest(&self) -> String;
+}
+
 
 
 

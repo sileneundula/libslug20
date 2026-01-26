@@ -33,7 +33,8 @@ use serde_big_array::BigArray;
 use subtle_encoding::hex;
 use base58::{FromBase58, FromBase58Error, ToBase58};
 use slugencode::prelude::*;
-
+use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret,IntoPemSignature};
+use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 /// # SPHINCS: Public Key
 /// 
 /// Size of 64 bytes
