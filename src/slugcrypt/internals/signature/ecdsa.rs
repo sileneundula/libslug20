@@ -23,6 +23,7 @@
 //! - [X] Other
 //!     - [X] Derive Public Key From Secret
 
+use bip32::PublicKey;
 //use ecdsa::signature::Keypair;
 use ecdsa::PrimeCurve;
 use ecdsa::signature::Signer;
@@ -63,7 +64,7 @@ use crate::errors::SlugErrors;
 /// 
 /// ECDSA Public Key as 32 bytes
 #[derive(Clone,PartialEq,PartialOrd,Hash,Debug,Serialize,Deserialize,Zeroize,ZeroizeOnDrop)]
-pub struct ECDSAPublicKey(pub [u8;32]);
+pub struct ECDSAPublicKey(#[serde(with = "BigArray")]pub [u8;33]);
 /// # ECDSA Secret Key (Secp256k1)
 /// 
 /// `Key-Size:` 32 bytes
@@ -360,7 +361,7 @@ impl ECDSASecretKey {
     /// 
     /// Gets Public Key From Secret Key
     pub fn public_key(&self) -> Result<ECDSAPublicKey,ecdsa::Error> {
-        let mut output_bytes: [u8;32] = [0u8;32];
+        let mut output_bytes: [u8;33] = [0u8;33];
         let bytes = self.to_usable_type_pk();
 
         let pk = match bytes {
@@ -370,7 +371,7 @@ impl ECDSASecretKey {
         let bytes = pk.to_sec1_bytes();
         let final_bytes = bytes.to_vec();
 
-        if final_bytes.len() == 32 {
+        if final_bytes.len() == 33 {
             output_bytes.copy_from_slice(&final_bytes);
         }
         Ok(ECDSAPublicKey(output_bytes))
@@ -530,16 +531,16 @@ impl ECDSAPublicKey {
     pub fn as_bytes(&self) -> &[u8] {
         return &self.0
     }
-    pub fn to_bytes(&self) -> [u8;32] {
+    pub fn to_bytes(&self) -> [u8;33] {
         return self.0
     }
-    pub fn from_bytes(bytes: [u8;32]) -> Self {
+    pub fn from_bytes(bytes: [u8;33]) -> Self {
         Self(bytes)
     }
     pub fn from_slice(bytes: &[u8]) -> Result<Self,SlugErrors> {
-        let mut output: [u8;32] = [0u8;32];
+        let mut output: [u8;33] = [0u8;33];
         
-        if bytes.len() == 32 {
+        if bytes.len() == 33 {
             output.copy_from_slice(bytes);
             return Ok(Self(output))
         }
@@ -673,9 +674,9 @@ impl ECDSAPublicKey {
 fn ECDSA() {
     let key = ECDSASecretKey::generate();
     let pk = key.public_key().unwrap();
-    let signature = key.sign("Hello World!").unwrap();
+    let signature = key.sign("Hello World!".as_bytes()).unwrap();
 
-    let is_valid = pk.verify("Hello World!", signature.0);
+    let is_valid = pk.verify("Hello World!".as_bytes(), signature.0);
 
     println!("{}",is_valid.unwrap())
 
