@@ -12,6 +12,11 @@
 //!     - [X] IntoX59Public
 //!     - [X] IntoX59Secret
 //!     - [X] IntoX59Signature
+//! - [ ] Signature Digest (BLAKE3)
+//!     - [ ] BLAKE3
+//!     - [ ] SHA256
+//!     - [ ] SHA512
+//!     - [ ] BLAKE2B (Variable)
 //! - [ ] SignWithHedgedSignature
 //! - [ ] DeriveOintDigest (uses BLAKE2B to derive an address from the input)
 //! 
@@ -23,6 +28,7 @@
 
 //use crate::slugfmt::certificate::cert::X59Certificate;
 
+use bip39::Language;
 use slugencode::errors::SlugEncodingError;
 
 use crate::slugcrypt::internals::signature::esphand_signature::EsphandKeypair;
@@ -65,6 +71,10 @@ pub trait IntoPemSignature: Sized {
     fn into_pem(&self) -> Result<String,SlugErrors>;
     fn from_pem<T: AsRef<str>>(signature_in_pem: T) -> Result<Self,SlugErrors>;
     fn get_pem_label_signature() -> String;
+}
+
+pub trait GenerateWithBIP39: Sized {
+    fn generate_bip39<T: AsRef<str>>(num_of_words: usize, language: Language, password: T) -> Result<Self,SlugErrors>;
 }
 
 /// # Into X59 Trait (Public Key)
