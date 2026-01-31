@@ -1,3 +1,26 @@
+//! # Slug20 Traits
+//! 
+//! This is a collection of common-traits used by the libslug library.
+//! 
+//! ## Traits
+//! 
+//! - [X] IntoPEM
+//!     - [X] IntoPemPublic
+//!     - [X] IntoPemSecret
+//!     - [X] IntoPemSignature
+//! - [X] IntoX59
+//!     - [X] IntoX59Public
+//!     - [X] IntoX59Secret
+//!     - [X] IntoX59Signature
+//! - [ ] SignWithHedgedSignature
+//! - [ ] DeriveOintDigest (uses BLAKE2B to derive an address from the input)
+//! 
+//! ## Implemented Traits
+//! 
+//! - [X] IntoPEM
+//!     - [X] EsphandSignature
+//!     - [ ] ShulginSigning
+
 //use crate::slugfmt::certificate::cert::X59Certificate;
 
 use slugencode::errors::SlugEncodingError;

@@ -33,11 +33,17 @@ pub const MLDSA3_PUBLIC_KEY_SIZE: usize = 1952;
 pub const MLDSA3_SECRET_KEY_SIZE: usize = 4032;
 pub const MLDSA3_SIGNATURE_SIZE: usize = 3309;
 
+pub mod protocol_info {
+    pub const ALGORITHM: &str = "ML-DSA";
+    pub const MLDSA3_PUBLIC_KEY_SIZE: usize = 1952;
+    pub const MLDSA3_SECRET_KEY_SIZE: usize = 4032;
+    pub const MLDSA3_SIGNATURE_SIZE: usize = 3309;
+}
 
 /// # MLDSA3: Public Key
 /// 
 /// The Public Key of MLDSA (Dilithium65)
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Zeroize, ZeroizeOnDrop, PartialOrd)]
 pub struct MLDSA3PublicKey {
     #[serde(with = "BigArray")]
     pub pk: [u8; MLDSA3_PUBLIC_KEY_SIZE],
@@ -46,7 +52,7 @@ pub struct MLDSA3PublicKey {
 /// # MLDSA3: Secret Key
 /// 
 /// The Secret Key of MLDSA (Dilithium65)
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Zeroize, ZeroizeOnDrop, PartialOrd)]
 pub struct MLDSA3SecretKey {
     #[serde(with = "BigArray")]
     pub sk: [u8; MLDSA3_SECRET_KEY_SIZE],
@@ -55,7 +61,7 @@ pub struct MLDSA3SecretKey {
 /// # MLDSA3: Signature
 /// 
 /// The Signature of MLDSA (Dilithium65)
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Zeroize, ZeroizeOnDrop, PartialOrd)]
 pub struct MLDSA3Signature {
     #[serde(with = "BigArray")]
     pub signature: [u8; MLDSA3_SIGNATURE_SIZE],
@@ -64,7 +70,7 @@ pub struct MLDSA3Signature {
 /// # MLDSA3: Keypair (Public Key and Secret Key)
 /// 
 /// The MLDSA3 Keypair
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Zeroize, ZeroizeOnDrop, PartialOrd)]
 pub struct MLDSA3Keypair {
     pub public_key: MLDSA3PublicKey,
     pub secret_key: MLDSA3SecretKey,

@@ -13,6 +13,7 @@
 
 use std::fmt::Display;
 
+use ed25519_dalek::SignatureError;
 use slugencode::errors::SlugEncodingError;
 use thiserror::Error;
 use std::convert::From;
@@ -76,9 +77,18 @@ impl From<SlugEncodingError> for SlugErrors {
     }
 }
 
+impl From<SignatureError> for SlugErrors {
+    fn from(value: SignatureError) -> Self {
+        match value {
+            SignatureError => return SlugErrors::SigningFailure(SlugErrorAlgorithms::SIG_ED25519)
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum SlugErrorAlgorithms {
     SIG_ED25519,
+    SIG_ABSOLVESIGNING,
     SIG_ED448,
     SIG_SCHNORR,
     SIG_SPHINCS_PLUS,
@@ -92,6 +102,7 @@ pub enum SlugErrorAlgorithms {
     ENC_KYBER,
     SYMENC_AES,
     SYMENC_XCHACHA20,
+    UNKNOWN,
 }
 
 /* 

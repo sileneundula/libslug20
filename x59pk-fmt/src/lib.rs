@@ -37,3 +37,5 @@ pub mod label;
 pub mod errors;
 
 pub mod prelude;
+
+pub mod traits;

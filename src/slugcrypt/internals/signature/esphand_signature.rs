@@ -17,6 +17,8 @@
 //!     - [X] IntoPemPublicKey
 //!     - [X] IntoPemSecretKey
 //!     - [X] IntoPemSignature
+//! - [ ] IntoOintAddress (propiertary)
+//!     - [ ]
 //! 
 //! ## TODO
 //! 

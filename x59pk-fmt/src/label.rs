@@ -1,4 +1,4 @@
-//! # X59 Data
+//! # X59 Data Format
 //! 
 //! ## Author
 //! 
@@ -96,6 +96,8 @@ pub struct X59Label {
 /// # X59 Data Type
 /// 
 /// - [X] Contains easy conversions
+/// - [X] Contains From_str and From_bytes
+/// - [X] Contains Into_String For Text Values
 /// - [ ] Contains checksum
 /// - [ ] Contains Default function
 /// - [ ] Contains Default for attribute/data type function formatting
@@ -115,6 +117,9 @@ impl X59Value {
         Self {
             data: x,
         }
+    }
+    pub fn into_string(&self) -> Result<String, std::string::FromUtf8Error> {
+        return String::from_utf8(self.data.to_vec())
     }
     /// # Encode Data
     pub fn encode(&self, encoding: SlugEncodings) -> Result<String,SlugEncodingError> {

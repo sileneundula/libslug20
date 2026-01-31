@@ -57,6 +57,9 @@ pub mod shulginsigning;
 /// FALCON1024
 pub mod esphand_signature;
 
+/// Dilithium (ML-DSA3) + ED25519
+pub mod absolvesigning;
+
 pub mod utils;
 
 pub mod bls;

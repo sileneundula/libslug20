@@ -55,7 +55,7 @@ digest = {version = "0.10.7", optional=true}
 blake3 = {version = "1.8.3", optional=true}
 
 # ML-KEM
-ml-kem = {version = "0.2.1", optional=true}
+ml-kem = {version = "0.2.2", optional=true}
 
 # Symmetric Encryption
 chacha20poly1305 = {version = "0.10.1", optional=true}
