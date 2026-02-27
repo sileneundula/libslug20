@@ -1,13 +1,11 @@
-//! # Oint-Keys
+//! # OpenInternet Keys
 //! 
-//! ## Description
+//! An abstraction for cryptographic primitives for the open internet or Web 3.20.
 //! 
-//! A `Standardized Format` For OpenInternet (Web 3.20) for cryptographic keypairs that is modular/extendable.
+//! ## Features
 //! 
+//! - [ ] Hybrid Signatures: ShulginSigning, EsphandSigning, AbsolveSigning
 
-/// Imports
-pub mod prelude;
+use oint_keys_traits::{IsOintPublicKey,IsOintSecretKey,IsOintSignature};
 
 pub mod key;
-
-pub mod traits;

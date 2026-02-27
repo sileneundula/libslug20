@@ -12,11 +12,15 @@
 //!     - [X] IntoX59Public
 //!     - [X] IntoX59Secret
 //!     - [X] IntoX59Signature
+//!     - [ ] IntoX59Encryption
 //! - [ ] Signature Digest (BLAKE3)
 //!     - [ ] BLAKE3
 //!     - [ ] SHA256
 //!     - [ ] SHA512
 //!     - [ ] BLAKE2B (Variable)
+//! - [ ] GenerateWithBIP39
+//!     - [ ] Implemented
+//!         - [ ] X
 //! - [ ] SignWithHedgedSignature
 //! - [ ] DeriveOintDigest (uses BLAKE2B to derive an address from the input)
 //! 
@@ -24,7 +28,7 @@
 //! 
 //! - [X] IntoPEM
 //!     - [X] EsphandSignature
-//!     - [ ] ShulginSigning
+//!     - [X] ShulginSigning
 
 //use crate::slugfmt::certificate::cert::X59Certificate;
 

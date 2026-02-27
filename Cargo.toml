@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["oint-keys","x59pk-fmt"]
+members = ["oint-keys", "oint-keys-traits","x59pk-fmt"]
 
 [package]
 name = "libslug"
@@ -55,17 +55,19 @@ digest = {version = "0.10.7", optional=true}
 blake3 = {version = "1.8.3", optional=true}
 
 # ML-KEM
-ml-kem = {version = "0.2.2", optional=true}
+ml-kem = {version = "0.2.3", optional=true}
 
 # Symmetric Encryption
 chacha20poly1305 = {version = "0.10.1", optional=true}
 aes-gcm = {version = "0.10.3", optional=true}
 morus = {version="0.1.3", optional=true}
+ascon-aead128 = "0.1.0-rc.3"
 
 # PQ Signatures
 pqcrypto-sphincsplus = { version = "0.7.2", optional=true}
 pqcrypto-traits = {version = "0.3.5", optional=true}
 pqcrypto-falcon = {version = "0.4.1", optional=true}
+pqcrypto-hqc = {version = "0.2.2", optional=true}
 
 # Signatures
 ed25519-dalek = {version = "2.2.0", features=["rand_core"], optional=true}
@@ -74,8 +76,10 @@ ecdsa = {version = "0.16.9", features=["verifying"], optional=true}
 k256 = {version = "0.13.4", features=["ecdsa"], optional=true}
 ml-dsa = {version = "0.0.4", optional=true}
 ed448 = {version = "0.4.0", optional=true}
+ed448-goldilocks = {version="0.6.0", optional=true}
 ed448-goldilocks-plus = {version = "0.16.0", optional=true}
 bls-signatures = {version = "0.15.0", optional=true}
+
 
 # /atropinetears/One-Time Signatures
 leslie_lamport = { version = "0.3.1", optional=true}
@@ -102,7 +106,7 @@ fixedstr = {version="0.5.10",features=["serde"]}
 log = "0.4.29"
 
 # DER + PEM
-der = "0.7.10"
+der = "0.8.0"
 pem = "3.0.6"
 
 [features]
@@ -132,7 +136,7 @@ ecdsa = ["dep:ecdsa","k256"]
 sphincs_plus = ["dep:pqcrypto-sphincsplus","dep:pqcrypto-traits"]
 falcon = ["dep:pqcrypto-falcon","dep:pqcrypto-traits"]
 ml-dsa = ["dep:ml-dsa"]
-ed448 = ["dep:ed448","dep:ed448-goldilocks-plus"]
+ed448 = ["dep:ed448","dep:ed448-goldilocks-plus","dep:ed448-goldilocks"]
 bls = ["dep:bls-signatures"]
 
 

@@ -64,6 +64,8 @@ pub mod utils;
 
 pub mod bls;
 
+pub mod ed448_2;
+
 
 /// One-Time Signatures (Lamport Signatures, Winternitz-OTS)
 #[cfg(feature = "experimental")]

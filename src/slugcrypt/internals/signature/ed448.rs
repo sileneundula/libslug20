@@ -1,11 +1,21 @@
+use digest::Update;
 use ed448_goldilocks_plus::{EdwardsPoint, CompressedEdwardsY, Scalar, elliptic_curve::hash2curve::ExpandMsgXof, sha3::Shake256};
+use k256::elliptic_curve::PrimeField;
 use rand::rngs::OsRng;
+use tiny_keccak::Shake;
 
-pub struct ED448PublicKey(pub [u8;57]);
+use serde::{Serialize,Deserialize};
+use serde_big_array::BigArray;
 
-pub struct ED448SecretKey(pub [u8;56]);
+#[derive(Clone, Debug, PartialEq, PartialOrd, Serialize, Deserialize, Hash)]
+pub struct ED448PublicKey(#[serde(with = "BigArray")]pub [u8;57]);
 
-pub struct ED448Signature(pub [u8;114]);
+#[derive(Clone, Debug, PartialEq, PartialOrd, Serialize, Deserialize, Hash)]
+
+pub struct ED448SecretKey(#[serde(with = "BigArray")]pub  [u8;56]);
+#[derive(Clone, Debug, PartialEq, PartialOrd, Serialize, Deserialize, Hash)]
+
+pub struct ED448Signature(#[serde(with = "BigArray")]pub [u8;114]);
 
 impl ED448SecretKey {
     pub fn generate() -> Self {
@@ -14,6 +24,15 @@ impl ED448SecretKey {
         return Self(secret_key.to_bytes())
     }
     pub fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Scalar {
+        let mut hasher = Shake256::default();
+        hasher.update(&self.0);
+        
+        let mut signer = self.to_usable_type();
+
+        let r_scalar = Scalar::hash(msg, dst)
+
+        signer.multiply(Scalar::MULTIPLICATIVE_GENERATOR);
+
         let hashed_scalar = Scalar::hash::<ExpandMsgXof<Shake256>>(msg.as_ref(), b"edwards448_XOF:SHAKE256_ELL2_RO_");
 
         let hashed_point = EdwardsPoint::hash::<ExpandMsgXof<Shake256>>(b"test", b"edwards448_XOF:SHAKE256_ELL2_RO_");
