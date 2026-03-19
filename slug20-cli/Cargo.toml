@@ -1,0 +1,8 @@
+[package]
+name = "slug20-cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libslug = "0.7.2"
+clap = {version = "4.6.0", features=["derive"]}

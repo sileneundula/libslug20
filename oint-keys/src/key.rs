@@ -2,6 +2,11 @@
 //! 
 //! ## Cipher Suite
 //! 
+//! - [ ] slug20
+//!     - [ ] `slug20_shulginsignature`
+//!     - [ ] `slug20_esphandsignature`
+//!     - [ ] `slug20_absolvesignature`
+//! 
 //! Modular Approach To Adding Keys
 //! 
 //! 
@@ -59,7 +64,7 @@ pub struct OintSignature<'a> {
     pub signature: &'a str,
     pub alg: str64,
 }
-
+/* 
 impl GenerateKeypair for OintKeypair<'a> {
     fn generate<T: AsRef<str>>(algorithm: T) -> Self {
         let x = match algorithm.as_ref() {
@@ -105,3 +110,4 @@ pub enum Keypairs {
     SPHINCS(SPHINCSSecretKey,SPHINCSPublicKey),
     MLDSA(MLDSA3SecretKey,MLDSA3PublicKey)
 }
+    */

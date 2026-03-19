@@ -17,6 +17,9 @@ pub struct ED448SecretKey(#[serde(with = "BigArray")]pub  [u8;56]);
 
 pub struct ED448Signature(#[serde(with = "BigArray")]pub [u8;114]);
 
+
+/*
+
 impl ED448SecretKey {
     pub fn generate() -> Self {
         let mut rng = OsRng;
@@ -68,3 +71,5 @@ impl ED448PublicKey {
         return output
     }
 }
+
+*/

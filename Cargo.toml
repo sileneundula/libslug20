@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["oint-keys", "oint-keys-traits","x59pk-fmt"]
+members = ["oint-keys", "oint-keys-traits", "slug20-cli","x59pk-fmt", "app/openinternetcryptography/src-tauri"]
 
 [package]
 name = "libslug"
