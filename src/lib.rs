@@ -20,14 +20,14 @@
 //!     - [X] ED25519
 //!     - [ ] ED448
 //!     - [X] Schnorr
-//!     - [ ] ECDSA
+//!     - [X] ECDSA (Secp256k1)
 //!     - [X] SPHINCS+ (SHAKE256)
 //!     - [ ] FALCON512
 //!     - [X] FALCON1024
-//!     - [X] Dilithium65 (ML-DSA)
+//!     - [X] Dilithium65 (ML-DSA3)
 //!     - [X] One-Time Signatures
-//!         - [X] Lamport Signatures
-//!         - [X] Winternitz One Time Signatures (WOTS)
+//!         - [ ] Lamport Signatures
+//!         - [ ] Winternitz One Time Signatures (WOTS)
 //! - [X] Hash Functions
 //!     - [X] SHA2 (224,256,384,512)
 //!     - [X] SHA3 (224,256,384,512)

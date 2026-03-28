@@ -27,7 +27,7 @@
 //! - [ ] ENCODINGS
 //! - [ ] PUBLIC KEY
 //! - [ ] PRIVATE KEY
-//! - [ ] ADD PEM ENCODING
+//! - [X] ADD PEM ENCODING
 //! 
 //! ## TODO:
 //! - [X] Implement ShulgingSigning Scheme (with secure, hedged signatures)

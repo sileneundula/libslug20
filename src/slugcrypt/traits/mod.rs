@@ -46,6 +46,11 @@ pub trait RecoverablePublicKey {
 
 }
 
+pub trait HybridCryptographyRevert: Sized {
+    fn verify_classical(&self) -> bool;
+    fn verify_pq(&self) -> bool;
+}
+
 
 /// # IntoPem Trait
 /// 

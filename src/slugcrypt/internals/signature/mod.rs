@@ -8,7 +8,7 @@
 //! 
 //! - [X] Schnorr over Ristreto
 //! 
-//! - [ ] ECDSA
+//! - [X] ECDSA (Secp256k1)
 //! 
 //! - [ ] ED448
 //! 
@@ -21,6 +21,14 @@
 //! - [ ] Lamport Signatures
 //! 
 //! - [ ] Winternitz One-Time Signatures (WOTS)
+//! 
+//! ## TODO
+//! 
+//! - [ ] Refactor Hybrid Signatures
+//!     - [ ] ShulginSigning
+//!     - [ ] EsphandSigning
+//!     - [ ] AbsolveSigning
+//! - [ ] X59-fmt standard
 
 #[cfg(feature = "sphincs_plus")]
 /// SPHINCS+ (SHAKE256) (255bit security) (smaller signature version)
