@@ -227,7 +227,7 @@ impl FromEncoding for MLDSA3PublicKey {
         let key = MLDSA3PublicKey::from_bytes(&output)?;
         return Ok(key)
     }
-    fn from_hex<T: AsRef<str>>(s: T) -> Result<MLDSA3PublicKey, SlugErrors> {
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
         let decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output = decoder.decode(s.as_ref())?;
         let key = MLDSA3PublicKey::from_bytes(&output)?;
@@ -370,10 +370,12 @@ impl MLDSA3PublicKey {
         }
     }
     /// From Hexadecimal (Upper)
+    /*
     pub fn from_hex<T: AsRef<str>>(s_hex: T) -> Result<Vec<u8>,HexError> {
         let decoded = hex::decode_upper(s_hex.as_ref().as_bytes())?;
         Ok(decoded)
     }
+    */
     /// as bytes (1952)
     pub fn as_bytes(&self) -> &[u8] {
         &self.pk
@@ -410,11 +412,13 @@ impl MLDSA3SecretKey {
             Err(SlugErrors::InvalidLengthFromBytes)
         }
     }
+    /*
     /// From Hexadecimal (Upper)
     pub fn from_hex<T: AsRef<str>>(s_hex: T) -> Result<Vec<u8>,HexError> {
         let decoded = hex::decode_upper(s_hex.as_ref().as_bytes())?;
         Ok(decoded)
     }
+    */
     /// as bytes (4032 bytes)
     pub fn as_bytes(&self) -> &[u8] {
         &self.sk
@@ -453,10 +457,12 @@ impl MLDSA3Signature {
         }
     }
     /// From Hexadecimal (Upper)
+    /*
     pub fn from_hex<T: AsRef<str>>(s_hex: T) -> Result<Vec<u8>,HexError> {
         let decoded = hex::decode_upper(s_hex.as_ref().as_bytes())?;
         Ok(decoded)
     }
+    */
     /// as bytes (3309 bytes)
     pub fn as_bytes(&self) -> &[u8] {
         &self.signature
