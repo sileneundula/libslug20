@@ -16,6 +16,11 @@ use subtle_encoding::hex;
 use schnorrkel::{Keypair, vrf::{VRFInOut, VRFProof, VRFPreOut, VRFSigningTranscript, Malleable}};
 use schnorrkel::context::SigningContext;
 
+// TODO: Serialization
+use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret, IntoPemSignature};
+use crate::slugcrypt::traits::IntoPem;
+use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
+
 /// SLUGCRYPT CONTEXT
 pub const SLUGCRYPT_CONTEXT: &str = "SlugCrypt";
 

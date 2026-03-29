@@ -9,7 +9,19 @@
 //! Public Key Size: 1952
 //! Secret Key Size: 4032
 //! Signature Size: 3309
-
+//! 
+//! ### Features
+//! 
+//! - [X] Encoding
+//!     - [X] IntoEncoding
+//!         - [X] Public Key
+//!         - [X] Secret Key
+//!         - [X] Signature
+//!     - [X] FromEncoding
+//!         - [X] Public Key
+//!         - [X] Secret Key
+//!         - [X] Signature
+//!     - [ ] IntoPem
 use ml_dsa::{self, KeyGen};
 use rand::rngs::OsRng;
 
@@ -18,10 +30,14 @@ use serde_big_array::BigArray;
 //use subtle_encoding::Hex;
 use zeroize::{Zeroize, ZeroizeOnDrop};
 use crate::errors::SlugErrors;
+use crate::slugcrypt::traits::FromEncoding;
+use crate::slugcrypt::traits::IntoEncoding;
 
 use subtle_encoding::Encoding;
 use subtle_encoding::hex;
 use subtle_encoding::Error as HexError;
+use slugencode::SlugEncodingUsage;
+use slugencode::SlugEncodings;
 
 //use hybrid_array::ArrayN;
 use hybrid_array_new::ArrayN;
@@ -80,6 +96,222 @@ pub struct MLDSA3Keypair {
 /// 
 /// Includes Generation
 pub struct SlugMLDSA3;
+
+impl IntoEncoding for MLDSA3PublicKey {
+    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+}
+
+impl IntoEncoding for MLDSA3SecretKey {
+    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+}
+
+impl IntoEncoding  for MLDSA3Signature {
+    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = encoder.encode(self.as_bytes());
+        return output
+    }
+}
+
+impl FromEncoding for MLDSA3PublicKey {
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<MLDSA3PublicKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3PublicKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<MLDSA3PublicKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3PublicKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<MLDSA3PublicKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3PublicKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<MLDSA3PublicKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3PublicKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<MLDSA3PublicKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3PublicKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<MLDSA3PublicKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3PublicKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+}
+
+impl FromEncoding for MLDSA3SecretKey {
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<MLDSA3SecretKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3SecretKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<MLDSA3SecretKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3SecretKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<MLDSA3SecretKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3SecretKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<MLDSA3SecretKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3SecretKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<MLDSA3SecretKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3SecretKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<MLDSA3SecretKey, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3SecretKey::from_bytes(&output)?;
+        return Ok(key)
+    }
+}
+
+impl FromEncoding for MLDSA3Signature {
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<MLDSA3Signature, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3Signature::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<MLDSA3Signature, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3Signature::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<MLDSA3Signature, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3Signature::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<MLDSA3Signature, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3Signature::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<MLDSA3Signature, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3Signature::from_bytes(&output)?;
+        return Ok(key)
+    }
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<MLDSA3Signature, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = decoder.decode(s.as_ref())?;
+        let key = MLDSA3Signature::from_bytes(&output)?;
+        return Ok(key)
+    }
+}
 
 impl SlugMLDSA3 {
     /// Generate Keypair using Operating System Randomness

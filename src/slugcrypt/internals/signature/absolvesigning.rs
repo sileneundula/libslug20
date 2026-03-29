@@ -10,6 +10,10 @@ use zeroize::{Zeroize,ZeroizeOnDrop};
 
 pub const ABSOLVE_CONTEXT: &str = "libslug20";
 
+use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret, IntoPemSignature};
+use crate::slugcrypt::traits::IntoPem;
+use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
+
 
 /// # AbsolveKeypair
 /// 
@@ -83,5 +87,18 @@ impl AbsolveKeypair {
         else {
             return Err(SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_ABSOLVESIGNING))
         }
+    }
+}
+
+impl IntoX59PublicKey for AbsolveKeypair {
+    fn into_x59_pk(&self) -> Result<String,SlugErrors> {
+        let classical_ed25519 = self.ed25519pk.to_hexadecimal()?;
+        let pq_mldsa = self.mldsa3pk.as_bytes()
+    }
+    fn from_x59_pk<T: AsRef<str>>(x59_encoded: T) -> Result<Self,SlugErrors> {
+        
+    }
+    fn x59_metadata_pk() -> String {
+        
     }
 }
