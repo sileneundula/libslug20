@@ -16,12 +16,25 @@
 //!             - [X] To X59 Format
 //!             - [X] From X59 Format
 //!             - [X] X59 Metadata
-//!         - [ ] Secret Key
-//!         - [ ] Signature
+//!         - [X] Secret Key
+//!             - [X] To X59 Format
+//!             - [X] From X59 Format
+//!             - [X] X59 Metadata
+//!         - [X] Signature
+//!             - [X] To X59 Format
+//!             - [X] From X59 Format
+//!             - [X] X59 Metadata
+//!     - [ ] IntoPem
+//!     - [X] IntoPemX59: Use X59 Format and encode in PEM
+//!         - [X] Secret Key + Public Key using X59 Format
+//!         - [ ] Public Key
+
+use std::str::FromStr;
 
 use crate::errors::SlugErrors;
 use crate::slugcrypt::internals::signature::ed25519::{ED25519PublicKey,ED25519SecretKey,ED25519Signature};
 use crate::slugcrypt::internals::signature::ml_dsa::{SlugMLDSA3,MLDSA3Keypair,MLDSA3PublicKey,MLDSA3SecretKey,MLDSA3Signature};
+use pem::Pem;
 use serde::{Serialize,Deserialize};
 use zeroize::{Zeroize,ZeroizeOnDrop};
 
@@ -32,6 +45,8 @@ use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 use crate::slugcrypt::traits::{FromEncoding,IntoEncoding};
 use crate::errors::{SlugErrorAlgorithms,EncodingError};
+// IntoPEMX59
+use crate::slugcrypt::traits::IntoPemX59;
 
 
 /// # AbsolveKeypair
@@ -73,6 +88,9 @@ impl AbsolveKeypair {
             mldsa3sk: Some(mldsa_sk.to_owned())
         }
     }
+    /// # Sign With Context
+    /// 
+    /// Signs with specified context and includes context as bytes in the signature.
     pub fn sign_with_context<T: AsRef<[u8]>>(&self, msg: T, context: T) -> Result<AbsolveSignature,SlugErrors> {
         if self.ed25519sk.is_some() == true && self.mldsa3sk.is_some() == true {
             let sig = self.ed25519sk.clone().unwrap().sign(msg.as_ref())?;
@@ -84,9 +102,15 @@ impl AbsolveKeypair {
             return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_ABSOLVESIGNING))
         }
     }
+    /// # Sign
+    /// 
+    /// Signs with ED25519 and ML-DSA3 with context "libslug20".
     pub fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Result<AbsolveSignature,SlugErrors> {
         return self.sign_with_context(msg.as_ref(), ABSOLVE_CONTEXT.as_bytes())
     }
+    /// # Verify "AbsolveSigning": ML-DSA3 + ED25519
+    /// 
+    /// This will allow you to verify a message against the AbsolveSignature struct which includes context field and is encoded.
     pub fn verify<T: AsRef<[u8]>>(&self, msg: T, signature: AbsolveSignature) -> Result<bool,SlugErrors> {
         let is_valid = self.ed25519pk.verify(signature.ed25519sig.clone(), msg.as_ref())?;
         let is_valid_pq = self.mldsa3pk.verify(msg.as_ref(), signature.context.as_slice(), &signature.mldsa3sig)?;
@@ -160,10 +184,10 @@ impl IntoX59SecretKey for AbsolveKeypair {
         let classical_key_pk = self.ed25519pk.to_hexadecimal()?;
         let mldsa_pk = self.mldsa3pk.to_hex()?;
 
-
+        // TODO: Remove Clone
         if self.ed25519sk.is_some() && self.mldsa3sk.is_some() {
-            let classical_key_sk = self.ed25519sk.unwrap().to_hexadecimal()?;
-            let mldsa_sk = self.mldsa3sk.unwrap().to_hex()?;
+            let classical_key_sk = self.ed25519sk.clone().unwrap().to_hexadecimal()?;
+            let mldsa_sk = self.mldsa3sk.clone().unwrap().to_hex()?;
 
             let mut output = String::new();
             output.push_str(&classical_key_pk);
@@ -279,5 +303,27 @@ impl IntoX59Signature for AbsolveSignature {
     }
     fn x59_metadata() -> String {
         String::from("libslug20/AbsolveSigning")
+    }
+}
+
+impl IntoPemX59 for AbsolveKeypair {
+    fn into_pem_x59_standard(&self) -> Result<String,SlugErrors> {
+        let x = self.into_x59()?;
+        let output: Pem = Pem::new(Self::info_pem_x59_standard_label(), x);
+        return Ok(output.to_string())
+
+    }
+    fn from_pem_x59_standard<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = Pem::from_str(s.as_ref())?;
+        let output: Vec<u8> = x.into_contents();
+        let x59 = String::from_utf8(output)?;
+        let output = Self::from_x59(x59)?;
+        return Ok(output)
+    }
+    /// # Info (PEM X59 Standard Label)
+    /// 
+    /// `libslug20/AbsolveSigningX59FMT`
+    fn info_pem_x59_standard_label() -> String {
+        String::from("libslug20/AbsolveSigningX59FMT")
     }
 }

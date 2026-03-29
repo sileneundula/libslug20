@@ -51,6 +51,15 @@ pub trait HybridCryptographyRevert: Sized {
     fn verify_pq(&self) -> bool;
 }
 
+/// # IntoPemX59
+/// 
+/// Converts Into PEM format using X59FMT Standard as input.
+pub trait IntoPemX59: Sized {
+    fn into_pem_x59_standard(&self) -> Result<String,SlugErrors>;
+    fn from_pem_x59_standard<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn info_pem_x59_standard_label() -> String;
+}
+
 
 /// # IntoPem Trait
 /// 

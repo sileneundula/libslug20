@@ -11,9 +11,10 @@
 //! - [X] Error Handeling
 //! - [ ] Error Codes
 
-use std::fmt::Display;
+use std::{fmt::Display, str::Utf8Error, string::FromUtf8Error};
 
 use ed25519_dalek::SignatureError;
+use pem::PemError;
 use slugencode::errors::SlugEncodingError;
 use thiserror::Error;
 use std::convert::From;
@@ -85,6 +86,30 @@ impl From<SignatureError> for SlugErrors {
     }
 }
 
+impl From<pem::PemError> for SlugErrors {
+    fn from(value: PemError) -> Self {
+        match value {
+            _ => return SlugErrors::EncodingError { alg: SlugErrorAlgorithms::UNKNOWN, encoding: EncodingError::PEM, other: None }
+        }
+    }
+}
+
+impl From<Utf8Error> for SlugErrors {
+    fn from(value: Utf8Error) -> Self {
+        match value {
+            _ => return SlugErrors::EncodingError { alg: SlugErrorAlgorithms::UNKNOWN, encoding: EncodingError::Utf8, other: None }
+        }
+    }
+}
+
+impl From<FromUtf8Error> for SlugErrors {
+    fn from(value: FromUtf8Error) -> Self {
+        match value {
+            _ => return SlugErrors::EncodingError { alg: SlugErrorAlgorithms::UNKNOWN, encoding: EncodingError::Utf8, other: None }
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum SlugErrorAlgorithms {
     SIG_ED25519,
@@ -139,7 +164,7 @@ pub enum EncodingError {
     Base58,
     Base64,
     Base64urlsafe,
-    
+    Utf8,
     X59_fmt,
     PEM,
 }
