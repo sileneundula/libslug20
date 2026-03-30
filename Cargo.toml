@@ -76,7 +76,7 @@ ecdsa = {version = "0.16.9", features=["verifying"], optional=true}
 k256 = {version = "0.13.4", features=["ecdsa"], optional=true}
 ml-dsa = {version = "0.0.4", optional=true}
 ed448 = {version = "0.4.0", optional=true}
-ed448-goldilocks = {version="0.6.0", optional=true}
+ed448-goldilocks = {version="0.9.0", optional=true}
 ed448-goldilocks-plus = {version = "0.16.0", optional=true}
 bls-signatures = {version = "0.15.0", optional=true}
 

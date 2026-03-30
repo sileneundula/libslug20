@@ -1574,12 +1574,13 @@ dependencies = [
 
 [[package]]
 name = "ed448-goldilocks"
-version = "0.6.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "edfb3bda47454c38f066509a8ddacb2e1823c5d0ec9f1d254b1d0d31b387cc7d"
+checksum = "88322282bccdc6fa7ab65b0c30cb877fba541547653436d08bb775fa4a4307b4"
 dependencies = [
  "fiat-crypto 0.1.20",
  "hex 0.4.3",
+ "rand_core 0.6.4",
  "subtle",
 ]
 
