@@ -134,7 +134,7 @@ impl Ed448PublicKey {
 
         // FIX LATER
         if sig.context.is_some() {
-            let output = x.verify_ctx(&signature, &sig.context.unwrap(), msg.as_ref());
+            let output = x.verify_ctx(&signature, &sig.context.clone().unwrap(), msg.as_ref());
 
             if output.is_ok() {
                 return Ok(true)
