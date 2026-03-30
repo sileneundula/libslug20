@@ -178,5 +178,10 @@ impl Ed448Signature {
 
 #[test]
 fn create() {
-    Ed448SecretKey::generate();
+    let key = Ed448SecretKey::generate();
+    let msg = "This is a message warning of the future... heed my warnings and serve allah...repent....repent...repent...icu...copper...mineshafts...like...outlast";
+    let sig = key.sign_with_context(msg.as_bytes(), ED448_CONTEXT.as_bytes()).expect("Failed to receive");
+
+    let result = key.into_public_key().verify(msg.as_bytes(), sig);
+    assert_eq!(result.unwrap(),true);
 }
