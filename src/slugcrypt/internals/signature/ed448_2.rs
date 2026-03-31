@@ -1,6 +1,18 @@
 //! # Ed448
 //! 
 //! Secret Key Size: 57 Bytes
+//! 
+//! ## TODO:
+//! 
+//! - [ ] Encoding
+//!     - [X] IntoEncoding
+//!     - [ ] IntoX59
+//!     - [ ] IntoPem
+//!     - [ ] FromPem
+//!     - [ ] FromX59
+//!     - [X] FromEncoding
+//! 
+//! - [ ] Signature Verifying
 
 use ed448_goldilocks_plus::{EdwardsPoint, CompressedEdwardsY, Scalar, elliptic_curve::hash2curve::ExpandMsgXof, sha3::Shake256};
 use ed448_goldilocks_plus::{SigningKey, VerifyingKey};
@@ -13,7 +25,13 @@ use serde::{Serialize,Deserialize};
 use ed448_goldilocks_plus::SigningError;
 use ed448_goldilocks_plus::Signature;
 
+// Encodings
+use crate::slugcrypt::traits::IntoEncoding;
+use crate::slugcrypt::traits::FromEncoding;
+
 use crate::errors::SlugErrors;
+use slugencode::SlugEncodingUsage;
+use slugencode::SlugEncodings;
 
 pub const ED448_CONTEXT: &str = "libslug20";
 
@@ -42,6 +60,417 @@ pub struct Ed448Keypair {
     sk: Ed448SecretKey,
 }
 
+impl IntoEncoding for Ed448PublicKey {
+    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(&self.pk)?;
+
+        return Ok(output)
+
+        
+    }
+    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(&self.pk)?;
+
+        return Ok(output)
+    }
+    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(&self.pk)?;
+
+        return Ok(output)
+    }
+    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(&self.pk)?;
+
+        return Ok(output)
+    }
+    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(&self.pk)?;
+
+        return Ok(output)
+    }
+    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(&self.pk)?;
+
+        return Ok(output)
+    }
+}
+
+impl IntoEncoding for Ed448SecretKey {
+    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(&self.sk)?;
+
+        return Ok(output)
+
+        
+    }
+    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(&self.sk)?;
+
+        return Ok(output)
+    }
+    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(&self.sk)?;
+
+        return Ok(output)
+    }
+    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(&self.sk)?;
+
+        return Ok(output)
+    }
+    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(&self.sk)?;
+
+        return Ok(output)
+    }
+    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(&self.sk)?;
+
+        return Ok(output)
+    }
+}
+
+impl IntoEncoding for Ed448Signature {
+    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let mut output_final = String::new();
+        
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(&self.sig)?;
+        
+        if self.context.is_some() {
+            let y = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let context = y.encode(&self.context.as_ref().unwrap())?;
+
+            output_final.push_str(&output);
+            output_final.push_str(":");
+            output_final.push_str(&context);
+            return Ok(output_final)
+        }
+        else {
+            return Ok(output)
+        }
+    }
+    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let mut output_final = String::new();
+        
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(&self.sig)?;
+        
+        if self.context.is_some() {
+            let y = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let context = y.encode(&self.context.as_ref().unwrap())?;
+
+            output_final.push_str(&output);
+            output_final.push_str(":");
+            output_final.push_str(&context);
+            return Ok(output_final)
+        }
+        else {
+            return Ok(output)
+        }
+    }
+    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let mut output_final = String::new();
+        
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(&self.sig)?;
+        
+        if self.context.is_some() {
+            let y = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let context = y.encode(&self.context.as_ref().unwrap())?;
+
+            output_final.push_str(&output);
+            output_final.push_str(":");
+            output_final.push_str(&context);
+            return Ok(output_final)
+        }
+        else {
+            return Ok(output)
+        }
+    }
+    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let mut output_final = String::new();
+        
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(&self.sig)?;
+        
+        if self.context.is_some() {
+            let y = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let context = y.encode(&self.context.as_ref().unwrap())?;
+
+            output_final.push_str(&output);
+            output_final.push_str(":");
+            output_final.push_str(&context);
+            return Ok(output_final)
+        }
+        else {
+            return Ok(output)
+        }
+    }
+    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let mut output_final = String::new();
+        
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(&self.sig)?;
+        
+        if self.context.is_some() {
+            let y = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let context = y.encode(&self.context.as_ref().unwrap())?;
+
+            output_final.push_str(&output);
+            output_final.push_str(":");
+            output_final.push_str(&context);
+            return Ok(output_final)
+        }
+        else {
+            return Ok(output)
+        }
+    }
+    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+        let mut output_final = String::new();
+        
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(&self.sig)?;
+        
+        if self.context.is_some() {
+            let y = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let context = y.encode(&self.context.as_ref().unwrap())?;
+
+            output_final.push_str(&output);
+            output_final.push_str(":");
+            output_final.push_str(&context);
+            return Ok(output_final)
+        }
+        else {
+            return Ok(output)
+        }
+    }
+}
+
+impl FromEncoding for Ed448PublicKey {
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+}
+
+impl FromEncoding for Ed448SecretKey {
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)  
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.decode(s.as_ref())?;
+        let output_2 = Self::from_slice(&output)?;
+        return Ok(output_2)
+    }
+}
+
+impl FromEncoding for Ed448Signature {
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        if s.as_ref().contains(":") {
+            let (sig, context_hex) = s.as_ref().split_once(":").unwrap();
+
+            let context_decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+
+            let output = sig_decoder.decode(sig)?;
+            let context = context_decoder.decode(context_hex)?;
+
+            let x = Self::from_slice(&output, Some(&context))?;
+            return Ok(x)
+        }
+        else {
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+            let y = sig_decoder.decode(s.as_ref())?;
+
+            let output = Ed448Signature::from_slice(&y, None)?;
+
+            return Ok(output)
+        }
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        if s.as_ref().contains(":") {
+            let (sig, context_hex) = s.as_ref().split_once(":").unwrap();
+
+            let context_decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+
+            let output = sig_decoder.decode(sig)?;
+            let context = context_decoder.decode(context_hex)?;
+
+            let x = Self::from_slice(&output, Some(&context))?;
+            return Ok(x)
+        }
+        else {
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+            let y = sig_decoder.decode(s.as_ref())?;
+
+            let output = Ed448Signature::from_slice(&y, None)?;
+
+            return Ok(output)
+        }
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        if s.as_ref().contains(":") {
+            let (sig, context_hex) = s.as_ref().split_once(":").unwrap();
+
+            let context_decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+
+            let output = sig_decoder.decode(sig)?;
+            let context = context_decoder.decode(context_hex)?;
+
+            let x = Self::from_slice(&output, Some(&context))?;
+            return Ok(x)
+        }
+        else {
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+            let y = sig_decoder.decode(s.as_ref())?;
+
+            let output = Ed448Signature::from_slice(&y, None)?;
+
+            return Ok(output)
+        }
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        if s.as_ref().contains(":") {
+            let (sig, context_hex) = s.as_ref().split_once(":").unwrap();
+
+            let context_decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+
+            let output = sig_decoder.decode(sig)?;
+            let context = context_decoder.decode(context_hex)?;
+
+            let x = Self::from_slice(&output, Some(&context))?;
+            return Ok(x)
+        }
+        else {
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+            let y = sig_decoder.decode(s.as_ref())?;
+
+            let output = Ed448Signature::from_slice(&y, None)?;
+
+            return Ok(output)
+        }
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        if s.as_ref().contains(":") {
+            let (sig, context_hex) = s.as_ref().split_once(":").unwrap();
+
+            let context_decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+
+            let output = sig_decoder.decode(sig)?;
+            let context = context_decoder.decode(context_hex)?;
+
+            let x = Self::from_slice(&output, Some(&context))?;
+            return Ok(x)
+        }
+        else {
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+            let y = sig_decoder.decode(s.as_ref())?;
+
+            let output = Ed448Signature::from_slice(&y, None)?;
+
+            return Ok(output)
+        }
+    }
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        if s.as_ref().contains(":") {
+            let (sig, context_hex) = s.as_ref().split_once(":").unwrap();
+
+            let context_decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+
+            let output = sig_decoder.decode(sig)?;
+            let context = context_decoder.decode(context_hex)?;
+
+            let x = Self::from_slice(&output, Some(&context))?;
+            return Ok(x)
+        }
+        else {
+            let sig_decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+            let y = sig_decoder.decode(s.as_ref())?;
+
+            let output = Ed448Signature::from_slice(&y, None)?;
+
+            return Ok(output)
+        }
+    }
+}
 impl Ed448SecretKey {
     pub fn generate() -> Self {
         let mut output_key: [u8;57] = [0u8;57];
@@ -112,6 +541,19 @@ impl Ed448SecretKey {
     pub fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Result<Ed448Signature, SlugErrors>  {
         self.sign_with_context(msg.as_ref(), ED448_CONTEXT.as_bytes())
     }
+    pub fn from_slice(x: &[u8]) -> Result<Ed448SecretKey, SlugErrors> {
+        let mut output: [u8;57] = [0u8;57];
+        
+        if x.len() == 57 {
+            output.copy_from_slice(x);
+            return Ok(Self {
+                sk: output
+            })
+        }
+        else {
+            return Err(SlugErrors::InvalidLengthFromBytes)
+        }
+    }
 }
 
 impl Ed448PublicKey {
@@ -155,6 +597,19 @@ impl Ed448PublicKey {
     pub fn verify_with_context<T: AsRef<[u8]>>(&self, msg: T, context: T, sig: Ed448Signature) {
 
     }
+    pub fn from_slice(x: &[u8]) -> Result<Ed448PublicKey, SlugErrors> {
+        let mut output: [u8;57] = [0u8;57];
+        
+        if x.len() == 57 {
+            output.copy_from_slice(x);
+            return Ok(Self {
+                pk: output
+            })
+        }
+        else {
+            return Err(SlugErrors::InvalidLengthFromBytes)
+        }
+    }
 }
 
 impl Ed448Signature {
@@ -167,6 +622,27 @@ impl Ed448Signature {
         else {
             return Ok(sig.unwrap())
         }    
+    }
+    pub fn from_slice(x: &[u8], context: Option<&[u8]>) -> Result<Ed448Signature, SlugErrors> {
+        let mut output: [u8;114] = [0u8;114];
+        
+        if x.len() == 114 && context.is_some() {
+            output.copy_from_slice(x);
+            return Ok(Self {
+                sig: output,
+                context: Some(context.unwrap().to_vec())
+            })
+        }
+        else if x.len() == 114 && context.is_none() {
+            output.copy_from_slice(x);
+            return Ok(Self {
+                sig: output,
+                context: None,
+            })
+        }
+        else {
+            return Err(SlugErrors::InvalidLengthFromBytes)
+        }
     }
 }
 
