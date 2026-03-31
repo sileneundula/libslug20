@@ -77,18 +77,19 @@ impl Ed448SecretKey {
             return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_ED448))
         }
         else {
-            unimplemented!()
+            let mut signature_output: [u8;114] = [0u8;114];
+            signature_output.copy_from_slice(&x.unwrap().to_bytes());
+
+            let signature = Ed448Signature {
+                sig: signature_output,
+                context: Some(context.as_ref().to_vec()),
+            };
+            return Ok(signature)
         }
 
-        let mut signature_output: [u8;114] = [0u8;114];
-        signature_output.copy_from_slice(&x.unwrap().to_bytes());
+        
 
-        let signature = Ed448Signature {
-            sig: signature_output,
-            context: Some(context.as_ref().to_vec()),
-        };
-
-        return Ok(signature)
+        
     }
     pub fn sign_without_context_attached<T: AsRef<[u8]>>(&self, msg: T, context: T) -> Result<Ed448Signature,SlugErrors> {
         let x: Result<ed448_goldilocks_plus::Signature, _> = self.into_usable_type().sign_ctx(context.as_ref(), msg.as_ref());
@@ -97,18 +98,16 @@ impl Ed448SecretKey {
             return Err(SlugErrors::SigningFailure(crate::errors::SlugErrorAlgorithms::SIG_ED448))
         }
         else {
-            unimplemented!()
+            let mut signature_output: [u8;114] = [0u8;114];
+            signature_output.copy_from_slice(&x.unwrap().to_bytes());
+
+            let signature = Ed448Signature {
+                sig: signature_output,
+                context: None,
+            };
+
+            return Ok(signature)
         }
-
-        let mut signature_output: [u8;114] = [0u8;114];
-        signature_output.copy_from_slice(&x.unwrap().to_bytes());
-
-        let signature = Ed448Signature {
-            sig: signature_output,
-            context: None,
-        };
-
-        return Ok(signature)
     }
     pub fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Result<Ed448Signature, SlugErrors>  {
         self.sign_with_context(msg.as_ref(), ED448_CONTEXT.as_bytes())
@@ -123,10 +122,8 @@ impl Ed448PublicKey {
             return Err(SlugErrors::Other(String::from("Failed To Convert Into VerifyingKey Type")))
         }
         else {
-            unimplemented!()
+            return Ok(x.unwrap())
         }
-
-        return Ok(x.unwrap())
     }
     pub fn verify<T: AsRef<[u8]>>(&self, msg: T, sig: Ed448Signature) -> Result<bool, SlugErrors> {
         let x = self.into_usable_type()?;
@@ -168,10 +165,8 @@ impl Ed448Signature {
             return Err(SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_ED448))
         }
         else {
-            unimplemented!()
-        }
-
-        return Ok(sig.unwrap())
+            return Ok(sig.unwrap())
+        }    
     }
 }
 
@@ -179,7 +174,7 @@ impl Ed448Signature {
 #[test]
 fn create() {
     let key = Ed448SecretKey::generate();
-    let msg = "This is a message warning of the future... heed my warnings and serve allah...repent....repent...repent...icu...copper...mineshafts...like...outlast";
+    let msg = "This is a message being signed by ed448-goldilocks-plus";
     let sig = key.sign_with_context(msg.as_bytes(), ED448_CONTEXT.as_bytes()).expect("Failed to receive");
 
     let result = key.into_public_key().verify(msg.as_bytes(), sig);
