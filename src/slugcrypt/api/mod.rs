@@ -194,8 +194,8 @@ impl SlugCSPRNGAPI {
         SlugCSPRNG::from_seed(bytes)
     }
     /// Generate a new Mnemonic
-    pub fn mnemonic(mnemonic: SlugMnemonic, pass: &str, language: Language) -> Result<[u8;32],ErrorKind> {
-        let seed = mnemonic.to_seed(pass, language)?;
+    pub fn mnemonic(mnemonic: SlugMnemonic, pass: &str) -> Result<[u8;32],ErrorKind> {
+        let seed = mnemonic.to_seed(pass)?;
         let mut output: [u8;32] = [0u8;32];
 
         output.copy_from_slice(&seed);

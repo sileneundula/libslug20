@@ -1,3 +1,7 @@
+//! # BIP32: Key Derivation
+//! 
+//! This module includes Key Derivation from Bitcoin's Improvement Proposals's 32th proposal.
+
 use bip32::{XPrv, Seed};
 use bip32::PrivateKey;
 use bip32::PublicKey;
@@ -11,6 +15,9 @@ use fixedstr::str32;
 use rand::rngs::OsRng;
 
 use crate::errors::SlugErrors;
+
+/// BIP32 Traits
+pub mod traits;
 
 /// # Key-Deriviation (BIP32)
 /// 

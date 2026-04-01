@@ -1,4 +1,5 @@
 use libslug::slugcrypt::internals::bip39::SlugMnemonic;
+use libslug::slugcrypt::internals::bip39::{SlugBIP39Languages,SlugBIP39Words};
 
 fn main() {
     // Select Language
@@ -10,9 +11,9 @@ fn main() {
 
 
     // Generate Phrase
-    let phrase = SlugMnemonic::new(bip39::MnemonicType::Words24, bip39::Language::English);
+    let phrase = SlugMnemonic::new(SlugBIP39Words::Words24, SlugBIP39Languages::English);
     
     
     // Get Seed
-    let seed: Vec<u8> = phrase.to_seed(password, language).unwrap();
+    let seed: Vec<u8> = phrase.to_seed(password).unwrap();
 }

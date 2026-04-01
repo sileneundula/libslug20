@@ -143,8 +143,8 @@ impl ED25519SecretKey {
         return ED25519SecretKey(signing_key.to_bytes());
     }
     /// From BIP39 (Generation or From)
-    pub fn from_bip39(mnemonic: SlugMnemonic, language: bip39::Language, password: &str) -> Result<Self,ErrorKind> {
-        let seed = mnemonic.to_seed(password, language)?;
+    pub fn from_bip39(mnemonic: SlugMnemonic, password: &str) -> Result<Self,ErrorKind> {
+        let seed = mnemonic.to_seed(password)?;
         Ok(Self::from_bytes(&seed).unwrap())
     }
     /// to byte array of 32 bytes

@@ -69,6 +69,12 @@ pub enum SlugErrors {
     SlugEncodingErrors(SlugEncodingError),
 }
 
+#[derive(Debug, Error)]
+pub enum X59CertificateErrors {
+    #[error("[Error] X59 Certificate Invalid")]
+    CertificateInvalid,
+}
+
 impl From<SlugEncodingError> for SlugErrors {
     fn from(value: SlugEncodingError) -> Self {
         match value {
