@@ -1,7 +1,8 @@
 use libslug::slugcrypt::internals::signature;
 use serde::{Serialize,Deserialize};
+use zeroize::{Zeroize,ZeroizeOnDrop};
 
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum SlugPublicKey {
     /// ShulginSigning: A hybrid signature scheme combining classical and post-quantum algorithms.
     ShulginSigning(signature::shulginsigning::ShulginKeypair),
@@ -21,15 +22,48 @@ pub enum SlugPublicKey {
     SPHINCS(signature::sphincs_plus::SPHINCSPublicKey),
     FALCON1024(signature::falcon::Falcon1024PublicKey),
     MLDSA3(signature::ml_dsa::MLDSA3PublicKey),
-
-
 }
 
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum SlugSecretKey {
     /// ShulginSigning: A hybrid signature scheme combining classical and post-quantum algorithms.
-    ShulginSigning(signature::ShulginKeypair),
+    ShulginSigning(signature::shulginsigning::ShulginKeypair),
     /// EsphandSigning: A signature scheme based on the Esphand algorithm, designed for high security and efficiency.
-    EsphandSigning(signature::EsphandKeypair),
+    EsphandSigning(signature::esphand_signature::EsphandKeypair),
     /// AbsolveSigning: A signature scheme that provides strong security guarantees while maintaining performance.
-    AbsolveSigning,
+    AbsolveSigning(signature::absolvesigning::AbsolveKeypair),
+
+    //=====CLASSICAL=====//
+    ED25519(signature::ed25519::ED25519SecretKey),
+    ED448(signature::ed448::Ed448SecretKey),
+    ECDSA(signature::ecdsa::ECDSASecretKey),
+    BLS12_381(signature::bls::BLSSecretKey),
+    SchnorrOverRistretto(signature::schnorr::SchnorrSecretKey),
+
+    //=====PQ=====//
+    SPHINCS((signature::sphincs_plus::SPHINCSSecretKey, signature::sphincs_plus::SPHINCSPublicKey)),
+    FALCON1024((signature::falcon::Falcon1024SecretKey, signature::falcon::Falcon1024PublicKey)),
+    MLDSA3((signature::ml_dsa::MLDSA3SecretKey, signature::ml_dsa::MLDSA3PublicKey)),
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
+pub enum SlugSignature {
+    /// ShulginSigning: A hybrid signature scheme combining classical and post-quantum algorithms.
+    ShulginSigning(signature::shulginsigning::ShulginSignature),
+    /// EsphandSigning: A signature scheme based on the Esphand algorithm, designed for high security and efficiency.
+    EsphandSigning(signature::esphand_signature::EsphandSignature),
+    /// AbsolveSigning: A signature scheme that provides strong security guarantees while maintaining performance.
+    AbsolveSigning(signature::absolvesigning::AbsolveSignature),
+
+    //=====CLASSICAL=====//
+    ED25519(signature::ed25519::ED25519Signature),
+    ED448(signature::ed448::Ed448Signature),
+    ECDSA(signature::ecdsa::ECDSASignature),
+    BLS12_381(signature::bls::BLSSignature),
+    SchnorrOverRistretto(signature::schnorr::SchnorrSignature),
+
+    //=====PQ=====//
+    SPHINCS(signature::sphincs_plus::SPHINCSSignature),
+    FALCON1024(signature::falcon::Falcon1024Signature),
+    MLDSA3(signature::ml_dsa::MLDSA3Signature),
 }

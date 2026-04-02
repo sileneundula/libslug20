@@ -66,24 +66,40 @@ use crate::traits::{OintGenerateKeypair,OintVerify,OintSign};
 use crate::constants::*;
 use crate::encodings::OintKeyEncodings;
 
+use serde::{Serialize,Deserialize};
+use zeroize::{Zeroize,ZeroizeOnDrop};
+
+
 type PublicKey = fixedstr::tstr<16_000>;
 type SecretKey = fixedstr::tstr<16_000>;
 
-pub struct LiberatoKeypair {
-    pub pk: LiberatoPublicKey,
-    pub sk: Lib
-}
+pub mod Liberato {
 
-pub struct LiberatoPublicKey {
-    pub pk: ,
-    pub alg: str64,
-    pub encoding: str64,
-}
+    use zeroize::{Zeroize,ZeroizeOnDrop};
+    use serde::{Serialize,Deserialize};
+    use crate::algorithms::slug::{SlugPublicKey,SlugSecretKey,SlugSignature};
 
-pub struct LiberatoSecretKey {
-    pub sk: String,
-    pub alg: str64,
-    pub encoding: str64,
+    #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+    pub struct LiberatoKeypair {
+        pub pk: LiberatoPublicKey,
+        pub sk: LiberatoSecretKey,
+    }
+
+    #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+    pub struct LiberatoPublicKey {
+        pub pk: SlugPublicKey,
+    }
+
+    #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+    pub struct LiberatoSecretKey {
+        pub sk: SlugSecretKey
+    }
+
+    #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+    pub struct LiberatoSignature {
+        pub signature: SlugSignature,
+    }
+
 }
 
 pub struct OintKeypair<'a> {
@@ -94,7 +110,7 @@ pub struct OintKeypair<'a> {
     pub encoding: str64,
     pub alg: str64,
 }
-
+/*
 impl<'a> OintGenerateKeypair<'a> for OintKeypair<'a> {
     fn generate<T: AsRef<str>>(cipher_suite: T) -> Result<OintKeypair<'a>,SlugErrors> {
         let x = cipher_suite.as_ref().to_ascii_uppercase();
@@ -385,6 +401,7 @@ impl<'a> OintGenerateKeypair<'a> for OintKeypair<'a> {
         }
     }
 }
+    */
 
 pub struct OintPublicKey<'a> {
     pub public_key: &'a str,

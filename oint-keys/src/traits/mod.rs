@@ -27,3 +27,11 @@ pub trait FromEncoding: Sized {
 pub trait OintKeysFromX59: Sized {
     fn from_x59<T: AsRef<str>>(x59_fmt: T, algorithm: T) -> Result<Self, SlugErrors>;
 }
+
+pub mod liberato_traits {
+    pub trait LiberatoKeypair: Sized {
+        fn generate() -> Self {
+            
+        }
+    }
+}
