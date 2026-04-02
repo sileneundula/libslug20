@@ -1,3 +1,9 @@
+pub mod traits;
+
+pub trait OintGenerateKeypair: Sized  {
+    fn generate() -> Self;
+}
+
 pub trait IsHybrid {
 
 }
