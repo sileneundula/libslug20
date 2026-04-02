@@ -5,5 +5,9 @@ edition = "2024"
 
 [dependencies]
 oint-keys-traits = {path = "../oint-keys-traits"}
+
+# /silene/libslug20: Cryptography Library
 libslug = {version="0.9.0"}
-fixedstr = {version="0.5.10", features=["serde"]}
+
+fixedstr = {version="0.5.10", features=["serde","pub-tstr"]}
+serde = { version="1.0.228", features=["derive"]}

@@ -38,7 +38,7 @@ use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signatur
 /// # SPHINCS: Public Key
 /// 
 /// Size of 64 bytes
-#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone)]
+#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, PartialEq, PartialOrd, Hash)]
 pub struct SPHINCSPublicKey {
     #[serde(with = "BigArray")]
     pk: [u8;64]
@@ -47,7 +47,7 @@ pub struct SPHINCSPublicKey {
 /// # SPHINCS: Secret Key
 /// 
 /// Size of 128 bytes
-#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone)]
+#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, PartialEq, PartialOrd, Hash)]
 pub struct SPHINCSSecretKey {
     #[serde(with = "BigArray")]
     sk: [u8;128]
@@ -56,7 +56,7 @@ pub struct SPHINCSSecretKey {
 /// # SPHINCS Signature
 /// 
 /// Size of 29_792 bytes
-#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone)]
+#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone, PartialEq, PartialOrd, Hash)]
 pub struct SPHINCSSignature {
     #[serde(with = "BigArray")]
     signature: [u8;29_792],

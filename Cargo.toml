@@ -4,7 +4,7 @@ members = ["oint-keys", "oint-keys-traits", "slug20-cli","x59pk-fmt", "app/openi
 
 [package]
 name = "libslug"
-version = "0.9.0"
+version = "0.9.1"
 edition = "2021"
 keywords = ["crypto","cryptography","encryption","digest","signature"]
 categories = ["cryptography"]

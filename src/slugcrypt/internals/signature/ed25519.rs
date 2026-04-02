@@ -65,7 +65,7 @@ use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signatur
 /// 32-byte Key in ED25519. It implements zeroize and serialization.
 /// 
 /// It is used to verify signatures.
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, Debug, PartialEq, PartialOrd, Hash)]
 pub struct ED25519PublicKey([u8;32]);
 
 /// # ED25519: Secret Key (Signing Key)
@@ -87,7 +87,7 @@ pub struct ED25519PublicKey([u8;32]);
 /// ## Signing
 /// 
 /// - Sign message or data
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, Debug, PartialEq, PartialOrd, Hash)]
 pub struct ED25519SecretKey([u8;32]);
 
 /// # ED25519: Signature
@@ -97,7 +97,7 @@ pub struct ED25519SecretKey([u8;32]);
 /// 64-byte signature in ED25519. It implements zeroize and serialization.
 /// 
 /// It is used to verify digital signatures.
-#[derive(Zeroize,ZeroizeOnDrop,Debug,Serialize,Deserialize, Clone, PartialEq, PartialOrd)]
+#[derive(Zeroize,ZeroizeOnDrop,Debug,Serialize,Deserialize, Clone, PartialEq, PartialOrd, Hash)]
 pub struct ED25519Signature(#[serde(with = "BigArray")][u8;64]);
 
 

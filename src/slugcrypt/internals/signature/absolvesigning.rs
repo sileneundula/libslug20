@@ -52,7 +52,7 @@ use crate::slugcrypt::traits::IntoPemX59;
 /// # AbsolveKeypair
 /// 
 /// ML-DSA3 + ED25519
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, PartialOrd, Zeroize, ZeroizeOnDrop)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, PartialOrd, Zeroize, ZeroizeOnDrop, Hash)]
 pub struct AbsolveKeypair {
     pub ed25519pk: ED25519PublicKey,
     pub mldsa3pk: MLDSA3PublicKey,
@@ -61,7 +61,7 @@ pub struct AbsolveKeypair {
     pub mldsa3sk: Option<MLDSA3SecretKey>, 
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, PartialOrd, Zeroize, ZeroizeOnDrop)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, PartialOrd, Zeroize, ZeroizeOnDrop, Hash)]
 pub struct AbsolveSignature {
     pub ed25519sig: ED25519Signature,
     pub mldsa3sig: MLDSA3Signature,

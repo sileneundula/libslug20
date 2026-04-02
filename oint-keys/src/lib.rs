@@ -8,11 +8,16 @@
 
 use oint_keys_traits::{IsOintPublicKey,IsOintSecretKey,IsOintSignature};
 
+/// Official Oint-Keys Key Types
 pub mod key;
 /// Official Oint-Keys Traits
 pub mod traits;
 
+/// Constants for Oint-Keys
 pub mod constants;
 
 /// Official Oint-Keys Encodings
 pub mod encodings;
+
+/// Official Oint-Keys Algorithms
+pub mod algorithms;

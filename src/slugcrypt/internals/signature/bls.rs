@@ -130,19 +130,19 @@ impl BLSPublicKey {
     */
 }
 */
-#[derive(Debug, Zeroize, ZeroizeOnDrop, Serialize, Deserialize, Clone, PartialEq, Hash)]
+#[derive(Debug, Zeroize, ZeroizeOnDrop, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Hash)]
 pub struct BLSSecretKey {
     #[serde(with = "BigArray")]
     sk: [u8; protocol_info::BLS_SK_SIZE],
 }
 
-#[derive(Debug, Zeroize, ZeroizeOnDrop, Serialize, Deserialize, Clone, PartialEq, Hash)]
+#[derive(Debug, Zeroize, ZeroizeOnDrop, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Hash)]
 pub struct BLSPublicKey {
     #[serde(with = "BigArray")]
     pk: [u8; protocol_info::BLS_PK_SIZE],
 }
 
-#[derive(Debug, Zeroize, ZeroizeOnDrop, Serialize, Deserialize, Clone, PartialEq, Hash)]
+#[derive(Debug, Zeroize, ZeroizeOnDrop, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Hash)]
 pub struct BLSSignature {
     #[serde(with = "BigArray")]
     signature: [u8; protocol_info::BLS_SIG_SIZE],

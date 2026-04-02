@@ -98,7 +98,7 @@ pub mod protocol_values {
 /// # ShulginKeypair
 /// 
 /// Contains an ED25519 Keypair and a SPHINCS+ Keypair
-#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop,PartialEq,PartialOrd,Hash)]
 pub struct ShulginKeypair {
     //=====Public-Keys=====//
     pub ed25519pk: ED25519PublicKey,
@@ -314,13 +314,13 @@ impl ShulginKeypair {
     }
 }
 
-#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop,PartialEq,PartialOrd,Hash)]
 pub struct ShulginSigningPublicKey {
     pub clpk: ED25519PublicKey,
     pub pqpk: SPHINCSPublicKey,
 }
 
-#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop,PartialEq,PartialOrd,Hash)]
 pub struct ShulginSigningSecretKey {
     pub clsk: ED25519SecretKey,
     pub pqpk: SPHINCSPublicKey,
@@ -328,7 +328,7 @@ pub struct ShulginSigningSecretKey {
 }
 
 /// # ShulginSigning Compact
-#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop, PartialEq, PartialOrd, Hash)]
 pub struct ShulginKeypairCompact {
     pub public_key: String,
     pub secret_key: Option<String>,
@@ -386,7 +386,7 @@ impl ShulginKeypairCompact {
     }
 }
 
-#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop, PartialEq, PartialOrd, Hash)]
 pub struct ShulginSignature {
     pub clsig: ED25519Signature,
     pub pqsig: SPHINCSSignature,
@@ -403,7 +403,7 @@ pub struct ShulginSignature {
 /// - [ ] VRF
 /// - [ ] OS_RANDOMNESS
 /// - [ ] ARGON2ID (Password-Derived Ephermal ShulginSigning 0x20CB/Silene style)
-#[derive(Clone, Serialize,Deserialize,PartialEq,PartialOrd,Eq,Ord)]
+#[derive(Clone, Serialize,Deserialize,PartialEq,PartialOrd,Eq,Ord, Debug)]
 pub struct ShulginSignatureSigningInfo {
     #[serde(skip_serializing_if = "Option::is_none")]
     message: Option<Vec<u8>>,
@@ -484,7 +484,7 @@ pub struct ShulginSignatureCompact {
 }
     */
 
-#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop,PartialEq,PartialOrd,Hash)]
 pub struct ShulginSignatureCompact {
     pub signature: String,
 }

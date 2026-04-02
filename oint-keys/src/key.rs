@@ -66,7 +66,25 @@ use crate::traits::{OintGenerateKeypair,OintVerify,OintSign};
 use crate::constants::*;
 use crate::encodings::OintKeyEncodings;
 
+type PublicKey = fixedstr::tstr<16_000>;
+type SecretKey = fixedstr::tstr<16_000>;
 
+pub struct LiberatoKeypair {
+    pub pk: LiberatoPublicKey,
+    pub sk: Lib
+}
+
+pub struct LiberatoPublicKey {
+    pub pk: ,
+    pub alg: str64,
+    pub encoding: str64,
+}
+
+pub struct LiberatoSecretKey {
+    pub sk: String,
+    pub alg: str64,
+    pub encoding: str64,
+}
 
 pub struct OintKeypair<'a> {
     pub pkh: OintPublicKey<'a>,

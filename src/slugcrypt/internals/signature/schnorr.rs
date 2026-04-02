@@ -28,33 +28,33 @@ pub const SLUGCRYPT_CONTEXT: &str = "SlugCrypt";
 /// # Schnorr: Public Key
 /// 
 /// The public key is 32-bytes in size.
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, Debug, PartialEq, PartialOrd, Hash)]
 pub struct SchnorrPublicKey([u8;32]);
 
 /// # Schnorr: Secret Key
 /// 
 /// The secret key is 64-bytes in size.
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, Debug, PartialEq, PartialOrd, Hash)]
 pub struct SchnorrSecretKey(#[serde(with = "BigArray")][u8;64]);
 
 /// # Schnorr: Signature
 /// 
 /// The signature is 64-bytes in size.
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, Debug, PartialEq, PartialOrd, Hash)]
 pub struct SchnorrSignature(#[serde(with = "BigArray")][u8;64]);
 
 /// # Schnorr: VRF Proof
 /// 
 /// Verifiable Random Function Proof
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, Debug, PartialEq, PartialOrd, Hash)]
 pub struct SchnorrVRFProof(#[serde(with = "BigArray")]pub [u8;64]);
 
 /// # Schnorr: IO
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Debug, Clone)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash)]
 pub struct SchnorrIO(pub [u8;32]);
 
 /// # Schnorr: Preout
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Debug, Clone)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash)]
 pub struct SchnorrPreout(pub [u8;32]);
 
 impl SchnorrIO {

@@ -55,26 +55,26 @@ pub mod protocol_info {
 
 }
 
-#[derive(Clone, PartialEq, PartialOrd, Debug, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Clone, PartialEq, PartialOrd, Debug, Serialize, Deserialize, Zeroize, ZeroizeOnDrop, Hash)]
 pub struct Ed448PublicKey {
     #[serde(with = "BigArray")]
     pub pk: [u8;57]
 }
 
-#[derive(Clone, PartialEq, PartialOrd, Debug, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Clone, PartialEq, PartialOrd, Debug, Serialize, Deserialize, Zeroize, ZeroizeOnDrop, Hash)]
 pub struct Ed448SecretKey {
     #[serde(with = "BigArray")]
     pub sk: [u8;57],
 }
 
-#[derive(Clone, PartialEq, PartialOrd, Debug, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Clone, PartialEq, PartialOrd, Debug, Serialize, Deserialize, Zeroize, ZeroizeOnDrop, Hash)]
 pub struct Ed448Signature {
     #[serde(with = "BigArray")]
     pub sig: [u8;114],
     pub context: Option<Vec<u8>>,
 }
 
-#[derive(Clone, PartialEq, PartialOrd, Debug, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Clone, PartialEq, PartialOrd, Debug, Serialize, Deserialize, Zeroize, ZeroizeOnDrop, Hash)]
 pub struct Ed448Keypair {
     pk: Ed448PublicKey,
     sk: Ed448SecretKey,
