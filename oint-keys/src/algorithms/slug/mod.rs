@@ -1,7 +1,7 @@
 use libslug::slugcrypt::internals::signature;
 use serde::{Serialize,Deserialize};
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash)]
 pub enum SlugPublicKey {
     /// ShulginSigning: A hybrid signature scheme combining classical and post-quantum algorithms.
     ShulginSigning(signature::shulginsigning::ShulginKeypair),

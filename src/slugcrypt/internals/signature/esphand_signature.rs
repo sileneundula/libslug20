@@ -79,7 +79,7 @@ pub mod protocol_values {
     pub const PROTOCOL_NAME_FOR_PEM_SIGNATURE: &str = "EsphandSignature-Signature";
 }
 
-#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop,PartialEq,PartialOrd,Hash)]
 pub struct EsphandKeypair {
     pub clpk: ED25519PublicKey,
     pub pqpk: Falcon1024PublicKey,
@@ -334,7 +334,7 @@ impl IntoPemSignature for EsphandSignature {
 }
 
 
-#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop)]
+#[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop,PartialEq,PartialOrd,Hash)]
 pub struct EsphandSignature {
     pub clsig: ED25519Signature,
     pub pqsig: Falcon1024Signature,

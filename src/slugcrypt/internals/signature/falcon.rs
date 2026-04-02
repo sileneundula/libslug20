@@ -51,7 +51,7 @@ use slugencode::{SlugEncodingUsage,SlugEncodings,errors::SlugEncodingError};
 /// ## Features
 /// 
 /// - Verification
-#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone)]
+#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone,PartialEq,PartialOrd,Hash)]
 pub struct Falcon1024PublicKey {
     #[serde(with = "BigArray")]
     pk: [u8; 1_793],
@@ -74,7 +74,7 @@ pub struct Falcon1024PublicKey {
 /// ## Features
 /// 
 /// - Signing
-#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone)]
+#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone,PartialEq,PartialOrd,Hash)]
 pub struct Falcon1024SecretKey {
     #[serde(with = "BigArray")]
     sk: [u8; 2_305],
@@ -97,7 +97,7 @@ pub struct Falcon1024SecretKey {
 /// ## Features
 /// 
 /// - Verification
-#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone)]
+#[derive(Debug,Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone,PartialEq,PartialOrd,Hash)]
 pub struct Falcon1024Signature {
     #[serde(with = "BigArray")]
     signature: [u8; 1_280],
