@@ -7,6 +7,8 @@
 ![Crates.io Total Downloads](https://img.shields.io/crates/d/libslug?style=flat-square)
 ![Crates.io Dependents](https://img.shields.io/crates/dependents/libslug?style=flat-square)
 
+![Libslug20 Logo](https://github.com/sileneundula/libslug20/)
+
 
 ## Description
 
@@ -20,7 +22,7 @@ It extends to include development of modern, decentralized PKI systems and modul
 
 - **Default Encryption:** ECIES Encryption over Curve25519 using AES-GCM
 - **Post-Quantum Encryption:** ML-KEM
-- **Signature Schemes:** ED25519, Schnorr over Ristretto (Curve25519), BLS12-381, ECDSA (secp256k1)
+- **Signature Schemes:** ED25519, Schnorr over Ristretto (Curve25519), BLS12-381, ECDSA (secp256k1), Ed448
 - **Post-Quantum Signature Schemes:** SPHINCS+ (SHAKE256) (Level 5), ML_DSA56 (Level 3), FALCON1024
 - **Hybrid Digital Signature Schemes:** EsphandSigning (FALCON1024 + ED25519), ShulginSigning (SPHINCS+ & ED25519), AbsolveSigning (ML-DSA3 + ED25519)
 - **Cert Format:** X59 Certificate Standard, PEM
@@ -29,6 +31,59 @@ It extends to include development of modern, decentralized PKI systems and modul
 - **Randomness Generation:** Supports Randomness Generation from the Operating System. Supports VRFs via Schnorr
 - **BIP39:** true, supported
 - **BIP32:** still in works
+
+## Table of Contents
+
+1. Symmetric Encryption
+2. Public Key Encryption
+3. Digital Signing
+4. Other
+
+### 1: Symmetric Encryption
+
+- [X] AES256-GCM
+- [X] XChaCha20-POLY1305
+- [ ] Morus
+
+### 2: Public Key Encryption
+
+- [X] ECIES over ED25519 using SHA3 + AES-GCM
+- [X] Kyber
+
+### 3: Digital Signatures
+
+#### 3.1 Hybrid Digital Signature Schemes
+
+- [X] ShulginSigning (SPHINCS+ (SHAKE256) + ED25519)
+- [X] EsphandSigning (Falcon1024 + ED25519)
+- [X] AbsolveSigning (MLDSA3 + ED25519)
+
+#### 3.2 Classical Signature Schemes
+
+- [X] EdDSA
+  - [X] Ed25519
+  - [X] Ed448
+- [X] ECDSA
+  - [X] Secp256k1
+- [X] Other
+  - [X] BLS12-381
+  - [X] Schnorr Over Ristretto
+
+#### 3.3 Post-Quantum Digital Signature Schemes
+
+- [X] SPHINCS+ (SHAKE256) (Level 5)
+- [X] FALCON1024
+- [X] MLDSA3 (Dilithium65)
+
+#### 4: Other
+
+- [X] BIP39
+- [ ] BIP32
+- [X] Schnorr VRF
+- [X] Cryptographic Randomness
+  - [X] SecureRand-rs
+  - [X] From_OS
+  - [X] Schnorr VRF
 
 ## Progress On Signatures
 
