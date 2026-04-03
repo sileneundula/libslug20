@@ -312,6 +312,14 @@ impl ShulginKeypair {
             return Err(SlugErrors::Other(String::from("Could Not Parse. Error In Parsing For ShulginSigning X59 Format.")))
         }
     }
+    pub fn into_public_key(&self) -> Self {
+        return Self {
+            ed25519pk: self.ed25519pk.clone(),
+            sphincspk: self.sphincspk.clone(),
+            ed25519sk: None,
+            sphincssk: None,
+        }
+    }
 }
 
 #[derive(Debug,Serialize,Deserialize,Clone,Zeroize,ZeroizeOnDrop,PartialEq,PartialOrd,Hash)]

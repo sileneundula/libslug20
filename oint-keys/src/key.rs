@@ -75,14 +75,60 @@ type SecretKey = fixedstr::tstr<16_000>;
 
 pub mod Liberato {
 
+    use libslug::slugcrypt::internals::signature::absolvesigning::AbsolveKeypair;
     use zeroize::{Zeroize,ZeroizeOnDrop};
     use serde::{Serialize,Deserialize};
     use crate::algorithms::slug::{SlugPublicKey,SlugSecretKey,SlugSignature};
+    use crate::algorithms::slug::Algorithms;
+    use crate::traits::liberato_traits::{LiberatoKeypairTrait,LiberatoPublicKeyTrait,LiberatoSecretKeyTrait,LiberatoX59Encoding};
+
 
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
     pub struct LiberatoKeypair {
         pub pk: LiberatoPublicKey,
         pub sk: LiberatoSecretKey,
+    }
+
+    impl LiberatoKeypairTrait for LiberatoKeypair {
+        fn generate(alg: crate::algorithms::slug::Algorithms) -> Result<Self,libslug::prelude::core::SlugErrors> {
+            match alg {
+                Algorithms::AbsolveSigning => {
+                    let x: AbsolveKeypair = AbsolveKeypair::generate();
+                    
+                    
+                }
+                Algorithms::BLS12_381 => {
+
+                }
+                Algorithms::ECDSA => {
+
+                }
+                Algorithms::ED25519 => {
+
+                }
+                Algorithms::ED448 => {
+
+                }
+                Algorithms::EsphandSigning => {
+
+                }
+                Algorithms::Falcon1024 => {
+
+                }
+                Algorithms::MLDSA3 => {
+
+                }
+                Algorithms::Schnorr => {
+
+                }
+                Algorithms::ShulginSigning => {
+
+                }
+                Algorithms::Sphincs => {
+
+                }
+            }
+        }
     }
 
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]

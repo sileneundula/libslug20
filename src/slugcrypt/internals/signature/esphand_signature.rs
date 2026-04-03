@@ -504,6 +504,14 @@ impl EsphandKeypair {
         })
 
     }
+    pub fn into_public_key(&self) -> Self {
+        return Self {
+            clpk: self.clpk.clone(),
+            pqpk: self.pqpk.clone(),
+            clsk: None,
+            pqsk: None,
+        }
+    }
 }
 
 impl IntoPem for EsphandKeypair {

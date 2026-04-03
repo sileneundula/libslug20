@@ -67,3 +67,18 @@ pub enum SlugSignature {
     FALCON1024(signature::falcon::Falcon1024Signature),
     MLDSA3(signature::ml_dsa::MLDSA3Signature),
 }
+
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
+pub enum Algorithms {
+    ShulginSigning,
+    EsphandSigning,
+    AbsolveSigning,
+    ED25519,
+    ED448,
+    ECDSA,
+    Schnorr,
+    BLS12_381,
+    Falcon1024,
+    Sphincs,
+    MLDSA3,
+}

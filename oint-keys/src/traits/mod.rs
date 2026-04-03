@@ -29,9 +29,26 @@ pub trait OintKeysFromX59: Sized {
 }
 
 pub mod liberato_traits {
-    pub trait LiberatoKeypair: Sized {
-        fn generate() -> Self {
-            
-        }
+    use libslug::errors::SlugErrors;
+    use crate::key::Liberato::{LiberatoKeypair,LiberatoPublicKey,LiberatoSecretKey,LiberatoSignature};
+    use crate::algorithms::slug::Algorithms;
+
+    pub trait LiberatoKeypairTrait: Sized {
+        fn generate(alg: Algorithms) -> Result<Self,SlugErrors>;
+    }
+
+    pub trait LiberatoSecretKeyTrait: Sized {
+        fn generate() -> Result<Self,SlugErrors>;
+        fn public_key(&self) -> Result<LiberatoPublicKey,SlugErrors>;
+        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<LiberatoSignature,SlugErrors>;
+    }
+
+    pub trait LiberatoPublicKeyTrait: Sized {
+        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: LiberatoSignature) -> Result<bool,SlugErrors>;
+    }
+
+    pub trait LiberatoX59Encoding: Sized {
+        fn into_encoding(&self) -> Result<String,SlugErrors>;
+        fn from_encoding<T: AsRef<str>>(encoding: T) -> Result<Self,SlugErrors>;
     }
 }

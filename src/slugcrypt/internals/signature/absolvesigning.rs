@@ -131,6 +131,14 @@ impl AbsolveKeypair {
             return Err(SlugErrors::VerifyingError(crate::errors::SlugErrorAlgorithms::SIG_ABSOLVESIGNING))
         }
     }
+    pub fn into_public_key(&self) -> Self {
+        Self {
+            ed25519pk: self.ed25519pk.clone(),
+            ed25519sk: None,
+            mldsa3pk: self.mldsa3pk.clone(),
+            mldsa3sk: None,
+        }
+    }
 }
 
 impl IntoX59PublicKey for AbsolveKeypair {
