@@ -7,7 +7,7 @@
 ![Crates.io Total Downloads](https://img.shields.io/crates/d/libslug?style=flat-square)
 ![Crates.io Dependents](https://img.shields.io/crates/dependents/libslug?style=flat-square)
 
-<img height="25%" width="25%" src="https://github.com/sileneundula/libslug20/blob/master/assets/logo/libslug20_logo_official.png">
+<img height="25%" width="25%" src="https://github.com/sileneundula/libslug20/blob/master/assets/logo/libslug20_logo.png">
 
 
 ## Description
