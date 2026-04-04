@@ -86,12 +86,15 @@ pub mod Liberato {
     use libslug::slugcrypt::internals::signature::schnorr::SchnorrSecretKey;
     use libslug::slugcrypt::internals::signature::shulginsigning::ShulginKeypair;
     use libslug::slugcrypt::internals::signature::sphincs_plus::SPHINCSSecretKey;
+    use libslug::slugcrypt::traits::IntoEncoding;
     use zeroize::{Zeroize,ZeroizeOnDrop};
     use serde::{Serialize,Deserialize};
     use crate::algorithms::slug::{SlugPublicKey,SlugSecretKey,SlugSignature};
     use crate::algorithms::slug::Algorithms;
     use crate::traits::liberato_traits::{LiberatoKeypairTrait, LiberatoPublicKeyTrait, LiberatoSecretKeyTrait, LiberatoVerification, LiberatoX59Encoding};
     use crate::traits::liberato_traits::LiberatoSigning;
+
+    use crate::traits::liberato_traits::{IntoEncodingPublicKey,IntoEncodingKeypair,IntoEncodingSecretKey,IntoEncodingSignature};
 
 
     pub const LIBERATO_KEYPAIR_CONTEXT: &str = "OintKeys-LiberatoKeypair-Context";
@@ -500,7 +503,6 @@ pub mod Liberato {
         }
     }
     }
-
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
     pub struct LiberatoPublicKey {
         pub pk: SlugPublicKey,
@@ -542,7 +544,319 @@ pub mod Liberato {
             return self.signature.clone();
         }
     }
+
+
+
+    impl IntoEncodingPublicKey for LiberatoPublicKey {
+        fn into_base32(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
+            match &self.pk {
+                SlugPublicKey::AbsolveSigning(pk) => {
+                    unimplemented!()
+                }
+                SlugPublicKey::BLS12_381(pk) => {
+                    let x = pk.to_base32()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ECDSA(pk) => {
+                    let x = pk.to_base32()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED25519(pk) => {
+                    let x = pk.to_base32()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED448(pk) => {
+                    let x = pk.to_base32()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::EsphandSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::FALCON1024(pk) => {
+                    let x = pk.to_base32()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::MLDSA3(pk) => {
+                    let x = pk.to_base32()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::SchnorrOverRistretto(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::ShulginSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::SPHINCS(pk) => {
+                    let x = pk.to_base32()?;
+
+                    return Ok(x)
+                }
+            }
+        }
+        fn into_base32up(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
+            match &self.pk {
+                SlugPublicKey::AbsolveSigning(pk) => {
+                    unimplemented!()
+                }
+                SlugPublicKey::BLS12_381(pk) => {
+                    let x = pk.to_base32_unpadded()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ECDSA(pk) => {
+                    let x = pk.to_base32_unpadded()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED25519(pk) => {
+                    let x = pk.to_base32_unpadded()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED448(pk) => {
+                    let x = pk.to_base32_unpadded()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::EsphandSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::FALCON1024(pk) => {
+                    let x = pk.to_base32_unpadded()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::MLDSA3(pk) => {
+                    let x = pk.to_base32_unpadded()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::SchnorrOverRistretto(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::ShulginSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::SPHINCS(pk) => {
+                    let x = pk.to_base32_unpadded()?;
+
+                    return Ok(x)
+                }
+        }
+    }
+        fn into_base58(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
+            match &self.pk {
+                SlugPublicKey::AbsolveSigning(pk) => {
+                    unimplemented!()
+                }
+                SlugPublicKey::BLS12_381(pk) => {
+                    let x = pk.to_base58()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ECDSA(pk) => {
+                    let x = pk.to_base58()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED25519(pk) => {
+                    let x = pk.to_base58()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED448(pk) => {
+                    let x = pk.to_base58()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::EsphandSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::FALCON1024(pk) => {
+                    let x = pk.to_base58()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::MLDSA3(pk) => {
+                    let x = pk.to_base58()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::SchnorrOverRistretto(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::ShulginSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::SPHINCS(pk) => {
+                    let x = pk.to_base58()?;
+
+                    return Ok(x)
+                }
+            }
+        }
+        fn into_base64(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
+            match &self.pk {
+                SlugPublicKey::AbsolveSigning(pk) => {
+                    unimplemented!()
+                }
+                SlugPublicKey::BLS12_381(pk) => {
+                    let x = pk.to_base64()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ECDSA(pk) => {
+                    let x = pk.to_base64()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED25519(pk) => {
+                    let x = pk.to_base64()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED448(pk) => {
+                    let x = pk.to_base64()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::EsphandSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::FALCON1024(pk) => {
+                    let x = pk.to_base64()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::MLDSA3(pk) => {
+                    let x = pk.to_base64()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::SchnorrOverRistretto(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::ShulginSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::SPHINCS(pk) => {
+                    let x = pk.to_base64()?;
+
+                    return Ok(x)
+                }
+            }
+    }
+        fn into_base64url(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
+            match &self.pk {
+                SlugPublicKey::AbsolveSigning(pk) => {
+                    unimplemented!()
+                }
+                SlugPublicKey::BLS12_381(pk) => {
+                    let x = pk.to_base64_url_safe()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ECDSA(pk) => {
+                    let x = pk.to_base64_url_safe()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED25519(pk) => {
+                    let x = pk.to_base64_url_safe()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED448(pk) => {
+                    let x = pk.to_base64_url_safe()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::EsphandSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::FALCON1024(pk) => {
+                    let x = pk.to_base64_url_safe()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::MLDSA3(pk) => {
+                    let x = pk.to_base64_url_safe()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::SchnorrOverRistretto(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::ShulginSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::SPHINCS(pk) => {
+                    let x = pk.to_base64_url_safe()?;
+
+                    return Ok(x)
+                }
+            }
+        }
+        fn into_hex(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
+            match &self.pk {
+                SlugPublicKey::AbsolveSigning(pk) => {
+                    unimplemented!()
+                }
+                SlugPublicKey::BLS12_381(pk) => {
+                    let x = pk.to_hex()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ECDSA(pk) => {
+                    let x = pk.to_hex()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED25519(pk) => {
+                    let x = pk.to_hexadecimal()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::ED448(pk) => {
+                    let x = pk.to_hex()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::EsphandSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::FALCON1024(pk) => {
+                    let x = pk.to_hex()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::MLDSA3(pk) => {
+                    let x = pk.to_hex()?;
+
+                    return Ok(x)
+                }
+                SlugPublicKey::SchnorrOverRistretto(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::ShulginSigning(pk) => {
+                    unimplemented!();
+                }
+                SlugPublicKey::SPHINCS(pk) => {
+                    let x = pk.to_hex()?;
+
+                    return Ok(x)
+                }
+            }
+        }
+    }
 }
+
 
 pub struct OintKeypair<'a> {
     pub pkh: OintPublicKey<'a>,

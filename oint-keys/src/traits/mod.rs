@@ -33,6 +33,42 @@ pub mod liberato_traits {
     use crate::key::Liberato::{LiberatoKeypair,LiberatoPublicKey,LiberatoSecretKey,LiberatoSignature};
     use crate::algorithms::slug::Algorithms;
 
+    pub trait IntoEncodingKeypair {
+        fn hex(&self) -> Result<String,SlugErrors>;
+        fn base32(&self) -> Result<String,SlugErrors>;
+        fn base32up(&self) -> Result<String,SlugErrors>;
+        fn base58(&self) -> Result<String,SlugErrors>;
+        fn base64(&self) -> Result<String,SlugErrors>;
+        fn base64url(&self) -> Result<String,SlugErrors>;
+    }
+
+    pub trait IntoEncodingSecretKey {
+        fn hex(&self) -> Result<&str,SlugErrors>;
+        fn base32(&self) -> Result<&str,SlugErrors>;
+        fn base32up(&self) -> Result<&str,SlugErrors>;
+        fn base58(&self) -> Result<&str,SlugErrors>;
+        fn base64(&self) -> Result<&str,SlugErrors>;
+        fn base64url(&self) -> Result<&str,SlugErrors>;
+    }
+
+    pub trait IntoEncodingPublicKey {
+        fn into_hex(&self) -> Result<String,SlugErrors>;
+        fn into_base32(&self) -> Result<String,SlugErrors>;
+        fn into_base32up(&self) -> Result<String,SlugErrors>;
+        fn into_base58(&self) -> Result<String,SlugErrors>;
+        fn into_base64(&self) -> Result<String,SlugErrors>;
+        fn into_base64url(&self) -> Result<String,SlugErrors>;
+    }
+
+    pub trait IntoEncodingSignature {
+        fn hex(&self) -> Result<&str,SlugErrors>;
+        fn base32(&self) -> Result<&str,SlugErrors>;
+        fn base32up(&self) -> Result<&str,SlugErrors>;
+        fn base58(&self) -> Result<&str,SlugErrors>;
+        fn base64(&self) -> Result<&str,SlugErrors>;
+        fn base64url(&self) -> Result<&str,SlugErrors>;
+    }
+
     pub trait LiberatoKeypairTrait: Sized {
         /// # Generate Keypair
         /// 

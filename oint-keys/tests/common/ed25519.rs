@@ -15,6 +15,8 @@
 //!     - [X] Verifying With Right Message and Wrong Context (panic/pass) (0x08)
 //!     - [X] Verifying With Right Message and No Context After Context Has Been Provided (0x09)
 //!     - [X] Verifying With Right Message And Signing No Context But Providing Context (0x0A)
+//!     - [X] Signatures
+//!         - [X] Wrong Signature (0x0B)
 
 use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{LiberatoKeypairTrait, LiberatoSigning, LiberatoVerification}, *}};
 
@@ -160,6 +162,24 @@ fn _0x0A_ed25519_right_message_with_no_context_after_signing_with_no_context_and
     let sig = keypair.sign(msg, None).unwrap();
 
     let is_valid = keypair.pk.verify(msg, Some(context), sig.as_ref()).unwrap();
+
+    assert_eq!(is_valid,true);
+}
+
+#[test]
+#[should_panic]
+fn _0x0B_ed25519_wrong_signature() {
+    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+
+    let msg = "Example Message";
+    let msg_wrong = "Other Message";
+    let context = "Example Context";
+    let context_wrong = "Other Context";
+
+    let sig = keypair.sign(msg, None).unwrap();
+    let sig2 = keypair.sign(msg_wrong, None).unwrap();
+
+    let is_valid = keypair.pk.verify(msg, None, sig2.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
