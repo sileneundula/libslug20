@@ -233,7 +233,7 @@ pub mod Liberato {
     }
 
     impl LiberatoSigning for LiberatoKeypair {
-        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<LiberatoSignature,libslug::prelude::core::SlugErrors> {
+        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<LiberatoSignature>,libslug::prelude::core::SlugErrors> {
             match &self.sk.sk {
                 SlugSecretKey::AbsolveSigning(sk) => {
 
@@ -330,7 +330,7 @@ pub mod Liberato {
     }
 }
     impl LiberatoVerification for LiberatoPublicKey {
-        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, sig: LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
+        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, sig: &LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
             let signature: SlugSignature = sig.as_slug_signature();
             
             match &self.pk {
@@ -533,10 +533,10 @@ pub mod Liberato {
     }
 
     impl LiberatoSignature {
-        pub fn from_signature(alg: SlugSignature) -> Self {
-            return Self {
+        pub fn from_signature(alg: SlugSignature) -> Box<Self> {
+            return Box::new(Self {
                 signature: alg,
-            }
+            })
         }
         pub fn as_slug_signature(&self) -> SlugSignature {
             return self.signature.clone();

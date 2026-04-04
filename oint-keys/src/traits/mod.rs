@@ -34,6 +34,33 @@ pub mod liberato_traits {
     use crate::algorithms::slug::Algorithms;
 
     pub trait LiberatoKeypairTrait: Sized {
+        /// # Generate Keypair
+        /// 
+        /// This trait generates the required keypairs.
+        /// 
+        /// ## Algorithms
+        /// 
+        /// ### Hybrid Algorithms
+        /// 
+        /// - [X] ShulginSigning
+        /// - [X] EsphandSigning
+        /// - [X] AbsolveSigning
+        /// 
+        /// ### Classical
+        /// 
+        /// - [X] EdDSA
+        ///     - [X] ED25519
+        ///     - [X] ED448
+        /// - [X] ECDSA
+        ///     - [X] Secp256k1
+        /// - [X] Schnorr Over Ristretto
+        /// - [X] BLS12-381
+        /// 
+        /// ### Post-Quantum
+        /// 
+        /// - [X] FALCON1024
+        /// - [X] SPHINCS+ (SHAKE256) (Level 5)
+        /// - [X] ML-DSA3 (Dilithium65)
         fn generate(alg: Algorithms) -> Result<Self,SlugErrors>;
     }
 
@@ -44,11 +71,18 @@ pub mod liberato_traits {
     }
 
     pub trait LiberatoSigning: Sized {
-        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<LiberatoSignature,SlugErrors>;
+        /// # Signing
+        /// 
+        /// Signs a message as a byte slice generic and with an optional context.
+        /// 
+        /// ## TODO:
+        /// 
+        /// - Check Context options
+        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<LiberatoSignature>,SlugErrors>;
     }
 
     pub trait LiberatoVerification: Sized {
-        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: LiberatoSignature) -> Result<bool,SlugErrors>;
+        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: &LiberatoSignature) -> Result<bool,SlugErrors>;
     }
 
     pub trait LiberatoPublicKeyTrait: Sized {

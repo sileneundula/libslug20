@@ -21,3 +21,5 @@ pub mod encodings;
 
 /// Official Oint-Keys Algorithms
 pub mod algorithms;
+
+pub mod prelude;
