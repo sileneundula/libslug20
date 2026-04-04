@@ -42,15 +42,21 @@ pub mod liberato_traits {
         fn base64url(&self) -> Result<String,SlugErrors>;
     }
 
+    /// # IntoEncodingSecretKey
+    /// 
+    /// This trait provides methods to encode a secret key into various formats.
     pub trait IntoEncodingSecretKey {
-        fn hex(&self) -> Result<&str,SlugErrors>;
-        fn base32(&self) -> Result<&str,SlugErrors>;
-        fn base32up(&self) -> Result<&str,SlugErrors>;
-        fn base58(&self) -> Result<&str,SlugErrors>;
-        fn base64(&self) -> Result<&str,SlugErrors>;
-        fn base64url(&self) -> Result<&str,SlugErrors>;
+        fn into_hex(&self) -> Result<String,SlugErrors>;
+        fn into_base32(&self) -> Result<String,SlugErrors>;
+        fn into_base32up(&self) -> Result<String,SlugErrors>;
+        fn into_base58(&self) -> Result<String,SlugErrors>;
+        fn into_base64(&self) -> Result<String,SlugErrors>;
+        fn into_base64url(&self) -> Result<String,SlugErrors>;
     }
 
+    /// # Into Encoding Public Key
+    /// 
+    /// This trait provides methods to encode the public key into various formats.
     pub trait IntoEncodingPublicKey {
         fn into_hex(&self) -> Result<String,SlugErrors>;
         fn into_base32(&self) -> Result<String,SlugErrors>;
@@ -61,12 +67,12 @@ pub mod liberato_traits {
     }
 
     pub trait IntoEncodingSignature {
-        fn hex(&self) -> Result<&str,SlugErrors>;
-        fn base32(&self) -> Result<&str,SlugErrors>;
-        fn base32up(&self) -> Result<&str,SlugErrors>;
-        fn base58(&self) -> Result<&str,SlugErrors>;
-        fn base64(&self) -> Result<&str,SlugErrors>;
-        fn base64url(&self) -> Result<&str,SlugErrors>;
+        fn into_hex(&self) -> Result<String,SlugErrors>;
+        fn into_base32(&self) -> Result<String,SlugErrors>;
+        fn into_base32up(&self) -> Result<String,SlugErrors>;
+        fn into_base58(&self) -> Result<String,SlugErrors>;
+        fn into_base64(&self) -> Result<String,SlugErrors>;
+        fn into_base64url(&self) -> Result<String,SlugErrors>;
     }
 
     pub trait LiberatoKeypairTrait: Sized {
