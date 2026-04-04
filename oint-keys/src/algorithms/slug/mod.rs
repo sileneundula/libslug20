@@ -68,6 +68,23 @@ pub enum SlugSignature {
     MLDSA3(signature::ml_dsa::MLDSA3Signature),
 }
 
+impl SlugSignature {
+    pub fn as_alg(&self) -> Algorithms {
+        match self {
+            Self::ShulginSigning(_) => return Algorithms::ShulginSigning,
+            Self::EsphandSigning(_) => return Algorithms::EsphandSigning,
+            Self::AbsolveSigning(_) => return Algorithms::AbsolveSigning,
+            Self::ED25519(_) => return Algorithms::ED25519,
+            Self::ED448(_) => return Algorithms::ED448,
+            Self::ECDSA(_) => return Algorithms::ECDSA,
+            Self::BLS12_381(_) => return Algorithms::BLS12_381,
+            Self::SchnorrOverRistretto(_) => return Algorithms::Schnorr,
+            Self::SPHINCS(_) => return Algorithms::Sphincs,
+            Self::FALCON1024(_) => return Algorithms::Falcon1024,
+            Self::MLDSA3(_) => return Algorithms::MLDSA3,
+        }
+    }
+}
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Algorithms {
     ShulginSigning,

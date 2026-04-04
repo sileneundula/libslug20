@@ -43,6 +43,14 @@ pub mod liberato_traits {
         fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<LiberatoSignature,SlugErrors>;
     }
 
+    pub trait LiberatoSigning: Sized {
+        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<LiberatoSignature,SlugErrors>;
+    }
+
+    pub trait LiberatoVerification: Sized {
+        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: LiberatoSignature) -> Result<bool,SlugErrors>;
+    }
+
     pub trait LiberatoPublicKeyTrait: Sized {
         fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: LiberatoSignature) -> Result<bool,SlugErrors>;
     }

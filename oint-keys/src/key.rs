@@ -76,12 +76,25 @@ type SecretKey = fixedstr::tstr<16_000>;
 pub mod Liberato {
 
     use libslug::slugcrypt::internals::signature::absolvesigning::AbsolveKeypair;
+    use libslug::slugcrypt::internals::signature::bls::{BLSSecretKey, SlugBLS};
+    use libslug::slugcrypt::internals::signature::ecdsa::ECDSASecretKey;
+    use libslug::slugcrypt::internals::signature::ed448::Ed448SecretKey;
+    use libslug::slugcrypt::internals::signature::ed25519::ED25519SecretKey;
+    use libslug::slugcrypt::internals::signature::esphand_signature::EsphandKeypair;
+    use libslug::slugcrypt::internals::signature::falcon::SlugFalcon1024;
+    use libslug::slugcrypt::internals::signature::ml_dsa::{MLDSA3Keypair, SlugMLDSA3};
+    use libslug::slugcrypt::internals::signature::schnorr::SchnorrSecretKey;
+    use libslug::slugcrypt::internals::signature::shulginsigning::ShulginKeypair;
+    use libslug::slugcrypt::internals::signature::sphincs_plus::SPHINCSSecretKey;
     use zeroize::{Zeroize,ZeroizeOnDrop};
     use serde::{Serialize,Deserialize};
     use crate::algorithms::slug::{SlugPublicKey,SlugSecretKey,SlugSignature};
     use crate::algorithms::slug::Algorithms;
-    use crate::traits::liberato_traits::{LiberatoKeypairTrait,LiberatoPublicKeyTrait,LiberatoSecretKeyTrait,LiberatoX59Encoding};
+    use crate::traits::liberato_traits::{LiberatoKeypairTrait, LiberatoPublicKeyTrait, LiberatoSecretKeyTrait, LiberatoVerification, LiberatoX59Encoding};
+    use crate::traits::liberato_traits::LiberatoSigning;
 
+
+    pub const LIBERATO_KEYPAIR_CONTEXT: &str = "OintKeys-LiberatoKeypair-Context";
 
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
     pub struct LiberatoKeypair {
@@ -93,41 +106,390 @@ pub mod Liberato {
         fn generate(alg: crate::algorithms::slug::Algorithms) -> Result<Self,libslug::prelude::core::SlugErrors> {
             match alg {
                 Algorithms::AbsolveSigning => {
-                    let x: AbsolveKeypair = AbsolveKeypair::generate();
+                    let secret_key: AbsolveKeypair = AbsolveKeypair::generate();
+                    
+                    let pk: AbsolveKeypair = secret_key.into_public_key();
+
+                    return Ok(Self {
+                        pk: LiberatoPublicKey { pk: SlugPublicKey::AbsolveSigning(pk) },
+                        sk: LiberatoSecretKey { sk: SlugSecretKey::AbsolveSigning(secret_key) }
+                    })
                     
                 }
                 Algorithms::BLS12_381 => {
+                    let (pk, sk) = SlugBLS::generate();
 
+                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::BLS12_381(pk));
+                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::BLS12_381(sk));
+
+                    return Ok(Self {
+                        pk: pk_output,
+                        sk: sk_output,
+                    })
                 }
                 Algorithms::ECDSA => {
+                    let sk: ECDSASecretKey = ECDSASecretKey::generate();
+                    let pk: libslug::slugcrypt::internals::signature::ecdsa::ECDSAPublicKey = sk.public_key()?;
 
+                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::ECDSA(pk));
+                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::ECDSA(sk));
+
+                    return Ok(Self {
+                        pk: pk_output,
+                        sk: sk_output,
+                    })
                 }
                 Algorithms::ED25519 => {
+                    let sk: ED25519SecretKey = ED25519SecretKey::generate();
+                    let pk: libslug::slugcrypt::internals::signature::ed25519::ED25519PublicKey = sk.public_key()?;
 
+                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::ED25519(pk));
+                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::ED25519(sk));
+
+                    return Ok(Self {
+                        pk: pk_output,
+                        sk: sk_output,
+                    })
                 }
                 Algorithms::ED448 => {
+                    let sk: Ed448SecretKey = Ed448SecretKey::generate();
+                    let pk: libslug::slugcrypt::internals::signature::ed448::Ed448PublicKey = sk.into_public_key();
 
+                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::ED448(pk));
+                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::ED448(sk));
+
+                    return Ok(Self {
+                        pk: pk_output,
+                        sk: sk_output,
+                    })
                 }
                 Algorithms::EsphandSigning => {
+                    let secret_key = EsphandKeypair::generate();
+                    let pk = secret_key.into_public_key();
 
+                    return Ok(Self {
+                        pk: LiberatoPublicKey { pk: SlugPublicKey::EsphandSigning(pk) },
+                        sk: LiberatoSecretKey { sk: SlugSecretKey::EsphandSigning(secret_key) }
+                    })
                 }
                 Algorithms::Falcon1024 => {
+                    let (pk,sk) = SlugFalcon1024::generate();
 
+                    let pk_output = LiberatoPublicKey::from_public_key(SlugPublicKey::FALCON1024(pk.clone()));
+                    let sk_output = LiberatoSecretKey::from_secret_key(SlugSecretKey::FALCON1024((sk,pk.clone())));
+
+                    return Ok(Self {
+                        pk: pk_output,
+                        sk: sk_output,
+                    })
                 }
                 Algorithms::MLDSA3 => {
+                    let mldsa3: MLDSA3Keypair = SlugMLDSA3::generate();
+                    let mldsa3_pk: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3PublicKey = mldsa3.public_key().clone();
+                    let mldsa3_sk: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3SecretKey  = mldsa3.secret_key().clone();
 
+                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::MLDSA3(mldsa3_pk.clone()));
+                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::MLDSA3((mldsa3_sk, mldsa3_pk.clone())));
+
+                    return Ok(Self {
+                        pk: pk_output,
+                        sk: sk_output,
+                    })
                 }
                 Algorithms::Schnorr => {
+                    let sk: SchnorrSecretKey = SchnorrSecretKey::generate();
+                    let pk: libslug::slugcrypt::internals::signature::schnorr::SchnorrPublicKey = sk.public_key().expect("Failed During Generation of Schnorr Public Key");
 
+                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::SchnorrOverRistretto(pk));
+                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::SchnorrOverRistretto(sk));
+
+                    return Ok(Self {
+                        pk: pk_output,
+                        sk: sk_output,
+                    })
                 }
                 Algorithms::ShulginSigning => {
+                    let secret_key = ShulginKeypair::generate();
+                    let pk = secret_key.into_public_key();
 
+                    return Ok(Self {
+                        pk: LiberatoPublicKey { pk: SlugPublicKey::ShulginSigning(pk) },
+                        sk: LiberatoSecretKey { sk: SlugSecretKey::ShulginSigning(secret_key) }
+                    })
                 }
                 Algorithms::Sphincs => {
+                    let (pk,sk) = SPHINCSSecretKey::generate();
+                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::SPHINCS(pk.clone()));
+                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::SPHINCS((sk,pk.clone())));
+
+                    return Ok(Self {
+                        pk: pk_output,
+                        sk: sk_output,
+                    })
 
                 }
             }
         }
+    }
+
+    impl LiberatoSigning for LiberatoKeypair {
+        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<LiberatoSignature,libslug::prelude::core::SlugErrors> {
+            match &self.sk.sk {
+                SlugSecretKey::AbsolveSigning(sk) => {
+
+                    if context.is_none() {
+                        let x = sk.sign(msg.as_ref())?;
+                        return Ok(LiberatoSignature::from_signature(SlugSignature::AbsolveSigning(x)))
+                    }
+                    let signature = sk.sign_with_context(msg.as_ref(), context.unwrap().as_ref())?;
+
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::AbsolveSigning(signature)))
+                }
+                SlugSecretKey::BLS12_381(sk) => {
+                    unimplemented!();
+                }
+                SlugSecretKey::ECDSA(sk) => {
+                    let signature: (libslug::slugcrypt::internals::signature::ecdsa::ECDSASignature, libslug::slugcrypt::internals::signature::ecdsa::ECDSASignatureRecoveryID) = sk.sign(msg.as_ref())?;
+
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::ECDSA(signature.0)))
+                }
+                SlugSecretKey::ED25519(sk) => {
+                    let signature: libslug::slugcrypt::internals::signature::ed25519::ED25519Signature = sk.sign(msg.as_ref())?;
+
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::ED25519(signature)))
+                }
+                SlugSecretKey::ED448(sk) => {
+                    let signature: libslug::slugcrypt::internals::signature::ed448::Ed448Signature = sk.sign(msg.as_ref())?;
+
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::ED448(signature)))
+                }
+                SlugSecretKey::EsphandSigning(sk) => {
+                    let signature = sk.sign(msg.as_ref())?;
+
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::EsphandSigning(signature)))
+                }
+                SlugSecretKey::FALCON1024((sk, _)) => {
+                    let signature = sk.sign(msg.as_ref());
+
+                    if signature.is_err() {
+                        return Err(libslug::errors::SlugErrors::SigningFailure(libslug::errors::SlugErrorAlgorithms::SIG_FALCON))
+                    }
+                    else {
+                        let signature = signature.unwrap();
+                        return Ok(LiberatoSignature::from_signature(SlugSignature::FALCON1024(signature)))
+                    }
+                }
+                SlugSecretKey::MLDSA3((sk, _)) => {
+                    if context.is_none() {
+                        let signature: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3Signature = sk.sign(msg.as_ref(), LIBERATO_KEYPAIR_CONTEXT.as_bytes())?;
+
+                        return Ok(LiberatoSignature::from_signature(SlugSignature::MLDSA3(signature)))
+                    }
+                    else {
+                        let signature: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3Signature = sk.sign(msg.as_ref(), context.unwrap().as_ref())?;
+                        
+                        return Ok(LiberatoSignature::from_signature(SlugSignature::MLDSA3(signature)))
+                    }
+
+                }
+                SlugSecretKey::SchnorrOverRistretto(sk) => {
+                    if context.is_some() {
+                        let signature = sk.sign_with_context(msg.as_ref(), context.unwrap().as_ref());
+
+                        if signature.is_err() {
+                            return Err(libslug::errors::SlugErrors::SigningFailure(libslug::errors::SlugErrorAlgorithms::SIG_SCHNORR))
+                        }
+                        else {
+                            let signature = signature.unwrap();
+                            return Ok(LiberatoSignature::from_signature(SlugSignature::SchnorrOverRistretto(signature)))
+                        }
+                    }
+                    else {
+                        let signature = sk.sign_with_context(msg.as_ref(),LIBERATO_KEYPAIR_CONTEXT.as_bytes());
+
+                        if signature.is_err() {
+                            return Err(libslug::errors::SlugErrors::SigningFailure(libslug::errors::SlugErrorAlgorithms::SIG_SCHNORR))
+                        }
+                        else {
+                            let signature = signature.unwrap();
+                            return Ok(LiberatoSignature::from_signature(SlugSignature::SchnorrOverRistretto(signature)))
+                        }
+                    }
+                }
+                SlugSecretKey::ShulginSigning(sk) => {
+                    let signature: libslug::slugcrypt::internals::signature::shulginsigning::ShulginSignature = sk.sign(msg.as_ref())?;
+
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::ShulginSigning(signature)))
+                }
+                SlugSecretKey::SPHINCS(sk) => {
+                    let signature: libslug::slugcrypt::internals::signature::sphincs_plus::SPHINCSSignature = sk.0.sign(msg.as_ref())?;
+                    
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::SPHINCS(signature)))
+                }
+        }
+    }
+}
+    impl LiberatoVerification for LiberatoPublicKey {
+        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, sig: LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
+            let signature: SlugSignature = sig.as_slug_signature();
+            
+            match &self.pk {
+                SlugPublicKey::AbsolveSigning(pk) => {
+                    if let SlugSignature::AbsolveSigning(signature) = sig.signature {
+                        if context.is_none() {
+                            let verify = pk.verify(msg.as_ref(), signature)?;
+
+                            return Ok(verify)
+                        }
+                        else {
+                            let verify = pk.verify(msg.as_ref(), signature)?;
+
+                            return Ok(verify)
+                        }
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_ABSOLVESIGNING))
+                    }
+                }
+                SlugPublicKey::BLS12_381(pk) => {
+                    if let SlugSignature::BLS12_381(signature) = sig.signature {
+                        let verify = pk.verify(msg.as_ref(), &signature)?;
+
+                        return Ok(verify)
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_BLS))
+                    }
+                }
+                SlugPublicKey::ECDSA(pk) => {
+                    if let SlugSignature::ECDSA(signature) = sig.signature {
+                        let verify = pk.verify(msg.as_ref(), signature)?;
+
+                        return Ok(verify)
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_ECDSA))
+                    }
+
+                    return Ok(verify)
+                }
+                SlugPublicKey::ED25519(pk) => {
+                    if let SlugSignature::ED25519(signature) = sig.signature {
+                        let verify = pk.verify(signature,msg.as_ref())?;
+
+                        return Ok(verify)
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_ED25519))
+                    }
+                }
+                SlugPublicKey::ED448(pk) => {
+                    if let SlugSignature::ED448(signature) = sig.signature {
+                        let verify = pk.verify(msg.as_ref(),signature)?;
+
+                        return Ok(verify)
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_ED448))
+                    }
+                }
+                SlugPublicKey::EsphandSigning(pk) => {
+                    if let SlugSignature::EsphandSigning(signature) = sig.signature {
+                        let verify = pk.verify(msg.as_ref(), &signature)?;
+
+                        return Ok(verify)
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_ESPHAND))
+                    }
+                }
+                SlugPublicKey::FALCON1024(pk) => {
+                    if let SlugSignature::FALCON1024(signature) = sig.signature {
+                        let verify = pk.verify(msg.as_ref(), &signature)?;
+
+                        return Ok(verify)
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_FALCON))
+                    }
+                }
+                SlugPublicKey::MLDSA3(pk) => {
+                    if context.is_none() {
+                        if let SlugSignature::MLDSA3(signature) = sig.signature {
+                            let verify = pk.verify(msg.as_ref(), LIBERATO_KEYPAIR_CONTEXT.as_bytes(), &signature)?;
+
+                            return Ok(verify)
+                        }
+                        else {
+                            return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_MLDSA3))
+                        }
+                    }
+                    else {
+                        if let SlugSignature::MLDSA3(signature) = sig.signature {
+                            let verify = pk.verify(msg.as_ref(), context.unwrap().as_ref(), &signature)?;
+
+                            return Ok(verify)
+                        }
+                        else {
+                            return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_MLDSA3))
+                        }
+                    }
+
+                }
+                SlugPublicKey::SchnorrOverRistretto(pk) => {
+                    if context.is_none() {
+                        if let SlugSignature::SchnorrOverRistretto(signature) = sig.signature {
+                            let verify = pk.verify_with_context(msg.as_ref(), LIBERATO_KEYPAIR_CONTEXT.as_bytes(), signature)?;
+
+                            if verify.is_ok() {
+                                return Ok(true)
+                            }
+                            else {
+                                return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_SCHNORR))
+                            }
+                        }
+                        else {
+                            return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_SCHNORR))
+                        }
+                    }
+                    else {
+                        if let SlugSignature::SchnorrOverRistretto(signature) = sig.signature {
+                            let verify = pk.verify_with_context(msg.as_ref(), context.unwrap().as_ref(), signature)?;
+
+                            if verify.is_ok() {
+                                return Ok(true)
+                            }
+                            else {
+                                return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_SCHNORR))
+                            }
+                        }
+                        else {
+                            return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_SCHNORR))
+                        }
+                    }
+                }
+                SlugPublicKey::ShulginSigning(pk) => {
+                    if let SlugSignature::ShulginSigning(signature) = sig.signature {
+                        let verify = pk.verify(msg.as_ref(), &signature)?;
+
+                        return Ok(verify)
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_SHULGINSIGNING))
+                    }
+                }
+                SlugPublicKey::SPHINCS(pk) => {
+                    if let SlugSignature::SPHINCS(signature) = sig.signature {
+                        let verify: bool = pk.verify(msg.as_ref(), signature)?;
+
+                        return Ok(verify)
+                    }
+                    else {
+                        return Err(libslug::errors::SlugErrors::VerifyingError(libslug::errors::SlugErrorAlgorithms::SIG_SPHINCS_PLUS))
+                    }
+            }
+        }
+    }
     }
 
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
@@ -135,9 +497,25 @@ pub mod Liberato {
         pub pk: SlugPublicKey,
     }
 
+    impl LiberatoPublicKey {
+        pub fn from_public_key(alg: SlugPublicKey) -> Self {
+            return Self {
+                pk: alg,
+            }
+        }
+    }
+
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
     pub struct LiberatoSecretKey {
         pub sk: SlugSecretKey
+    }
+
+    impl LiberatoSecretKey {
+        pub fn from_secret_key(alg: SlugSecretKey) -> Self {
+            return Self {
+                sk: alg,
+            }
+        }
     }
 
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
@@ -145,6 +523,16 @@ pub mod Liberato {
         pub signature: SlugSignature,
     }
 
+    impl LiberatoSignature {
+        pub fn from_signature(alg: SlugSignature) -> Self {
+            return Self {
+                signature: alg,
+            }
+        }
+        pub fn as_slug_signature(&self) -> SlugSignature {
+            return self.signature.clone();
+        }
+    }
 }
 
 pub struct OintKeypair<'a> {
