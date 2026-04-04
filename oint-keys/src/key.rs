@@ -95,7 +95,6 @@ pub mod Liberato {
                 Algorithms::AbsolveSigning => {
                     let x: AbsolveKeypair = AbsolveKeypair::generate();
                     
-                    
                 }
                 Algorithms::BLS12_381 => {
 
