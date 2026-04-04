@@ -352,7 +352,7 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::BLS12_381(pk) => {
-                    if let SlugSignature::BLS12_381(signature) = sig.signature {
+                    if let SlugSignature::BLS12_381(signature) = &sig.signature {
                         let verify = pk.verify(msg.as_ref(), &signature)?;
 
                         return Ok(verify)
@@ -362,8 +362,8 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::ECDSA(pk) => {
-                    if let SlugSignature::ECDSA(signature) = sig.signature {
-                        let verify = pk.verify(msg.as_ref(), signature)?;
+                    if let SlugSignature::ECDSA(signature) = &sig.signature {
+                        let verify = pk.verify(msg.as_ref(), signature.clone())?;
 
                         return Ok(verify)
                     }
@@ -372,8 +372,8 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::ED25519(pk) => {
-                    if let SlugSignature::ED25519(signature) = sig.signature {
-                        let verify = pk.verify(signature,msg.as_ref())?;
+                    if let SlugSignature::ED25519(signature) = &sig.signature {
+                        let verify = pk.verify(signature.clone(),msg.as_ref())?;
 
                         return Ok(verify)
                     }
@@ -382,8 +382,8 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::ED448(pk) => {
-                    if let SlugSignature::ED448(signature) = sig.signature {
-                        let verify = pk.verify(msg.as_ref(),signature)?;
+                    if let SlugSignature::ED448(signature) = &sig.signature {
+                        let verify = pk.verify(msg.as_ref(),signature.clone())?;
 
                         return Ok(verify)
                     }
@@ -392,7 +392,7 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::EsphandSigning(pk) => {
-                    if let SlugSignature::EsphandSigning(signature) = sig.signature {
+                    if let SlugSignature::EsphandSigning(signature) = &sig.signature {
                         let verify = pk.verify(msg.as_ref(), &signature)?;
 
                         return Ok(verify)
@@ -403,7 +403,7 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::FALCON1024(pk) => {
-                    if let SlugSignature::FALCON1024(signature) = sig.signature {
+                    if let SlugSignature::FALCON1024(signature) = &sig.signature {
                         let verify = pk.verify(msg.as_ref(), &signature);
 
                         if verify.is_ok() {
@@ -419,7 +419,7 @@ pub mod Liberato {
                 }
                 SlugPublicKey::MLDSA3(pk) => {
                     if context.is_none() {
-                        if let SlugSignature::MLDSA3(signature) = sig.signature {
+                        if let SlugSignature::MLDSA3(signature) = &sig.signature {
                             let verify = pk.verify(msg.as_ref(), LIBERATO_KEYPAIR_CONTEXT.as_bytes(), &signature)?;
 
                             return Ok(verify)
@@ -429,7 +429,7 @@ pub mod Liberato {
                         }
                     }
                     else {
-                        if let SlugSignature::MLDSA3(signature) = sig.signature {
+                        if let SlugSignature::MLDSA3(signature) = &sig.signature {
                             let verify = pk.verify(msg.as_ref(), context.unwrap().as_ref(), &signature)?;
 
                             return Ok(verify)
@@ -442,8 +442,8 @@ pub mod Liberato {
                 }
                 SlugPublicKey::SchnorrOverRistretto(pk) => {
                     if context.is_none() {
-                        if let SlugSignature::SchnorrOverRistretto(signature) = sig.signature {
-                            let verify = pk.verify_with_context(msg.as_ref(), LIBERATO_KEYPAIR_CONTEXT.as_bytes(), signature);
+                        if let SlugSignature::SchnorrOverRistretto(signature) = &sig.signature {
+                            let verify = pk.verify_with_context(msg.as_ref(), LIBERATO_KEYPAIR_CONTEXT.as_bytes(), signature.clone());
 
                             if verify.is_ok() {
                                 return Ok(true)
@@ -457,8 +457,8 @@ pub mod Liberato {
                         }
                     }
                     else {
-                        if let SlugSignature::SchnorrOverRistretto(signature) = sig.signature {
-                            let verify = pk.verify_with_context(msg.as_ref(), context.unwrap().as_ref(), signature);
+                        if let SlugSignature::SchnorrOverRistretto(signature) = &sig.signature {
+                            let verify = pk.verify_with_context(msg.as_ref(), context.unwrap().as_ref(), signature.clone());
 
                             if verify.is_ok() {
                                 return Ok(true)
@@ -473,7 +473,7 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::ShulginSigning(pk) => {
-                    if let SlugSignature::ShulginSigning(signature) = sig.signature {
+                    if let SlugSignature::ShulginSigning(signature) = &sig.signature {
                         let verify = pk.verify(msg.as_ref(), &signature)?;
 
                         return Ok(verify)
@@ -483,8 +483,8 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::SPHINCS(pk) => {
-                    if let SlugSignature::SPHINCS(signature) = sig.signature {
-                        let verify = pk.verify(msg.as_ref(), signature);
+                    if let SlugSignature::SPHINCS(signature) = &sig.signature {
+                        let verify = pk.verify(msg.as_ref(), signature.clone());
 
                         if verify.is_ok() {
                             return Ok(verify.unwrap())
