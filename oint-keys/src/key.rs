@@ -580,6 +580,9 @@ pub mod Liberato {
             }
         }
     }
+    fn verify<T: AsRef<[u8]>>(&self, msg: T, signature: &LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
+        return self.verify_with_context(msg, None, signature)
+    }
     }
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
     pub struct LiberatoPublicKey {
