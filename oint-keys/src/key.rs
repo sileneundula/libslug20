@@ -411,7 +411,7 @@ pub mod Liberato {
         }
 }
     impl LiberatoVerification for LiberatoPublicKey {
-        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, sig: &LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
+        fn verify_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, sig: &LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
             let signature: SlugSignature = sig.as_slug_signature();
             
             match &self.pk {

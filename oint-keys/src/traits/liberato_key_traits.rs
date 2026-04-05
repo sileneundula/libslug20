@@ -101,5 +101,5 @@ pub trait LiberatoSigning: Sized {
 }
 
 pub trait LiberatoVerification {
-    fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: &LiberatoSignature) -> Result<bool,SlugErrors>;
+    fn verify_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: &LiberatoSignature) -> Result<bool,SlugErrors>;
 }

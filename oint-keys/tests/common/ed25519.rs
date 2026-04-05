@@ -47,7 +47,7 @@ fn _0x04_ed25519_generation_and_signing_no_context_verifying() {
 
     let sig = keypair.sign_with_context(msg, None).unwrap();
 
-    let is_valid = keypair.pk.verify(msg, None, sig.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg, None, sig.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
@@ -61,7 +61,7 @@ fn _0x03_ed25519_generation_and_signing_with_context_verifying() {
 
     let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
-    let is_valid = keypair.pk.verify(msg, Some(context), sig.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg, Some(context), sig.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
@@ -77,7 +77,7 @@ fn _0x08_ed25519_wrong_context() {
 
     let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
-    let is_valid = keypair.pk.verify(msg, Some(context_2), sig.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg, Some(context_2), sig.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
@@ -93,7 +93,7 @@ fn _0x06_ed25519_wrong_message_with_context() {
 
     let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
-    let is_valid = keypair.pk.verify(msg_wrong, Some(context), sig.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg_wrong, Some(context), sig.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
@@ -110,7 +110,7 @@ fn _0x07_ed25519_wrong_message_with_wrong_context() {
 
     let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
-    let is_valid = keypair.pk.verify(msg_wrong, Some(context_wrong), sig.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg_wrong, Some(context_wrong), sig.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
@@ -127,7 +127,7 @@ fn _0x05_ed25519_wrong_message_with_no_context() {
 
     let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
-    let is_valid = keypair.pk.verify(msg_wrong, None, sig.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg_wrong, None, sig.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
@@ -144,7 +144,7 @@ fn _0x09_ed25519_right_message_with_no_context_after_signing_with_context() {
 
     let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
-    let is_valid = keypair.pk.verify(msg, None, sig.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg, None, sig.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
@@ -161,7 +161,7 @@ fn _0x0A_ed25519_right_message_with_no_context_after_signing_with_no_context_and
 
     let sig = keypair.sign_with_context(msg, None).unwrap();
 
-    let is_valid = keypair.pk.verify(msg, Some(context), sig.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg, Some(context), sig.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
@@ -179,7 +179,7 @@ fn _0x0B_ed25519_wrong_signature() {
     let sig = keypair.sign_with_context(msg, None).unwrap();
     let sig2 = keypair.sign_with_context(msg_wrong, None).unwrap();
 
-    let is_valid = keypair.pk.verify(msg, None, sig2.as_ref()).unwrap();
+    let is_valid = keypair.pk.verify_with_context(msg, None, sig2.as_ref()).unwrap();
 
     assert_eq!(is_valid,true);
 }
