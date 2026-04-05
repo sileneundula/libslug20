@@ -29,14 +29,14 @@ fn _0x00_ed25519_generation() {
 fn _0x02_ed25519_generation_and_signing_no_context() {
     let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
 
-    let sig = keypair.sign("Hello World.", None).unwrap();
+    let sig = keypair.sign_with_context("Hello World.", None).unwrap();
 }
 
 #[test]
 fn _0x01_ed25519_generation_and_signing_with_context() {
     let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
 
-    let sig = keypair.sign("Hello World.", Some("RandomContext")).unwrap();
+    let sig = keypair.sign_with_context("Hello World.", Some("RandomContext")).unwrap();
 }
 
 #[test]
@@ -45,7 +45,7 @@ fn _0x04_ed25519_generation_and_signing_no_context_verifying() {
 
     let msg = "Example Message";
 
-    let sig = keypair.sign(msg, None).unwrap();
+    let sig = keypair.sign_with_context(msg, None).unwrap();
 
     let is_valid = keypair.pk.verify(msg, None, sig.as_ref()).unwrap();
 
@@ -59,7 +59,7 @@ fn _0x03_ed25519_generation_and_signing_with_context_verifying() {
     let msg = "Example Message";
     let context = "Example Context";
 
-    let sig = keypair.sign(msg, Some(context)).unwrap();
+    let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
     let is_valid = keypair.pk.verify(msg, Some(context), sig.as_ref()).unwrap();
 
@@ -75,7 +75,7 @@ fn _0x08_ed25519_wrong_context() {
     let context = "Example Context";
     let context_2: &str = "Not The Same Context";
 
-    let sig = keypair.sign(msg, Some(context)).unwrap();
+    let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
     let is_valid = keypair.pk.verify(msg, Some(context_2), sig.as_ref()).unwrap();
 
@@ -91,7 +91,7 @@ fn _0x06_ed25519_wrong_message_with_context() {
     let msg_wrong = "Other Message";
     let context = "Example Context";
 
-    let sig = keypair.sign(msg, Some(context)).unwrap();
+    let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
     let is_valid = keypair.pk.verify(msg_wrong, Some(context), sig.as_ref()).unwrap();
 
@@ -108,7 +108,7 @@ fn _0x07_ed25519_wrong_message_with_wrong_context() {
     let context = "Example Context";
     let context_wrong = "Other Context";
 
-    let sig = keypair.sign(msg, Some(context)).unwrap();
+    let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
     let is_valid = keypair.pk.verify(msg_wrong, Some(context_wrong), sig.as_ref()).unwrap();
 
@@ -125,7 +125,7 @@ fn _0x05_ed25519_wrong_message_with_no_context() {
     let context = "Example Context";
     let context_wrong = "Other Context";
 
-    let sig = keypair.sign(msg, Some(context)).unwrap();
+    let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
     let is_valid = keypair.pk.verify(msg_wrong, None, sig.as_ref()).unwrap();
 
@@ -142,7 +142,7 @@ fn _0x09_ed25519_right_message_with_no_context_after_signing_with_context() {
     let context = "Example Context";
     let context_wrong = "Other Context";
 
-    let sig = keypair.sign(msg, Some(context)).unwrap();
+    let sig = keypair.sign_with_context(msg, Some(context)).unwrap();
 
     let is_valid = keypair.pk.verify(msg, None, sig.as_ref()).unwrap();
 
@@ -159,7 +159,7 @@ fn _0x0A_ed25519_right_message_with_no_context_after_signing_with_no_context_and
     let context = "Example Context";
     let context_wrong = "Other Context";
 
-    let sig = keypair.sign(msg, None).unwrap();
+    let sig = keypair.sign_with_context(msg, None).unwrap();
 
     let is_valid = keypair.pk.verify(msg, Some(context), sig.as_ref()).unwrap();
 
@@ -176,8 +176,8 @@ fn _0x0B_ed25519_wrong_signature() {
     let context = "Example Context";
     let context_wrong = "Other Context";
 
-    let sig = keypair.sign(msg, None).unwrap();
-    let sig2 = keypair.sign(msg_wrong, None).unwrap();
+    let sig = keypair.sign_with_context(msg, None).unwrap();
+    let sig2 = keypair.sign_with_context(msg_wrong, None).unwrap();
 
     let is_valid = keypair.pk.verify(msg, None, sig2.as_ref()).unwrap();
 

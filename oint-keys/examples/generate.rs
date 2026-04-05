@@ -12,8 +12,8 @@ fn main() {
     let context: &str = "RandomContext";
     
     // Sign
-    let sig: Box<LiberatoSignature> = keypair.sign(msg, None).unwrap();
-    let result = keypair.pk.verify(msg, None, sig.as_ref()).unwrap();
+    let sig: Box<LiberatoSignature> = keypair.sign_with_context(msg, Some(context)).unwrap();
+    let result = keypair.pk.verify(msg, Some(context), sig.as_ref()).unwrap();
 
     println!("ED25519: {:?}", result);
 }

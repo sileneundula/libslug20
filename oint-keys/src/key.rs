@@ -16,6 +16,12 @@
 //!         - [ ] `slug20_falcon1024`
 //!         - [ ] `slug20_sphincs_plus`
 //!         - [ ] `slug20_mldsa`
+//! 
+//! ## TODO:
+//! 
+//! - [ ] Implement Key Encodings
+//! - [ ] Implement Key Decodings
+//! 
 
 use std::str::FromStr;
 
@@ -62,19 +68,35 @@ use libslug::slugcrypt::internals::signature::ml_dsa;
 use libslug::slugcrypt::traits::{IntoEncoding,FromEncoding};
 use libslug::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 
-use crate::traits::{OintGenerateKeypair,OintVerify,OintSign};
-use crate::constants::*;
-use crate::encodings::OintKeyEncodings;
-
-use serde::{Serialize,Deserialize};
-use zeroize::{Zeroize,ZeroizeOnDrop};
-
-
-type PublicKey = fixedstr::tstr<16_000>;
-type SecretKey = fixedstr::tstr<16_000>;
-
 pub mod Liberato {
+    //! # Liberato Keypair: A Unified Interface for Cryptographic Key Management
+    //! 
+    //! ## Algorithms Supported
+    //! 
+    //! ### Hybrid Algorithms
+    //! 
+    //! - [X] ShulginSigning
+    //! - [X] EsphandSigning
+    //! - [X] AbsolveSigning
+    //! 
+    //! ### Classical
+    //! 
+    //! - [X] EdDSA
+    //!    - [X] ED25519
+    //!    - [X] ED448
+    //! - [X] ECDSA
+    //!   - [X] Secp256k1
+    //! - [X] Schnorr Over Ristretto
+    //! - [X] BLS12-381
+    //! 
+    //! ## Post-Quantum
+    //! 
+    //! - [X] Falcon1024
+    //! - [X] SPHINCS+
+    //! - [X] MLDSA3
+    use std::str::FromStr;
 
+    use fixedstr::str256;
     use libslug::slugcrypt::internals::signature::absolvesigning::AbsolveKeypair;
     use libslug::slugcrypt::internals::signature::bls::{BLSSecretKey, SlugBLS};
     use libslug::slugcrypt::internals::signature::ecdsa::ECDSASecretKey;
@@ -91,10 +113,12 @@ pub mod Liberato {
     use serde::{Serialize,Deserialize};
     use crate::algorithms::slug::{SlugPublicKey,SlugSecretKey,SlugSignature};
     use crate::algorithms::slug::Algorithms;
-    use crate::traits::liberato_traits::{LiberatoKeypairTrait, LiberatoVerification};
-    use crate::traits::liberato_traits::LiberatoSigning;
+    
+    
+    use crate::traits::liberato_key_traits::{LiberatoKeypairTrait, LiberatoVerification};
+    use crate::traits::liberato_key_traits::LiberatoSigning;
 
-    use crate::traits::liberato_traits::{IntoEncodingPublicKey,IntoEncodingKeypair,IntoEncodingSecretKey,IntoEncodingSignature};
+    use crate::traits::liberato_key_traits::{IntoEncodingPublicKey,IntoEncodingKeypair,IntoEncodingSecretKey,IntoEncodingSignature};
 
 
     pub const LIBERATO_KEYPAIR_CONTEXT: &str = "OintKeys-LiberatoKeypair-Context";
@@ -106,6 +130,9 @@ pub mod Liberato {
     }
 
     impl LiberatoKeypairTrait for LiberatoKeypair {
+        /// # [Oint-Keys]Generate Keypair
+        /// 
+        /// This function generates a keypair based on the provided algorithm. It supports a wide range of algorithms, including both classical and post-quantum schemes. The generated keypair is returned as a `LiberatoKeypair` struct, which contains both the public and secret keys.
         fn generate(alg: crate::algorithms::slug::Algorithms) -> Result<Self,libslug::prelude::core::SlugErrors> {
             match alg {
                 Algorithms::AbsolveSigning => {
@@ -233,44 +260,87 @@ pub mod Liberato {
                 }
             }
         }
+        /// # Get Public Key
+        /// 
+        /// Returns Public Key as `LiberatoPublicKey` struct.
+        fn public_key(&self) -> &LiberatoPublicKey {
+            return &self.pk;
+        }
+        /// # Get Secret Key
+        /// 
+        /// Returns Secret Key as `LiberatoSecretKey` struct.
+        fn secret_key(&self) -> &LiberatoSecretKey {
+            return &self.sk;
+        }
+        /// # Get Algorithm
+        /// 
+        /// Returns the algorithm used for the keypair as an `Algorithms` enum variant.
+        fn algorithm(&self) -> Algorithms {
+            return self.pk.pk.as_alg()
+        }
+        /// # Get Cipher Suite
+        /// 
+        /// Returns the cipher suite associated with the keypair's algorithm as a `String`.
+        fn cipher_suite(&self) -> String {
+            let x = self.algorithm().clone();
+            let output = x.cipher_suite().to_string();
+            return output
+        }
+        /// # Get Cipher Suite As Str256
+        /// 
+        /// Returns the cipher suite associated with the keypair's algorithm as a `str256` for optimized performance in contexts where fixed-size strings are beneficial.
+        fn cipher_suite_as_str256(&self) -> str256 {
+            let x = fixedstr::str256::from_str(self.algorithm().cipher_suite()).unwrap();
+            return x;
+        }
     }
 
     impl LiberatoSigning for LiberatoKeypair {
-        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<LiberatoSignature>,libslug::prelude::core::SlugErrors> {
+        fn sign_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<LiberatoSignature>,libslug::prelude::core::SlugErrors> {
             match &self.sk.sk {
+                // TODO: Sk signs using "libslug20" but this library forces it to use Liberato_Keypair_Context
+                // Contains Context Option
                 SlugSecretKey::AbsolveSigning(sk) => {
 
                     if context.is_none() {
-                        let x = sk.sign(msg.as_ref())?;
+                        let x = sk.sign_with_context(msg.as_ref(),LIBERATO_KEYPAIR_CONTEXT.as_bytes())?;
                         return Ok(LiberatoSignature::from_signature(SlugSignature::AbsolveSigning(x)))
                     }
-                    let signature = sk.sign_with_context(msg.as_ref(), context.unwrap().as_ref())?;
+                    let signature: libslug::slugcrypt::internals::signature::absolvesigning::AbsolveSignature = sk.sign_with_context(msg.as_ref(), context.unwrap().as_ref())?;
 
                     return Ok(LiberatoSignature::from_signature(SlugSignature::AbsolveSigning(signature)))
                 }
+                // [X] Done
                 SlugSecretKey::BLS12_381(sk) => {
-                    unimplemented!();
+                    let sig = sk.sign(msg.as_ref())?;
+
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::BLS12_381(sig)))
                 }
+                // [X] Done
                 SlugSecretKey::ECDSA(sk) => {
                     let signature: (libslug::slugcrypt::internals::signature::ecdsa::ECDSASignature, libslug::slugcrypt::internals::signature::ecdsa::ECDSASignatureRecoveryID) = sk.sign(msg.as_ref())?;
 
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::ECDSA(signature.0)))
+                    return Ok(LiberatoSignature::from_signature(SlugSignature::ECDSA(signature.0,signature.1)))
                 }
+                // [X] Done
                 SlugSecretKey::ED25519(sk) => {
                     let signature: libslug::slugcrypt::internals::signature::ed25519::ED25519Signature = sk.sign(msg.as_ref())?;
 
                     return Ok(LiberatoSignature::from_signature(SlugSignature::ED25519(signature)))
                 }
+                // [X] Done
                 SlugSecretKey::ED448(sk) => {
                     let signature: libslug::slugcrypt::internals::signature::ed448::Ed448Signature = sk.sign(msg.as_ref())?;
 
                     return Ok(LiberatoSignature::from_signature(SlugSignature::ED448(signature)))
                 }
+                // [X] Done
                 SlugSecretKey::EsphandSigning(sk) => {
                     let signature = sk.sign(msg.as_ref())?;
 
                     return Ok(LiberatoSignature::from_signature(SlugSignature::EsphandSigning(signature)))
                 }
+                // [X] Done
                 SlugSecretKey::FALCON1024((sk, _)) => {
                     let signature = sk.sign(msg.as_ref());
 
@@ -282,6 +352,7 @@ pub mod Liberato {
                         return Ok(LiberatoSignature::from_signature(SlugSignature::FALCON1024(signature)))
                     }
                 }
+                // [X] Done
                 SlugSecretKey::MLDSA3((sk, _)) => {
                     if context.is_none() {
                         let signature: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3Signature = sk.sign(msg.as_ref(), LIBERATO_KEYPAIR_CONTEXT.as_bytes())?;
@@ -295,6 +366,7 @@ pub mod Liberato {
                     }
 
                 }
+                // [X] Done
                 SlugSecretKey::SchnorrOverRistretto(sk) => {
                     if context.is_some() {
                         let signature = sk.sign_with_context(msg.as_ref(), context.unwrap().as_ref());
@@ -319,11 +391,13 @@ pub mod Liberato {
                         }
                     }
                 }
+                // [X] Done
                 SlugSecretKey::ShulginSigning(sk) => {
                     let signature: libslug::slugcrypt::internals::signature::shulginsigning::ShulginSignature = sk.sign(msg.as_ref())?;
 
                     return Ok(LiberatoSignature::from_signature(SlugSignature::ShulginSigning(signature)))
                 }
+                // [X] Done
                 SlugSecretKey::SPHINCS(sk) => {
                     let signature: libslug::slugcrypt::internals::signature::sphincs_plus::SPHINCSSignature = sk.0.sign(msg.as_ref())?;
                     
@@ -332,9 +406,9 @@ pub mod Liberato {
         }
 
     }
-    fn sign_without_context<T: AsRef<[u8]>>(&self, msg: T) -> Result<Box<LiberatoSignature>,libslug::prelude::core::SlugErrors> {
-        return self.sign(msg, None)
-    }
+        fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Result<Box<LiberatoSignature>,libslug::prelude::core::SlugErrors> {
+            return self.sign_with_context(msg, None)
+        }
 }
     impl LiberatoVerification for LiberatoPublicKey {
         fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, sig: &LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
@@ -369,7 +443,7 @@ pub mod Liberato {
                     }
                 }
                 SlugPublicKey::ECDSA(pk) => {
-                    if let SlugSignature::ECDSA(signature) = &sig.signature {
+                    if let SlugSignature::ECDSA(signature, _) = &sig.signature {
                         let verify = pk.verify(msg.as_ref(), signature.clone())?;
 
                         return Ok(verify)
@@ -1171,7 +1245,7 @@ pub mod Liberato {
 
 }
 
-
+/* 
 pub struct OintKeypair<'a> {
     pub pkh: OintPublicKey<'a>,
     pub skh: OintSecretKey<'a>,
@@ -1561,3 +1635,4 @@ pub enum Keypairs {
     SPHINCS_PLUS(SPHINCSPublicKey,SPHINCSSecretKey),
     MLDSA(MLDSA3PublicKey,MLDSA3SecretKey),
 }
+*/
