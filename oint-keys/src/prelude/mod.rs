@@ -1,5 +1,5 @@
 pub mod traits {
-    pub use crate::traits::liberato_traits::{LiberatoKeypairTrait,LiberatoPublicKeyTrait,LiberatoSecretKeyTrait,LiberatoSigning,LiberatoVerification};
+    pub use crate::traits::liberato_traits::{LiberatoKeypairTrait,LiberatoSigning,LiberatoVerification};
 }
 
 pub mod algorithms {
