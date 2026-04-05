@@ -106,12 +106,6 @@ pub mod liberato_traits {
         fn generate(alg: Algorithms) -> Result<Self,SlugErrors>;
     }
 
-    pub trait LiberatoSecretKeyTrait: Sized {
-        fn generate() -> Result<Self,SlugErrors>;
-        fn public_key(&self) -> Result<LiberatoPublicKey,SlugErrors>;
-        fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<LiberatoSignature,SlugErrors>;
-    }
-
     pub trait LiberatoSigning: Sized {
         /// # Signing
         /// 
@@ -121,18 +115,10 @@ pub mod liberato_traits {
         /// 
         /// - Check Context options
         fn sign<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<LiberatoSignature>,SlugErrors>;
+        fn sign_without_context<T: AsRef<[u8]>>(&self, msg: T) -> Result<Box<LiberatoSignature>,SlugErrors>;
     }
 
-    pub trait LiberatoVerification: Sized {
+    pub trait LiberatoVerification {
         fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: &LiberatoSignature) -> Result<bool,SlugErrors>;
-    }
-
-    pub trait LiberatoPublicKeyTrait: Sized {
-        fn verify<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: LiberatoSignature) -> Result<bool,SlugErrors>;
-    }
-
-    pub trait LiberatoX59Encoding: Sized {
-        fn into_encoding(&self) -> Result<String,SlugErrors>;
-        fn from_encoding<T: AsRef<str>>(encoding: T) -> Result<Self,SlugErrors>;
     }
 }

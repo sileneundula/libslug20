@@ -91,7 +91,7 @@ pub mod Liberato {
     use serde::{Serialize,Deserialize};
     use crate::algorithms::slug::{SlugPublicKey,SlugSecretKey,SlugSignature};
     use crate::algorithms::slug::Algorithms;
-    use crate::traits::liberato_traits::{LiberatoKeypairTrait, LiberatoPublicKeyTrait, LiberatoSecretKeyTrait, LiberatoVerification, LiberatoX59Encoding};
+    use crate::traits::liberato_traits::{LiberatoKeypairTrait, LiberatoVerification};
     use crate::traits::liberato_traits::LiberatoSigning;
 
     use crate::traits::liberato_traits::{IntoEncodingPublicKey,IntoEncodingKeypair,IntoEncodingSecretKey,IntoEncodingSignature};
@@ -330,6 +330,10 @@ pub mod Liberato {
                     return Ok(LiberatoSignature::from_signature(SlugSignature::SPHINCS(signature)))
                 }
         }
+
+    }
+    fn sign_without_context<T: AsRef<[u8]>>(&self, msg: T) -> Result<Box<LiberatoSignature>,libslug::prelude::core::SlugErrors> {
+        return self.sign(msg, None)
     }
 }
     impl LiberatoVerification for LiberatoPublicKey {
