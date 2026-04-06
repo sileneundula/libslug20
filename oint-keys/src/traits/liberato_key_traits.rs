@@ -16,6 +16,15 @@ pub trait IntoEncodingKeypair {
     fn base64url(&self) -> Result<String,SlugErrors>;
 }
 
+pub trait IntoX59 {
+    fn into_x59_fmt(&self) -> Result<String,SlugErrors>;
+    fn add_prefix(&self, alg: Algorithms) -> String;
+}
+
+pub trait FromX59: Sized {
+    fn from_x59_fmt<T: AsRef<str>>(s: T, alg: Algorithms) -> Result<Self,SlugErrors>;
+}
+
 /// # IntoEncodingSecretKey
 /// 
 /// This trait provides methods to encode a secret key into various formats.
