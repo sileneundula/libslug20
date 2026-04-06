@@ -1,27 +1,47 @@
+//! # Testing
+//! 
+//! ## Tests
+//! 
+//! - [X] Generation (0x00)
+//! - [X] Signing
+//!     - [X] Signing With Context (0x01)
+//!     - [X] Signing Without Context (0x02)
+//! - [X] Generation, Signing, and Verifying
+//!     - [X] Verifying With Context (pass) (0x03)
+//!     - [X] Verifying Without Context (pass) (0x04)
+//!     - [X] Verifying With Wrong Message And Without Context (panic) (0x05)
+//!     - [X] Verifying With Wrong Message and With Context (panic) (0x06)
+//!     - [X] Verifying With Wrong Message and Wrong Context (panic) (0x07)
+//!     - [X] Verifying With Right Message and Wrong Context (panic/pass) (0x08)
+//!     - [X] Verifying With Right Message and No Context After Context Has Been Provided (0x09)
+//!     - [X] Verifying With Right Message And Signing No Context But Providing Context (0x0A)
+//!     - [X] Signatures
+//!         - [X] Wrong Signature (0x0B)
+
 use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{LiberatoKeypairTrait, LiberatoSigning, LiberatoVerification}, *}};
 
 #[test]
-fn _0x00_ed448_generation() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x00_Schnorr_generation() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 }
 
 #[test]
-fn _0x02_Ed448_generation_and_signing_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x02_Schnorr_generation_and_signing_no_context() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", None).unwrap();
 }
 
 #[test]
-fn _0x01_Ed448_generation_and_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x01_Schnorr_generation_and_signing_with_context() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", Some("RandomContext")).unwrap();
 }
 
 #[test]
-fn _0x04_Ed448_generation_and_signing_no_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x04_Schnorr_generation_and_signing_no_context_verifying() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
 
@@ -33,8 +53,8 @@ fn _0x04_Ed448_generation_and_signing_no_context_verifying() {
 }
 
 #[test]
-fn _0x03_Ed448_generation_and_signing_with_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x03_Schnorr_generation_and_signing_with_context_verifying() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -48,8 +68,8 @@ fn _0x03_Ed448_generation_and_signing_with_context_verifying() {
 
 
 #[test]
-fn _0x08_Ed448_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x08_Schnorr_wrong_context() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -64,8 +84,8 @@ fn _0x08_Ed448_wrong_context() {
 
 #[test]
 #[should_panic]
-fn _0x06_Ed448_wrong_message_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x06_Schnorr_wrong_message_with_context() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -80,8 +100,8 @@ fn _0x06_Ed448_wrong_message_with_context() {
 
 #[test]
 #[should_panic]
-fn _0x07_Ed448_wrong_message_with_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x07_Schnorr_wrong_message_with_wrong_context() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -97,8 +117,8 @@ fn _0x07_Ed448_wrong_message_with_wrong_context() {
 
 #[test]
 #[should_panic]
-fn _0x05_Ed448_wrong_message_with_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x05_Schnorr_wrong_message_with_no_context() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -114,8 +134,8 @@ fn _0x05_Ed448_wrong_message_with_no_context() {
 
 #[test]
 #[should_panic]
-fn _0x09_Ed448_right_message_with_no_context_after_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x09_Schnorr_right_message_with_no_context_after_signing_with_context() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -131,8 +151,8 @@ fn _0x09_Ed448_right_message_with_no_context_after_signing_with_context() {
 
 #[test]
 #[should_panic]
-fn _0x0A_Ed448_right_message_with_no_context_after_signing_with_no_context_and_providing_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x0A_Schnorr_right_message_with_no_context_after_signing_with_no_context_and_providing_context() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -148,8 +168,8 @@ fn _0x0A_Ed448_right_message_with_no_context_after_signing_with_no_context_and_p
 
 #[test]
 #[should_panic]
-fn _0x0B_Ed448_wrong_signature() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED448).unwrap();
+fn _0x0B_Schnorr_wrong_signature() {
+    let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";

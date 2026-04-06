@@ -15,7 +15,7 @@ use securerand_rs::rngs::FuschineCSPRNG;
 /// fn main() {
 ///     let password: &str = "Thisisapassword";
 /// 
-///     let csprng = SlugCSPRNG::new(password);
+///     let csprng: [u8;32] = SlugCSPRNG::new(password);
 /// }
 /// ```
 pub struct SlugCSPRNG;
