@@ -1,6 +1,6 @@
 [package]
 name = "oint-keys"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["silene","SundialSource","WeSpeakInCursive.xyz"]
 description = "A Simple Standard Cryptography-Suite For Web 3.20, offering cryptographic abstraction (Generic Signing/Verifying, Generic Encryption) for various algorithms including post-quantum."
 categories = ["cryptography","security","authentication"]
