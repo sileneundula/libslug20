@@ -113,7 +113,6 @@ fn _0x05_Sphincs_wrong_message_with_no_context() {
 }
 
 #[test]
-#[should_panic]
 fn _0x09_Sphincs_right_message_with_no_context_after_signing_with_context() {
     let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
 
@@ -130,7 +129,6 @@ fn _0x09_Sphincs_right_message_with_no_context_after_signing_with_context() {
 }
 
 #[test]
-#[should_panic]
 fn _0x0A_Sphincs_right_message_with_no_context_after_signing_with_no_context_and_providing_context() {
     let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
 

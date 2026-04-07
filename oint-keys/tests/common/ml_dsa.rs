@@ -68,6 +68,7 @@ fn _0x03_MLDSA3_generation_and_signing_with_context_verifying() {
 
 
 #[test]
+#[should_panic]
 fn _0x08_MLDSA3_wrong_context() {
     let keypair = LiberatoKeypair::generate(Algorithms::MLDSA3).unwrap();
 

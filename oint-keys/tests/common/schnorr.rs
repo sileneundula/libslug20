@@ -68,6 +68,7 @@ fn _0x03_Schnorr_generation_and_signing_with_context_verifying() {
 
 
 #[test]
+#[should_panic]
 fn _0x08_Schnorr_wrong_context() {
     let keypair = LiberatoKeypair::generate(Algorithms::Schnorr).unwrap();
 

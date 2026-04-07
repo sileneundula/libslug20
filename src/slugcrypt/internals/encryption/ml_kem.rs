@@ -31,7 +31,7 @@ use serde_big_array::BigArray;
 /// # MLKEM: Public Key
 /// 
 /// This includes the 1568 byte public key for kyber1024.
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, PartialEq, PartialOrd, Hash)]
 pub struct MLKEMPublicKey {
     #[serde(with = "BigArray")]
     pub public_key: [u8;1568],
@@ -40,7 +40,7 @@ pub struct MLKEMPublicKey {
 /// # MLKEM: Secret Key
 /// 
 /// This includes the 3168 byte secret key for kyber1024.
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize, Clone, PartialEq, PartialOrd, Hash)]
 pub struct MLKEMSecretKey {
     #[serde(with = "BigArray")]
     pub secret_key: [u8;3168],
@@ -49,7 +49,7 @@ pub struct MLKEMSecretKey {
 /// # MLKEM: Secret Key
 /// 
 /// This includes the MLKEM/KYBER ciphertext.
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize,Clone,PartialEq,PartialOrd,Hash)]
 pub struct MLKEMCipherText {
     pub ciphertext: Vec<u8>,
 }
@@ -57,7 +57,7 @@ pub struct MLKEMCipherText {
 /// # MLKEM: SharedSecret
 /// 
 /// This includes the MLKEM Shared Secret of 32-bytes
-#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize,PartialEq, Debug)]
+#[derive(Zeroize,ZeroizeOnDrop,Serialize,Deserialize,PartialEq,Clone,Debug)]
 pub struct MLKEMSharedSecret {
     pub shared_secret: [u8;32],
 }
