@@ -1,4 +1,28 @@
-# Oint-Keys: A New Standard For Keypairs That Abstracts From Old Formats
+# Oint-Keys: A New Standard For Keypairs That Abstracts From Old Formats Intended For Web 3.20 or OpenInternet Project
+
+![Crates.io Version](https://img.shields.io/crates/v/oint-keys?style=flat-square&link=https%3A%2F%2Fcrates.io%2Fcrates%2Foint-keys)
+![Deps.rs Crate Dependencies (latest)](https://img.shields.io/deps-rs/oint-keys/latest?style=flat-square)
+![Crates.io Total Downloads](https://img.shields.io/crates/d/oint-keys?style=flat-square&link=https%3A%2F%2Fcrates.io%2Fcrates%2Foint-keys)
+![docs.rs](https://img.shields.io/docsrs/oint-keys?style=flat-square&link=https%3A%2F%2Fdocs.rs%2Foint-keys%2F)
+![Crates.io License](https://img.shields.io/crates/l/oint-keys?style=flat-square)
+![Crates.io Dependents](https://img.shields.io/crates/dependents/oint-keys?style=flat-square&link=https%3A%2F%2Fcrates.io%2Fcrates%2Foint-keys%2Freverse_dependencies)
+![Crates.io User Total Downloads](https://img.shields.io/crates/udt/253136?style=flat-square&label=Silene0259%20Total%20Downloads&link=https%3A%2F%2Fcrates.io%2Fusers%2Fsileneundula)
+![GitHub Repo stars](https://img.shields.io/github/stars/sileneundula/libslug20?style=flat-square&link=https%3A%2F%2Fgithub.com%2Fsileneundula%2Flibslug20%2Ftree%2Fmaster%2Foint-keys)
+
+
+
+
+![Bluesky followers](https://img.shields.io/bluesky/followers/silene0259.bsky.social)
+![Reddit User Karma](https://img.shields.io/reddit/user-karma/link/silene0259)
+![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCCVb9sS4YjtGlK0oP-9oeig)
+
+
+
+
+
+
+
+
 
 ## TODO
 
