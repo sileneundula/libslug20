@@ -7,6 +7,7 @@ categories = ["Cryptography","Authentication","Security"]
 keywords = ["oint","cryptography","post-quantum","standard","openinternet"]
 readme = "README.md"
 repository = "https://github.com/sileneundula/libslug20/tree/master/oint-keys"
+homepage = "htttps://wespeakincursive.xyz"
 edition = "2024"
 
 [dependencies]
