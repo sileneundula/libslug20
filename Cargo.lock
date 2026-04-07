@@ -3606,7 +3606,6 @@ version = "0.1.0"
 dependencies = [
  "fixedstr",
  "libslug 0.9.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "oint-keys-traits",
  "serde",
  "zeroize",
 ]

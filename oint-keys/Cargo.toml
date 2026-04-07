@@ -1,11 +1,15 @@
 [package]
 name = "oint-keys"
 version = "0.1.0"
+authors = ["silene","SundialSource","WeSpeakInCursive.xyz"]
+description = "A Simple Standard Cryptography-Suite For Web 3.20, offering cryptographic abstraction (Generic Signing/Verifying, Generic Encryption) for various algorithms including post-quantum."
+categories = ["Cryptography","Authentication","Security"]
+keywords = ["oint","cryptography","post-quantum","standard","openinternet"]
+readme = "README.md"
+repository = "https://github.com/sileneundula/libslug20/tree/master/oint-keys"
 edition = "2024"
 
 [dependencies]
-oint-keys-traits = {path = "../oint-keys-traits"}
-
 # /silene/libslug20: Cryptography Library
 libslug = {version="0.9.3"}
 
