@@ -4,4 +4,5 @@ pub mod slug;
 /// Encryption Algorithms
 pub mod encryption;
 
+/// Symmetric Encryption
 pub mod symmetric_encryption;

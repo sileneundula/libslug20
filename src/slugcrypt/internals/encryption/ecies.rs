@@ -31,6 +31,8 @@ use std::string::FromUtf8Error;
 use ecies_ed25519::PublicKey;
 use ecies_ed25519::SecretKey;
 use ecies_ed25519::Error;
+use zeroize::Zeroize;
+use zeroize::ZeroizeOnDrop;
 
 // SlugCrypt Structs
 use crate::slugcrypt::internals::ciphertext::CipherText;
@@ -77,7 +79,7 @@ pub struct ECIESDecrypt;
 /// - To and From Bytes
 /// - To and From Hexadecimal
 /// - To and From Base58
-#[derive(Clone,Serialize,Deserialize)]
+#[derive(Clone,Serialize,Deserialize,Debug,PartialEq)]
 pub struct ECPublicKey {
     pub public_key: PublicKey,
 }
@@ -102,7 +104,7 @@ pub struct ECPublicKey {
 /// - Encrypt
 /// - Decrypt
 /// - Get Public Key
-#[derive(Serialize,Deserialize)]
+#[derive(Serialize,Deserialize,Debug)]
 pub struct ECSecretKey {
     pub secret_key: SecretKey,
 }

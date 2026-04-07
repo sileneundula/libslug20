@@ -103,6 +103,8 @@ thiserror = "2.0.18"
 
 fixedstr = {version="0.5.10",features=["serde"]}
 
+rsa = {version="0.9.10", optional=true}
+
 log = "0.4.29"
 
 # DER + PEM
@@ -138,6 +140,7 @@ falcon = ["dep:pqcrypto-falcon","dep:pqcrypto-traits"]
 ml-dsa = ["dep:ml-dsa"]
 ed448 = ["dep:ed448","dep:ed448-goldilocks-plus","dep:ed448-goldilocks"]
 bls = ["dep:bls-signatures"]
+rsa = ["dep:rsa"]
 
 
 # Other
@@ -148,7 +151,8 @@ csprng = ["dep:rand","dep:securerand-rs","dep:argon2"]
 
 # Containers
 full-digests = ["sha3","sha2","blake2","blake3","digest"]
-full-signatures = ["schnorr","ed25519","ecdsa","sphincs_plus","falcon","ml-dsa","ed448","bls"]
+full-signatures = ["schnorr","ed25519","ecdsa","sphincs_plus","falcon","ml-dsa","ed448","bls","rsa"]
+full-encryption = ["rsa","ecies-ed25519-sha3","kyber1024"]
 
 
 # Experimental
