@@ -1,11 +1,15 @@
 # Slug20 Library
 
+
 ![Static Badge](https://img.shields.io/badge/%2Fsilene%2Fslug20-libslug-blue?style=flat-square)
 ![Crates.io Version](https://img.shields.io/crates/v/libslug?style=flat-square)
 ![Crates.io License](https://img.shields.io/crates/l/libslug?style=flat-square)
 ![Deps.rs Crate Dependencies (latest)](https://img.shields.io/deps-rs/libslug/latest?style=flat-square)
 ![Crates.io Total Downloads](https://img.shields.io/crates/d/libslug?style=flat-square)
 ![Crates.io Dependents](https://img.shields.io/crates/dependents/libslug?style=flat-square)
+
+![Bluesky followers](https://img.shields.io/bluesky/followers/silene0259.bsky.social?link=https%3A%2F%2Fbsky.app%2Fprofile%2Fsilene0259.bsky.social)
+
 
 <img height="25%" width="25%" src="https://github.com/sileneundula/libslug20/blob/master/assets/logo/libslug20_logo.png">
 
