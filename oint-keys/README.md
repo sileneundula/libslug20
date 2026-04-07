@@ -1,5 +1,6 @@
 # Oint-Keys: A New Standard For Keypairs That Abstracts From Old Formats Intended For Web 3.20 or OpenInternet Project
 
+![Static Badge](https://img.shields.io/badge/%2Fsilene%2Fslug20-ointkeys-blue?style=flat-square)
 ![Crates.io Version](https://img.shields.io/crates/v/oint-keys?style=flat-square&link=https%3A%2F%2Fcrates.io%2Fcrates%2Foint-keys)
 ![Deps.rs Crate Dependencies (latest)](https://img.shields.io/deps-rs/oint-keys/latest?style=flat-square)
 ![Crates.io Total Downloads](https://img.shields.io/crates/d/oint-keys?style=flat-square&link=https%3A%2F%2Fcrates.io%2Fcrates%2Foint-keys)
