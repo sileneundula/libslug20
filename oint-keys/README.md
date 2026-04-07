@@ -14,7 +14,6 @@
 
 
 ![Bluesky followers](https://img.shields.io/bluesky/followers/silene0259.bsky.social)
-![Reddit User Karma](https://img.shields.io/reddit/user-karma/link/silene0259)
 ![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCCVb9sS4YjtGlK0oP-9oeig)
 
 ## Description
