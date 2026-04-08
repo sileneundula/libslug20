@@ -1,10 +1,38 @@
+//! # Oint-Keys Traits
+//! 
+//! ## Signing and Verifying
+//! 
+//! - [ ] OintGeneration
+//! - [ ] OintSigning
+//! - [ ] OintVerifying
+//! 
+//! ### Encodings
+//! 
+//! #### Encodings
+//! 
+//! #### OpenInternetExport
+//! 
+//! - [ ] OpenInternetExport
+//! 
+//! #### X59 Format
+//! - [ ] IntoX59
+//! - [ ] FromX59
+//! 
+//! #### PEM
+//! - [ ] IntoPEM
+//! - [ ] FromPEM
+
 use fixedstr::str256;
 use libslug::errors::SlugErrors;
-use crate::key::Liberato::{LiberatoKeypair,LiberatoPublicKey,LiberatoSecretKey,LiberatoSignature};
+use crate::key::oint_keys::{OpenInternetKeypair,OpenInternetPublicKey,OpenInternetSecretKey,OpenInternetSignature};
 use crate::algorithms::slug::Algorithms;
 
+pub trait OpenInternetExport {
+    fn export(&self) -> Result<String, SlugErrors>;
+}
+
 pub trait OintSecretKey {
-    fn into_public_key(&self) -> Result<LiberatoPublicKey,SlugErrors>;
+    fn into_public_key(&self) -> Result<OpenInternetPublicKey,SlugErrors>;
 }
 
 pub trait IntoEncodingKeypair {
@@ -16,11 +44,17 @@ pub trait IntoEncodingKeypair {
     fn base64url(&self) -> Result<String,SlugErrors>;
 }
 
+/// # IntoX59
+/// 
+/// Into X59 Format
 pub trait IntoX59 {
     fn into_x59_fmt(&self) -> Result<String,SlugErrors>;
     fn add_prefix(&self, alg: Algorithms) -> String;
 }
 
+/// # FromX59
+/// 
+/// From X59 Format
 pub trait FromX59: Sized {
     fn from_x59_fmt<T: AsRef<str>>(s: T, alg: Algorithms) -> Result<Self,SlugErrors>;
 }
@@ -58,7 +92,7 @@ pub trait IntoEncodingSignature {
     fn into_base64url(&self) -> Result<String,SlugErrors>;
 }
 
-pub trait LiberatoKeypairTrait: Sized {
+pub trait OintKeypairTrait: Sized {
     /// # Generate Keypair
     /// 
     /// This trait generates the required keypairs.
@@ -88,8 +122,8 @@ pub trait LiberatoKeypairTrait: Sized {
     /// - [X] ML-DSA3 (Dilithium65)
     fn generate(alg: Algorithms) -> Result<Self,SlugErrors>;
     
-    fn public_key(&self) -> &LiberatoPublicKey;
-    fn secret_key(&self) -> &LiberatoSecretKey;
+    fn public_key(&self) -> &OpenInternetPublicKey;
+    fn secret_key(&self) -> &OpenInternetSecretKey;
     
     fn algorithm(&self) -> Algorithms;
     
@@ -97,7 +131,7 @@ pub trait LiberatoKeypairTrait: Sized {
     fn cipher_suite_as_str256(&self) -> str256;
 }
 
-pub trait LiberatoSigning: Sized {
+pub trait OintSigning: Sized {
     /// # Signing
     /// 
     /// Signs a message as a byte slice generic and with an optional context.
@@ -105,11 +139,11 @@ pub trait LiberatoSigning: Sized {
     /// ## TODO:
     /// 
     /// - Check Context options
-    fn sign_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<LiberatoSignature>,SlugErrors>;
-    fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Result<Box<LiberatoSignature>,SlugErrors>;
+    fn sign_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<OpenInternetSignature>,SlugErrors>;
+    fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Result<Box<OpenInternetSignature>,SlugErrors>;
 }
 
-pub trait LiberatoVerification {
-    fn verify_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: &LiberatoSignature) -> Result<bool,SlugErrors>;
-    fn verify<T: AsRef<[u8]>>(&self, msg: T, signature: &LiberatoSignature) -> Result<bool,SlugErrors>;
+pub trait OintVerification {
+    fn verify_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, signature: &OpenInternetSignature) -> Result<bool,SlugErrors>;
+    fn verify<T: AsRef<[u8]>>(&self, msg: T, signature: &OpenInternetSignature) -> Result<bool,SlugErrors>;
 }

@@ -1,27 +1,28 @@
-use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{LiberatoKeypairTrait, LiberatoSigning, LiberatoVerification}, *}};
+use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{OintKeypairTrait, OintSigning, OintVerification}, *}};
+use oint_keys::key::oint_keys::OpenInternetKeypair;
 
 #[test]
 fn _0x00_Sphincs_generation() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 }
 
 #[test]
 fn _0x02_Sphincs_generation_and_signing_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", None).unwrap();
 }
 
 #[test]
 fn _0x01_Sphincs_generation_and_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", Some("RandomContext")).unwrap();
 }
 
 #[test]
 fn _0x04_Sphincs_generation_and_signing_no_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
 
@@ -34,7 +35,7 @@ fn _0x04_Sphincs_generation_and_signing_no_context_verifying() {
 
 #[test]
 fn _0x03_Sphincs_generation_and_signing_with_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -49,7 +50,7 @@ fn _0x03_Sphincs_generation_and_signing_with_context_verifying() {
 
 #[test]
 fn _0x08_Sphincs_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -65,7 +66,7 @@ fn _0x08_Sphincs_wrong_context() {
 #[test]
 #[should_panic]
 fn _0x06_Sphincs_wrong_message_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -81,7 +82,7 @@ fn _0x06_Sphincs_wrong_message_with_context() {
 #[test]
 #[should_panic]
 fn _0x07_Sphincs_wrong_message_with_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -98,7 +99,7 @@ fn _0x07_Sphincs_wrong_message_with_wrong_context() {
 #[test]
 #[should_panic]
 fn _0x05_Sphincs_wrong_message_with_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -114,7 +115,7 @@ fn _0x05_Sphincs_wrong_message_with_no_context() {
 
 #[test]
 fn _0x09_Sphincs_right_message_with_no_context_after_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -130,7 +131,7 @@ fn _0x09_Sphincs_right_message_with_no_context_after_signing_with_context() {
 
 #[test]
 fn _0x0A_Sphincs_right_message_with_no_context_after_signing_with_no_context_and_providing_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -147,7 +148,7 @@ fn _0x0A_Sphincs_right_message_with_no_context_after_signing_with_no_context_and
 #[test]
 #[should_panic]
 fn _0x0B_Sphincs_wrong_signature() {
-    let keypair = LiberatoKeypair::generate(Algorithms::Sphincs).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::Sphincs).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";

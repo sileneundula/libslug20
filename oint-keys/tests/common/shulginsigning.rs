@@ -1,27 +1,28 @@
-use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{LiberatoKeypairTrait, LiberatoSigning, LiberatoVerification}, *}};
+use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{OintKeypairTrait, OintSigning, OintVerification}, *}};
+use oint_keys::key::oint_keys::OpenInternetKeypair;
 
 #[test]
 fn _0x00_ShulginSigning_generation() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 }
 
 #[test]
 fn _0x02_ShulginSigning_generation_and_signing_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", None).unwrap();
 }
 
 #[test]
 fn _0x01_ShulginSigning_generation_and_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", Some("RandomContext")).unwrap();
 }
 
 #[test]
 fn _0x04_ShulginSigning_generation_and_signing_no_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
 
@@ -34,7 +35,7 @@ fn _0x04_ShulginSigning_generation_and_signing_no_context_verifying() {
 
 #[test]
 fn _0x03_ShulginSigning_generation_and_signing_with_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -49,7 +50,7 @@ fn _0x03_ShulginSigning_generation_and_signing_with_context_verifying() {
 
 #[test]
 fn _0x08_ShulginSigning_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -65,7 +66,7 @@ fn _0x08_ShulginSigning_wrong_context() {
 #[test]
 #[should_panic]
 fn _0x06_ShulginSigning_wrong_message_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -81,7 +82,7 @@ fn _0x06_ShulginSigning_wrong_message_with_context() {
 #[test]
 #[should_panic]
 fn _0x07_ShulginSigning_wrong_message_with_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -98,7 +99,7 @@ fn _0x07_ShulginSigning_wrong_message_with_wrong_context() {
 #[test]
 #[should_panic]
 fn _0x05_ShulginSigning_wrong_message_with_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -115,7 +116,7 @@ fn _0x05_ShulginSigning_wrong_message_with_no_context() {
 #[test]
 #[should_panic]
 fn _0x09_ShulginSigning_right_message_with_no_context_after_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -132,7 +133,7 @@ fn _0x09_ShulginSigning_right_message_with_no_context_after_signing_with_context
 #[test]
 #[should_panic]
 fn _0x0A_ShulginSigning_right_message_with_no_context_after_signing_with_no_context_and_providing_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -149,7 +150,7 @@ fn _0x0A_ShulginSigning_right_message_with_no_context_after_signing_with_no_cont
 #[test]
 #[should_panic]
 fn _0x0B_ShulginSigning_wrong_signature() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ShulginSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ShulginSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";

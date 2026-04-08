@@ -18,30 +18,31 @@
 //!     - [X] Signatures
 //!         - [X] Wrong Signature (0x0B)
 
-use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{LiberatoKeypairTrait, LiberatoSigning, LiberatoVerification}, *}};
+use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{OintKeypairTrait, OintSigning, OintVerification}, *}};
+use oint_keys::key::oint_keys::OpenInternetKeypair;
 
 #[test]
 fn _0x00_AbsolveSigning_generation() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 }
 
 #[test]
 fn _0x02_AbsolveSigning_generation_and_signing_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", None).unwrap();
 }
 
 #[test]
 fn _0x01_AbsolveSigning_generation_and_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", Some("RandomContext")).unwrap();
 }
 
 #[test]
 fn _0x04_AbsolveSigning_generation_and_signing_no_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
 
@@ -54,7 +55,7 @@ fn _0x04_AbsolveSigning_generation_and_signing_no_context_verifying() {
 
 #[test]
 fn _0x03_AbsolveSigning_generation_and_signing_with_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -69,7 +70,7 @@ fn _0x03_AbsolveSigning_generation_and_signing_with_context_verifying() {
 
 #[test]
 fn _0x08_AbsolveSigning_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -85,7 +86,7 @@ fn _0x08_AbsolveSigning_wrong_context() {
 #[test]
 #[should_panic]
 fn _0x06_AbsolveSigning_wrong_message_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -101,7 +102,7 @@ fn _0x06_AbsolveSigning_wrong_message_with_context() {
 #[test]
 #[should_panic]
 fn _0x07_AbsolveSigning_wrong_message_with_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -118,7 +119,7 @@ fn _0x07_AbsolveSigning_wrong_message_with_wrong_context() {
 #[test]
 #[should_panic]
 fn _0x05_AbsolveSigning_wrong_message_with_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -135,7 +136,7 @@ fn _0x05_AbsolveSigning_wrong_message_with_no_context() {
 // Doesnt Panic. Doesnt Need Context.
 #[test]
 fn _0x09_AbsolveSigning_right_message_with_no_context_after_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -152,7 +153,7 @@ fn _0x09_AbsolveSigning_right_message_with_no_context_after_signing_with_context
 // Doesnt Need Context
 #[test]
 fn _0x0A_AbsolveSigning_right_message_with_no_context_after_signing_with_no_context_and_providing_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -169,7 +170,7 @@ fn _0x0A_AbsolveSigning_right_message_with_no_context_after_signing_with_no_cont
 #[test]
 #[should_panic]
 fn _0x0B_AbsolveSigning_wrong_signature() {
-    let keypair = LiberatoKeypair::generate(Algorithms::AbsolveSigning).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::AbsolveSigning).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";

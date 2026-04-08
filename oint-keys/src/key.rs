@@ -23,7 +23,7 @@
 //! - [ ] Implement Key Decodings
 //! 
 
-pub mod Liberato {
+pub mod oint_keys {
     //! # Liberato Keypair: A Unified Interface for Cryptographic Key Management
     //! 
     //! ## Algorithms Supported
@@ -71,25 +71,24 @@ pub mod Liberato {
     use crate::algorithms::slug::Algorithms;
     
     
-    use crate::traits::liberato_key_traits::{FromX59, IntoX59, LiberatoKeypairTrait};
-    use crate::traits::liberato_key_traits::{LiberatoSigning,LiberatoVerification};
+    use crate::traits::base::{FromX59, IntoX59, OintKeypairTrait, OintSigning, OintVerification};
 
-    use crate::traits::liberato_key_traits::{IntoEncodingPublicKey,IntoEncodingKeypair,IntoEncodingSecretKey,IntoEncodingSignature};
+    use crate::traits::base::{IntoEncodingPublicKey,IntoEncodingKeypair,IntoEncodingSecretKey,IntoEncodingSignature};
 
     use crate::constants::*;
 
-    pub const LIBERATO_KEYPAIR_CONTEXT: &str = "OintKeys-LiberatoKeypair-Context";
+    pub const LIBERATO_KEYPAIR_CONTEXT: &str = "OintKeys-OpenInternetKeypair-Context";
 
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
-    pub struct LiberatoKeypair {
-        pub pk: LiberatoPublicKey,
-        pub sk: LiberatoSecretKey,
+    pub struct OpenInternetKeypair {
+        pub pk: OpenInternetPublicKey,
+        pub sk: OpenInternetSecretKey,
     }
 
-    impl LiberatoKeypairTrait for LiberatoKeypair {
+    impl OintKeypairTrait for OpenInternetKeypair {
         /// # [Oint-Keys]Generate Keypair
         /// 
-        /// This function generates a keypair based on the provided algorithm. It supports a wide range of algorithms, including both classical and post-quantum schemes. The generated keypair is returned as a `LiberatoKeypair` struct, which contains both the public and secret keys.
+        /// This function generates a keypair based on the provided algorithm. It supports a wide range of algorithms, including both classical and post-quantum schemes. The generated keypair is returned as a `OpenInternetKeypair` struct, which contains both the public and secret keys.
         fn generate(alg: crate::algorithms::slug::Algorithms) -> Result<Self,libslug::prelude::core::SlugErrors> {
             match alg {
                 Algorithms::AbsolveSigning => {
@@ -98,16 +97,16 @@ pub mod Liberato {
                     let pk: AbsolveKeypair = secret_key.into_public_key();
 
                     return Ok(Self {
-                        pk: LiberatoPublicKey { pk: SlugPublicKey::AbsolveSigning(pk) },
-                        sk: LiberatoSecretKey { sk: SlugSecretKey::AbsolveSigning(secret_key) }
+                        pk: OpenInternetPublicKey { pk: SlugPublicKey::AbsolveSigning(pk) },
+                        sk: OpenInternetSecretKey { sk: SlugSecretKey::AbsolveSigning(secret_key) }
                     })
                     
                 }
                 Algorithms::BLS12_381 => {
                     let (pk, sk) = SlugBLS::generate();
 
-                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::BLS12_381(pk));
-                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::BLS12_381(sk));
+                    let pk_output: OpenInternetPublicKey = OpenInternetPublicKey::from_public_key(SlugPublicKey::BLS12_381(pk));
+                    let sk_output: OpenInternetSecretKey = OpenInternetSecretKey::from_secret_key(SlugSecretKey::BLS12_381(sk));
 
                     return Ok(Self {
                         pk: pk_output,
@@ -118,8 +117,8 @@ pub mod Liberato {
                     let sk: ECDSASecretKey = ECDSASecretKey::generate();
                     let pk: libslug::slugcrypt::internals::signature::ecdsa::ECDSAPublicKey = sk.public_key()?;
 
-                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::ECDSA(pk));
-                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::ECDSA(sk));
+                    let pk_output: OpenInternetPublicKey = OpenInternetPublicKey::from_public_key(SlugPublicKey::ECDSA(pk));
+                    let sk_output: OpenInternetSecretKey = OpenInternetSecretKey::from_secret_key(SlugSecretKey::ECDSA(sk));
 
                     return Ok(Self {
                         pk: pk_output,
@@ -130,8 +129,8 @@ pub mod Liberato {
                     let sk: ED25519SecretKey = ED25519SecretKey::generate();
                     let pk: libslug::slugcrypt::internals::signature::ed25519::ED25519PublicKey = sk.public_key()?;
 
-                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::ED25519(pk));
-                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::ED25519(sk));
+                    let pk_output: OpenInternetPublicKey = OpenInternetPublicKey::from_public_key(SlugPublicKey::ED25519(pk));
+                    let sk_output: OpenInternetSecretKey = OpenInternetSecretKey::from_secret_key(SlugSecretKey::ED25519(sk));
 
                     return Ok(Self {
                         pk: pk_output,
@@ -142,8 +141,8 @@ pub mod Liberato {
                     let sk: Ed448SecretKey = Ed448SecretKey::generate();
                     let pk: libslug::slugcrypt::internals::signature::ed448::Ed448PublicKey = sk.into_public_key();
 
-                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::ED448(pk));
-                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::ED448(sk));
+                    let pk_output: OpenInternetPublicKey = OpenInternetPublicKey::from_public_key(SlugPublicKey::ED448(pk));
+                    let sk_output: OpenInternetSecretKey = OpenInternetSecretKey::from_secret_key(SlugSecretKey::ED448(sk));
 
                     return Ok(Self {
                         pk: pk_output,
@@ -155,15 +154,15 @@ pub mod Liberato {
                     let pk = secret_key.into_public_key();
 
                     return Ok(Self {
-                        pk: LiberatoPublicKey { pk: SlugPublicKey::EsphandSigning(pk) },
-                        sk: LiberatoSecretKey { sk: SlugSecretKey::EsphandSigning(secret_key) }
+                        pk: OpenInternetPublicKey { pk: SlugPublicKey::EsphandSigning(pk) },
+                        sk: OpenInternetSecretKey { sk: SlugSecretKey::EsphandSigning(secret_key) }
                     })
                 }
                 Algorithms::Falcon1024 => {
                     let (pk,sk) = SlugFalcon1024::generate();
 
-                    let pk_output = LiberatoPublicKey::from_public_key(SlugPublicKey::FALCON1024(pk.clone()));
-                    let sk_output = LiberatoSecretKey::from_secret_key(SlugSecretKey::FALCON1024((sk,pk.clone())));
+                    let pk_output = OpenInternetPublicKey::from_public_key(SlugPublicKey::FALCON1024(pk.clone()));
+                    let sk_output = OpenInternetSecretKey::from_secret_key(SlugSecretKey::FALCON1024((sk,pk.clone())));
 
                     return Ok(Self {
                         pk: pk_output,
@@ -175,8 +174,8 @@ pub mod Liberato {
                     let mldsa3_pk: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3PublicKey = mldsa3.public_key().clone();
                     let mldsa3_sk: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3SecretKey  = mldsa3.secret_key().clone();
 
-                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::MLDSA3(mldsa3_pk.clone()));
-                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::MLDSA3((mldsa3_sk, mldsa3_pk.clone())));
+                    let pk_output: OpenInternetPublicKey = OpenInternetPublicKey::from_public_key(SlugPublicKey::MLDSA3(mldsa3_pk.clone()));
+                    let sk_output: OpenInternetSecretKey = OpenInternetSecretKey::from_secret_key(SlugSecretKey::MLDSA3((mldsa3_sk, mldsa3_pk.clone())));
 
                     return Ok(Self {
                         pk: pk_output,
@@ -187,8 +186,8 @@ pub mod Liberato {
                     let sk: SchnorrSecretKey = SchnorrSecretKey::generate();
                     let pk: libslug::slugcrypt::internals::signature::schnorr::SchnorrPublicKey = sk.public_key().expect("Failed During Generation of Schnorr Public Key");
 
-                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::SchnorrOverRistretto(pk));
-                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::SchnorrOverRistretto(sk));
+                    let pk_output: OpenInternetPublicKey = OpenInternetPublicKey::from_public_key(SlugPublicKey::SchnorrOverRistretto(pk));
+                    let sk_output: OpenInternetSecretKey = OpenInternetSecretKey::from_secret_key(SlugSecretKey::SchnorrOverRistretto(sk));
 
                     return Ok(Self {
                         pk: pk_output,
@@ -200,14 +199,14 @@ pub mod Liberato {
                     let pk = secret_key.into_public_key();
 
                     return Ok(Self {
-                        pk: LiberatoPublicKey { pk: SlugPublicKey::ShulginSigning(pk) },
-                        sk: LiberatoSecretKey { sk: SlugSecretKey::ShulginSigning(secret_key) }
+                        pk: OpenInternetPublicKey { pk: SlugPublicKey::ShulginSigning(pk) },
+                        sk: OpenInternetSecretKey { sk: SlugSecretKey::ShulginSigning(secret_key) }
                     })
                 }
                 Algorithms::Sphincs => {
                     let (pk,sk) = SPHINCSSecretKey::generate();
-                    let pk_output: LiberatoPublicKey = LiberatoPublicKey::from_public_key(SlugPublicKey::SPHINCS(pk.clone()));
-                    let sk_output: LiberatoSecretKey = LiberatoSecretKey::from_secret_key(SlugSecretKey::SPHINCS((sk,pk.clone())));
+                    let pk_output: OpenInternetPublicKey = OpenInternetPublicKey::from_public_key(SlugPublicKey::SPHINCS(pk.clone()));
+                    let sk_output: OpenInternetSecretKey = OpenInternetSecretKey::from_secret_key(SlugSecretKey::SPHINCS((sk,pk.clone())));
 
                     return Ok(Self {
                         pk: pk_output,
@@ -219,14 +218,14 @@ pub mod Liberato {
         }
         /// # Get Public Key
         /// 
-        /// Returns Public Key as `LiberatoPublicKey` struct.
-        fn public_key(&self) -> &LiberatoPublicKey {
+        /// Returns Public Key as `OpenInternetPublicKey` struct.
+        fn public_key(&self) -> &OpenInternetPublicKey {
             return &self.pk;
         }
         /// # Get Secret Key
         /// 
-        /// Returns Secret Key as `LiberatoSecretKey` struct.
-        fn secret_key(&self) -> &LiberatoSecretKey {
+        /// Returns Secret Key as `OpenInternetSecretKey` struct.
+        fn secret_key(&self) -> &OpenInternetSecretKey {
             return &self.sk;
         }
         /// # Get Algorithm
@@ -252,8 +251,8 @@ pub mod Liberato {
         }
     }
 
-    impl LiberatoSigning for LiberatoKeypair {
-        fn sign_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<LiberatoSignature>,libslug::prelude::core::SlugErrors> {
+    impl OintSigning for OpenInternetKeypair {
+        fn sign_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>) -> Result<Box<OpenInternetSignature>,libslug::prelude::core::SlugErrors> {
             match &self.sk.sk {
                 // TODO: Sk signs using "libslug20" but this library forces it to use Liberato_Keypair_Context
                 // Contains Context Option
@@ -261,41 +260,41 @@ pub mod Liberato {
 
                     if context.is_none() {
                         let x = sk.sign_with_context(msg.as_ref(),LIBERATO_KEYPAIR_CONTEXT.as_bytes())?;
-                        return Ok(LiberatoSignature::from_signature(SlugSignature::AbsolveSigning(x)))
+                        return Ok(OpenInternetSignature::from_signature(SlugSignature::AbsolveSigning(x)))
                     }
                     let signature: libslug::slugcrypt::internals::signature::absolvesigning::AbsolveSignature = sk.sign_with_context(msg.as_ref(), context.unwrap().as_ref())?;
 
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::AbsolveSigning(signature)))
+                    return Ok(OpenInternetSignature::from_signature(SlugSignature::AbsolveSigning(signature)))
                 }
                 // [X] Done
                 SlugSecretKey::BLS12_381(sk) => {
                     let sig = sk.sign(msg.as_ref())?;
 
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::BLS12_381(sig)))
+                    return Ok(OpenInternetSignature::from_signature(SlugSignature::BLS12_381(sig)))
                 }
                 // [X] Done
                 SlugSecretKey::ECDSA(sk) => {
                     let signature: (libslug::slugcrypt::internals::signature::ecdsa::ECDSASignature, libslug::slugcrypt::internals::signature::ecdsa::ECDSASignatureRecoveryID) = sk.sign(msg.as_ref())?;
 
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::ECDSA(signature.0,signature.1)))
+                    return Ok(OpenInternetSignature::from_signature(SlugSignature::ECDSA(signature.0,signature.1)))
                 }
                 // [X] Done
                 SlugSecretKey::ED25519(sk) => {
                     let signature: libslug::slugcrypt::internals::signature::ed25519::ED25519Signature = sk.sign(msg.as_ref())?;
 
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::ED25519(signature)))
+                    return Ok(OpenInternetSignature::from_signature(SlugSignature::ED25519(signature)))
                 }
                 // [X] Done
                 SlugSecretKey::ED448(sk) => {
                     let signature: libslug::slugcrypt::internals::signature::ed448::Ed448Signature = sk.sign(msg.as_ref())?;
 
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::ED448(signature)))
+                    return Ok(OpenInternetSignature::from_signature(SlugSignature::ED448(signature)))
                 }
                 // [X] Done
                 SlugSecretKey::EsphandSigning(sk) => {
                     let signature = sk.sign(msg.as_ref())?;
 
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::EsphandSigning(signature)))
+                    return Ok(OpenInternetSignature::from_signature(SlugSignature::EsphandSigning(signature)))
                 }
                 // [X] Done
                 SlugSecretKey::FALCON1024((sk, _)) => {
@@ -306,7 +305,7 @@ pub mod Liberato {
                     }
                     else {
                         let signature = signature.unwrap();
-                        return Ok(LiberatoSignature::from_signature(SlugSignature::FALCON1024(signature)))
+                        return Ok(OpenInternetSignature::from_signature(SlugSignature::FALCON1024(signature)))
                     }
                 }
                 // [X] Done
@@ -314,12 +313,12 @@ pub mod Liberato {
                     if context.is_none() {
                         let signature: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3Signature = sk.sign(msg.as_ref(), LIBERATO_KEYPAIR_CONTEXT.as_bytes())?;
 
-                        return Ok(LiberatoSignature::from_signature(SlugSignature::MLDSA3(signature)))
+                        return Ok(OpenInternetSignature::from_signature(SlugSignature::MLDSA3(signature)))
                     }
                     else {
                         let signature: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3Signature = sk.sign(msg.as_ref(), context.unwrap().as_ref())?;
                         
-                        return Ok(LiberatoSignature::from_signature(SlugSignature::MLDSA3(signature)))
+                        return Ok(OpenInternetSignature::from_signature(SlugSignature::MLDSA3(signature)))
                     }
 
                 }
@@ -333,7 +332,7 @@ pub mod Liberato {
                         }
                         else {
                             let signature = signature.unwrap();
-                            return Ok(LiberatoSignature::from_signature(SlugSignature::SchnorrOverRistretto(signature)))
+                            return Ok(OpenInternetSignature::from_signature(SlugSignature::SchnorrOverRistretto(signature)))
                         }
                     }
                     else {
@@ -344,7 +343,7 @@ pub mod Liberato {
                         }
                         else {
                             let signature = signature.unwrap();
-                            return Ok(LiberatoSignature::from_signature(SlugSignature::SchnorrOverRistretto(signature)))
+                            return Ok(OpenInternetSignature::from_signature(SlugSignature::SchnorrOverRistretto(signature)))
                         }
                     }
                 }
@@ -352,23 +351,23 @@ pub mod Liberato {
                 SlugSecretKey::ShulginSigning(sk) => {
                     let signature: libslug::slugcrypt::internals::signature::shulginsigning::ShulginSignature = sk.sign(msg.as_ref())?;
 
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::ShulginSigning(signature)))
+                    return Ok(OpenInternetSignature::from_signature(SlugSignature::ShulginSigning(signature)))
                 }
                 // [X] Done
                 SlugSecretKey::SPHINCS(sk) => {
                     let signature: libslug::slugcrypt::internals::signature::sphincs_plus::SPHINCSSignature = sk.0.sign(msg.as_ref())?;
                     
-                    return Ok(LiberatoSignature::from_signature(SlugSignature::SPHINCS(signature)))
+                    return Ok(OpenInternetSignature::from_signature(SlugSignature::SPHINCS(signature)))
                 }
         }
 
     }
-        fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Result<Box<LiberatoSignature>,libslug::prelude::core::SlugErrors> {
+        fn sign<T: AsRef<[u8]>>(&self, msg: T) -> Result<Box<OpenInternetSignature>,libslug::prelude::core::SlugErrors> {
             return self.sign_with_context(msg, None)
         }
 }
-    impl LiberatoVerification for LiberatoPublicKey {
-        fn verify_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, sig: &LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
+    impl OintVerification for OpenInternetPublicKey {
+        fn verify_with_context<T: AsRef<[u8]>>(&self, msg: T, context: Option<T>, sig: &OpenInternetSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
             let signature: SlugSignature = sig.as_slug_signature();
             
             match &self.pk {
@@ -537,16 +536,17 @@ pub mod Liberato {
             }
         }
     }
-    fn verify<T: AsRef<[u8]>>(&self, msg: T, signature: &LiberatoSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
+    fn verify<T: AsRef<[u8]>>(&self, msg: T, signature: &OpenInternetSignature) -> Result<bool,libslug::prelude::core::SlugErrors> {
         return self.verify_with_context(msg, None, signature)
     }
     }
+    
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
-    pub struct LiberatoPublicKey {
+    pub struct OpenInternetPublicKey {
         pub pk: SlugPublicKey,
     }
 
-    impl LiberatoPublicKey {
+    impl OpenInternetPublicKey {
         pub fn from_public_key(alg: SlugPublicKey) -> Self {
             return Self {
                 pk: alg,
@@ -555,11 +555,11 @@ pub mod Liberato {
     }
 
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
-    pub struct LiberatoSecretKey {
+    pub struct OpenInternetSecretKey {
         pub sk: SlugSecretKey
     }
 
-    impl LiberatoSecretKey {
+    impl OpenInternetSecretKey {
         pub fn from_secret_key(alg: SlugSecretKey) -> Self {
             return Self {
                 sk: alg,
@@ -568,11 +568,11 @@ pub mod Liberato {
     }
 
     #[derive(Clone, Debug, PartialEq, PartialOrd, Hash, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
-    pub struct LiberatoSignature {
+    pub struct OpenInternetSignature {
         pub signature: SlugSignature,
     }
 
-    impl LiberatoSignature {
+    impl OpenInternetSignature {
         pub fn from_signature(alg: SlugSignature) -> Box<Self> {
             return Box::new(Self {
                 signature: alg,
@@ -585,7 +585,7 @@ pub mod Liberato {
 
     //===== Implementations of Encoding Traits for Liberato Keys =====
 
-    impl IntoEncodingPublicKey for LiberatoPublicKey {
+    impl IntoEncodingPublicKey for OpenInternetPublicKey {
         fn into_base32(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
             match &self.pk {
                 SlugPublicKey::AbsolveSigning(pk) => {
@@ -894,7 +894,7 @@ pub mod Liberato {
         }
     }
 
-    impl IntoEncodingSecretKey for LiberatoSecretKey {
+    impl IntoEncodingSecretKey for OpenInternetSecretKey {
         fn into_base32(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
             match &self.sk {
                 SlugSecretKey::AbsolveSigning(sk) => {
@@ -1204,7 +1204,7 @@ pub mod Liberato {
     }
 
 
-    impl IntoX59 for LiberatoPublicKey {
+    impl IntoX59 for OpenInternetPublicKey {
         fn into_x59_fmt(&self) -> Result<String,libslug::prelude::core::SlugErrors> {
             match &self.pk {
                 SlugPublicKey::AbsolveSigning(x) => {
@@ -1280,7 +1280,7 @@ pub mod Liberato {
        }
     }
 
-    impl FromX59 for LiberatoPublicKey {
+    impl FromX59 for OpenInternetPublicKey {
         fn from_x59_fmt<T: AsRef<str>>(s: T, alg: Algorithms) -> Result<Self,libslug::prelude::core::SlugErrors> {
             match alg {
                 Algorithms::AbsolveSigning => {

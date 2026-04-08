@@ -18,30 +18,31 @@
 //!     - [X] Signatures
 //!         - [X] Wrong Signature (0x0B)
 
-use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{LiberatoKeypairTrait, LiberatoSigning, LiberatoVerification}, *}};
+use oint_keys::{algorithms::slug::Algorithms, prelude::{traits::{OintKeypairTrait, OintSigning, OintVerification}, *}};
+use oint_keys::key::oint_keys::OpenInternetKeypair;
 
 #[test]
 fn _0x00_ed25519_generation() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 }
 
 #[test]
 fn _0x02_ed25519_generation_and_signing_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", None).unwrap();
 }
 
 #[test]
 fn _0x01_ed25519_generation_and_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let sig = keypair.sign_with_context("Hello World.", Some("RandomContext")).unwrap();
 }
 
 #[test]
 fn _0x04_ed25519_generation_and_signing_no_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
 
@@ -54,7 +55,7 @@ fn _0x04_ed25519_generation_and_signing_no_context_verifying() {
 
 #[test]
 fn _0x03_ed25519_generation_and_signing_with_context_verifying() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -69,7 +70,7 @@ fn _0x03_ed25519_generation_and_signing_with_context_verifying() {
 
 #[test]
 fn _0x08_ed25519_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
     let context = "Example Context";
@@ -85,7 +86,7 @@ fn _0x08_ed25519_wrong_context() {
 #[test]
 #[should_panic]
 fn _0x06_ed25519_wrong_message_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -101,7 +102,7 @@ fn _0x06_ed25519_wrong_message_with_context() {
 #[test]
 #[should_panic]
 fn _0x07_ed25519_wrong_message_with_wrong_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -118,7 +119,7 @@ fn _0x07_ed25519_wrong_message_with_wrong_context() {
 #[test]
 #[should_panic]
 fn _0x05_ed25519_wrong_message_with_no_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -135,7 +136,7 @@ fn _0x05_ed25519_wrong_message_with_no_context() {
 #[test]
 #[should_panic]
 fn _0x09_ed25519_right_message_with_no_context_after_signing_with_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -152,7 +153,7 @@ fn _0x09_ed25519_right_message_with_no_context_after_signing_with_context() {
 #[test]
 #[should_panic]
 fn _0x0A_ed25519_right_message_with_no_context_after_signing_with_no_context_and_providing_context() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
@@ -169,7 +170,7 @@ fn _0x0A_ed25519_right_message_with_no_context_after_signing_with_no_context_and
 #[test]
 #[should_panic]
 fn _0x0B_ed25519_wrong_signature() {
-    let keypair = LiberatoKeypair::generate(Algorithms::ED25519).unwrap();
+    let keypair = OpenInternetKeypair::generate(Algorithms::ED25519).unwrap();
 
     let msg = "Example Message";
     let msg_wrong = "Other Message";
