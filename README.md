@@ -1,11 +1,21 @@
 # Slug20 Library
 
+
 ![Static Badge](https://img.shields.io/badge/%2Fsilene%2Fslug20-libslug-blue?style=flat-square)
 ![Crates.io Version](https://img.shields.io/crates/v/libslug?style=flat-square)
 ![Crates.io License](https://img.shields.io/crates/l/libslug?style=flat-square)
 ![Deps.rs Crate Dependencies (latest)](https://img.shields.io/deps-rs/libslug/latest?style=flat-square)
 ![Crates.io Total Downloads](https://img.shields.io/crates/d/libslug?style=flat-square)
 ![Crates.io Dependents](https://img.shields.io/crates/dependents/libslug?style=flat-square)
+
+![Bluesky followers](https://img.shields.io/bluesky/followers/silene0259.bsky.social?link=https%3A%2F%2Fbsky.app%2Fprofile%2Fsilene0259.bsky.social)
+![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCCVb9sS4YjtGlK0oP-9oeig?link=https%3A%2F%2Fwww.youtube.com%2F%40DionysianMyst-u8s)
+![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/jtortorelli09?link=https%3A%2F%2Fx.com%2Fjtortorelli09)
+![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/silene0259?link=https%3A%2F%2Fx.com%2Fsilene0259)
+
+
+
+
 
 <img height="25%" width="25%" src="https://github.com/sileneundula/libslug20/blob/master/assets/logo/libslug20_logo.png">
 
