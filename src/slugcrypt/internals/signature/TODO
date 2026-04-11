@@ -9,3 +9,6 @@
 - [X] ED25519
 - [X] ED448
 - [X] FALCON1024
+- [X] Schnorr
+- [X] ML-DSA3
+- [X] 

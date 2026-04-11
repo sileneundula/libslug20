@@ -67,7 +67,7 @@ use zeroize::{ZeroizeOnDrop,Zeroize};
 // IntoPem
 use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
-
+use crate::slugcrypt::traits::{IntoEncoding,FromEncoding};
 use securerand_rs::securerand::SecureRandom;
 use securerand_rs::rngs::FuschineCSPRNG;
 

@@ -49,6 +49,7 @@ use log::info;
 use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret, IntoPemSignature};
 use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
+use crate::slugcrypt::traits::{FromEncoding,IntoEncoding};
 
 use slugencode::prelude::*;
 
@@ -617,7 +618,7 @@ impl EsphandSignature {
     /// # To X59 Signature (Esphand)
     /// 
     /// **Encoding:** Hexadecimal
-    pub fn to_x59_signature(&self) -> Result<String,SlugEncodingError> {
+    pub fn to_x59_signature(&self) -> Result<String,SlugErrors> {
         let mut output = String::new();
 
         output.push_str(&self.clsig.to_hexadecimal()?);
