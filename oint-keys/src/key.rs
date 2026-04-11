@@ -592,22 +592,22 @@ pub mod oint_keys {
                     unimplemented!()
                 }
                 SlugPublicKey::BLS12_381(pk) => {
-                    let x = pk.to_base32()?;
+                    let x = pk.into_base32()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ECDSA(pk) => {
-                    let x = pk.to_base32()?;
+                    let x = pk.into_base32()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED25519(pk) => {
-                    let x = pk.to_base32()?;
+                    let x = pk.into_base32()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED448(pk) => {
-                    let x = pk.to_base32()?;
+                    let x = pk.into_base32()?;
 
                     return Ok(x)
                 }
@@ -615,12 +615,12 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::FALCON1024(pk) => {
-                    let x = pk.to_base32()?;
+                    let x = pk.into_base32()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::MLDSA3(pk) => {
-                    let x = pk.to_base32()?;
+                    let x = pk.into_base32()?;
 
                     return Ok(x)
                 }
@@ -631,7 +631,7 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::SPHINCS(pk) => {
-                    let x = pk.to_base32()?;
+                    let x = pk.into_base32()?;
 
                     return Ok(x)
                 }
@@ -643,22 +643,22 @@ pub mod oint_keys {
                     unimplemented!()
                 }
                 SlugPublicKey::BLS12_381(pk) => {
-                    let x = pk.to_base32_unpadded()?;
+                    let x = pk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ECDSA(pk) => {
-                    let x = pk.to_base32_unpadded()?;
+                    let x = pk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED25519(pk) => {
-                    let x = pk.to_base32_unpadded()?;
+                    let x = pk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED448(pk) => {
-                    let x = pk.to_base32_unpadded()?;
+                    let x = pk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
@@ -666,12 +666,12 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::FALCON1024(pk) => {
-                    let x = pk.to_base32_unpadded()?;
+                    let x = pk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::MLDSA3(pk) => {
-                    let x = pk.to_base32_unpadded()?;
+                    let x = pk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
@@ -682,7 +682,7 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::SPHINCS(pk) => {
-                    let x = pk.to_base32_unpadded()?;
+                    let x = pk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
@@ -694,22 +694,22 @@ pub mod oint_keys {
                     unimplemented!()
                 }
                 SlugPublicKey::BLS12_381(pk) => {
-                    let x = pk.to_base58()?;
+                    let x = pk.into_base58()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ECDSA(pk) => {
-                    let x = pk.to_base58()?;
+                    let x = pk.into_base58()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED25519(pk) => {
-                    let x = pk.to_base58()?;
+                    let x = pk.into_base58()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED448(pk) => {
-                    let x = pk.to_base58()?;
+                    let x = pk.into_base58()?;
 
                     return Ok(x)
                 }
@@ -717,12 +717,12 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::FALCON1024(pk) => {
-                    let x = pk.to_base58()?;
+                    let x = pk.into_base58()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::MLDSA3(pk) => {
-                    let x = pk.to_base58()?;
+                    let x = pk.into_base58()?;
 
                     return Ok(x)
                 }
@@ -733,7 +733,7 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::SPHINCS(pk) => {
-                    let x = pk.to_base58()?;
+                    let x = pk.into_base58()?;
 
                     return Ok(x)
                 }
@@ -745,22 +745,22 @@ pub mod oint_keys {
                     unimplemented!()
                 }
                 SlugPublicKey::BLS12_381(pk) => {
-                    let x = pk.to_base64()?;
+                    let x = pk.into_base64()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ECDSA(pk) => {
-                    let x = pk.to_base64()?;
+                    let x = pk.into_base64()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED25519(pk) => {
-                    let x = pk.to_base64()?;
+                    let x = pk.into_base64()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED448(pk) => {
-                    let x = pk.to_base64()?;
+                    let x = pk.into_base64()?;
 
                     return Ok(x)
                 }
@@ -768,12 +768,12 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::FALCON1024(pk) => {
-                    let x = pk.to_base64()?;
+                    let x = pk.into_base64()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::MLDSA3(pk) => {
-                    let x = pk.to_base64()?;
+                    let x = pk.into_base64()?;
 
                     return Ok(x)
                 }
@@ -784,7 +784,7 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::SPHINCS(pk) => {
-                    let x = pk.to_base64()?;
+                    let x = pk.into_base64()?;
 
                     return Ok(x)
                 }
@@ -796,22 +796,22 @@ pub mod oint_keys {
                     unimplemented!()
                 }
                 SlugPublicKey::BLS12_381(pk) => {
-                    let x = pk.to_base64_url_safe()?;
+                    let x = pk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ECDSA(pk) => {
-                    let x = pk.to_base64_url_safe()?;
+                    let x = pk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED25519(pk) => {
-                    let x = pk.to_base64_url_safe()?;
+                    let x = pk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ED448(pk) => {
-                    let x = pk.to_base64_url_safe()?;
+                    let x = pk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
@@ -819,12 +819,12 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::FALCON1024(pk) => {
-                    let x = pk.to_base64_url_safe()?;
+                    let x = pk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::MLDSA3(pk) => {
-                    let x = pk.to_base64_url_safe()?;
+                    let x = pk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
@@ -835,7 +835,7 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::SPHINCS(pk) => {
-                    let x = pk.to_base64_url_safe()?;
+                    let x = pk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
@@ -847,12 +847,12 @@ pub mod oint_keys {
                     unimplemented!()
                 }
                 SlugPublicKey::BLS12_381(pk) => {
-                    let x = pk.to_hex()?;
+                    let x = pk.into_hex()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::ECDSA(pk) => {
-                    let x = pk.to_hex()?;
+                    let x = pk.into_hex()?;
 
                     return Ok(x)
                 }
@@ -870,12 +870,12 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::FALCON1024(pk) => {
-                    let x = pk.to_hex()?;
+                    let x = pk.into_hex()?;
 
                     return Ok(x)
                 }
                 SlugPublicKey::MLDSA3(pk) => {
-                    let x = pk.to_hex()?;
+                    let x = pk.into_hex()?;
 
                     return Ok(x)
                 }
@@ -886,7 +886,7 @@ pub mod oint_keys {
                     unimplemented!();
                 }
                 SlugPublicKey::SPHINCS(pk) => {
-                    let x = pk.to_hex()?;
+                    let x = pk.into_hex()?;
 
                     return Ok(x)
                 }

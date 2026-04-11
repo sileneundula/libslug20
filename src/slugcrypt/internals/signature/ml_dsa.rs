@@ -98,101 +98,101 @@ pub struct MLDSA3Keypair {
 pub struct SlugMLDSA3;
 
 impl IntoEncoding for MLDSA3PublicKey {
-    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base32(&self) -> Result<String, SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base32);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base58(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base58);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base64(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base64);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
 }
 
 impl IntoEncoding for MLDSA3SecretKey {
-    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base32(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base32);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base58(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base58);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base64(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base64);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
 }
 
 impl IntoEncoding  for MLDSA3Signature {
-    fn to_base32(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base32(&self) -> Result<String, SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base32);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base32_unpadded(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base58(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base58(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base58);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base64(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base64(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base64);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_base64_url_safe(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
-    fn to_hex(&self) -> Result<String,slugencode::prelude::SlugEncodingError> {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
-        let output = encoder.encode(self.as_bytes());
-        return output
+        let output = encoder.encode(self.as_bytes())?;
+        return Ok(output)
     }
 }
 

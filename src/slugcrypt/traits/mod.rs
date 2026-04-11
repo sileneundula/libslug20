@@ -52,18 +52,20 @@ use crate::slugcrypt::internals::signature::esphand_signature::EsphandKeypair;
 
 use crate::errors::SlugErrors;
 
+use std::string::String;
+
 //=====VERIFIED=====//
 
 /// # Into Encoding
 /// 
 /// Contains Constant-Time Encodings For Various Types
 pub trait IntoEncoding {
-    fn to_hex(&self) -> Result<String,SlugErrors>;
-    fn to_base32(&self) -> Result<String,SlugErrors>;
-    fn to_base32_unpadded(&self) -> Result<String,SlugErrors>;
-    fn to_base58(&self) -> Result<String,SlugErrors>;
-    fn to_base64(&self) -> Result<String,SlugErrors>;
-    fn to_base64_url_safe(&self) -> Result<String,SlugErrors>;
+    fn into_hex(&self) -> Result<String,SlugErrors>;
+    fn into_base32(&self) -> Result<String,SlugErrors>;
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors>;
+    fn into_base58(&self) -> Result<String,SlugErrors>;
+    fn into_base64(&self) -> Result<String,SlugErrors>;
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors>;
 }
 
 pub trait FromEncoding: Sized {

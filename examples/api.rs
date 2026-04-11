@@ -7,7 +7,7 @@ use libslug::slugcrypt::api::SlugAsyCrypt;
 
 fn main() {
     let key = EncryptionKey::generate();
-    let key_hex = key.to_hex().unwrap();
+    let key_hex = key.into_hex().unwrap();
     let data = "encrypted by xchacha20-poly1305";
 
     let crypt = SlugCrypt::encrypt(key, data).unwrap();

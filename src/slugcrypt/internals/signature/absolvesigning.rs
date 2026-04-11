@@ -144,7 +144,7 @@ impl AbsolveKeypair {
 impl IntoX59PublicKey for AbsolveKeypair {
     fn into_x59_pk(&self) -> Result<String,SlugErrors> {
         let classical_ed25519 = self.ed25519pk.to_hexadecimal()?;
-        let pq_mldsa = self.mldsa3pk.to_hex()?;
+        let pq_mldsa = self.mldsa3pk.into_hex()?;;
 
         let mut output: String = String::new();
         output.push_str(&classical_ed25519);
@@ -190,12 +190,12 @@ impl IntoX59PublicKey for AbsolveKeypair {
 impl IntoX59SecretKey for AbsolveKeypair {
     fn into_x59(&self) -> Result<String,SlugErrors> {
         let classical_key_pk = self.ed25519pk.to_hexadecimal()?;
-        let mldsa_pk = self.mldsa3pk.to_hex()?;
+        let mldsa_pk = self.mldsa3pk.into_hex()?;;
 
         // TODO: Remove Clone
         if self.ed25519sk.is_some() && self.mldsa3sk.is_some() {
             let classical_key_sk = self.ed25519sk.clone().unwrap().to_hexadecimal()?;
-            let mldsa_sk = self.mldsa3sk.clone().unwrap().to_hex()?;
+            let mldsa_sk = self.mldsa3sk.clone().unwrap().into_hex()?;;
 
             let mut output = String::new();
             output.push_str(&classical_key_pk);
@@ -257,7 +257,7 @@ impl IntoX59SecretKey for AbsolveKeypair {
 impl IntoX59Signature for AbsolveSignature {
     fn into_x59(&self) -> Result<String,SlugErrors> {
         let ed25519sig = self.ed25519sig.to_hexadecimal()?;
-        let mldsa3sig = self.mldsa3sig.to_hex()?;
+        let mldsa3sig = self.mldsa3sig.into_hex()?;;
 
         let context_encoder = slugencode::SlugEncodingUsage::new(slugencode::SlugEncodings::Hex);
 

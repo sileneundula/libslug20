@@ -512,99 +512,99 @@ impl ED25519Signature {
 
 
 impl IntoEncoding for ED25519PublicKey {
-    fn to_hex(&self) -> Result<String,SlugErrors> {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output: String = encoder.encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base32(&self) -> Result<String,SlugErrors> {
+    fn into_base32(&self) -> Result<String,SlugErrors> {
         let output: String = SlugEncodingUsage::new(SlugEncodings::Base32).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base32_unpadded(&self) -> Result<String,SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base32unpadded).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base58(&self) -> Result<String,SlugErrors> {
+    fn into_base58(&self) -> Result<String,SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base58).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base64(&self) -> Result<String,SlugErrors> {
+    fn into_base64(&self) -> Result<String,SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base64).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base64_url_safe(&self) -> Result<String,SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe).encode(&self.0)?;
         Ok(output)
     }
 }
 
 impl IntoEncoding for ED25519SecretKey {
-    fn to_hex(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_hex(&self) -> Result<std::string::String, SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output: String = encoder.encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base32(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base32(&self) -> Result<std::string::String, SlugErrors> {
         let output: String = SlugEncodingUsage::new(SlugEncodings::Base32).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base32_unpadded(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<std::string::String, SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base32unpadded).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base58(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base58(&self) -> Result<std::string::String, SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base58).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base64(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base64(&self) -> Result<std::string::String, SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base64).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base64_url_safe(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<std::string::String, SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe).encode(&self.0)?;
         Ok(output)
     }
 }
 
 impl IntoEncoding for ED25519Signature {
-    fn to_hex(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_hex(&self) -> Result<std::string::String, SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output: String = encoder.encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base32(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base32(&self) -> Result<std::string::String, SlugErrors> {
         let output: String = SlugEncodingUsage::new(SlugEncodings::Base32).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base32_unpadded(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<std::string::String, SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base32unpadded).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base58(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base58(&self) -> Result<std::string::String, SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base58).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base64(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base64(&self) -> Result<std::string::String, SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base64).encode(&self.0)?;
         Ok(output)
     }
 
-    fn to_base64_url_safe(&self) -> Result<std::string::String, SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<std::string::String, SlugErrors> {
         let output = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe).encode(&self.0)?;
         Ok(output)
     }

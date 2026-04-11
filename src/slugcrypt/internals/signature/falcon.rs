@@ -565,96 +565,96 @@ impl Falcon1024Signature {
 
 
 impl IntoEncoding for Falcon1024PublicKey {
-    fn to_hex(&self) -> Result<String, SlugErrors> {
+    fn into_hex(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base32(&self) -> Result<String, SlugErrors> {
+    fn into_base32(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base58(&self) -> Result<String, SlugErrors> {
+    fn into_base58(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base58);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base64(&self) -> Result<String, SlugErrors> {
+    fn into_base64(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
 }
 impl IntoEncoding for Falcon1024SecretKey {
-    fn to_hex(&self) -> Result<String, SlugErrors> {
+    fn into_hex(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base32(&self) -> Result<String, SlugErrors> {
+    fn into_base32(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base58(&self) -> Result<String, SlugErrors> {
+    fn into_base58(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base58);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base64(&self) -> Result<String, SlugErrors> {
+    fn into_base64(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
 }
 impl IntoEncoding for Falcon1024Signature {
-    fn to_hex(&self) -> Result<String, SlugErrors> {
+    fn into_hex(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base32(&self) -> Result<String, SlugErrors> {
+    fn into_base32(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base58(&self) -> Result<String, SlugErrors> {
+    fn into_base58(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base58);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base64(&self) -> Result<String, SlugErrors> {
+    fn into_base64(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
     }
-    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = x.encode(self.as_bytes())?;
         Ok(output)

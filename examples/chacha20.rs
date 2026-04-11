@@ -7,7 +7,7 @@ fn main() {
     let key = EncryptionKey::generate();
 
     // Get The Key As A Hex Using Constant-Time Encoding
-    let key_hex = key.to_hex().unwrap();
+    let key_hex = key.into_hex().unwrap();
 
     println!("Key Hex (Using Constant-Time(ish)): {}", &key_hex);
 

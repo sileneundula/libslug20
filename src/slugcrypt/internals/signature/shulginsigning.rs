@@ -134,8 +134,8 @@ impl IntoX59SecretKey for ShulginKeypair {
         if self.ed25519sk.is_some() == true && self.sphincssk.is_some() == true {
             let ed25519pk = &self.ed25519pk.to_hexadecimal()?;
             let ed25519sk = &self.ed25519sk.clone().unwrap().to_hexadecimal()?;
-            let sphincspk = &self.sphincspk.to_hex()?;
-            let sphincssk = &self.sphincssk.clone().unwrap().to_hex()?;
+            let sphincspk = &self.sphincspk.into_hex()?;;
+            let sphincssk = &self.sphincssk.clone().unwrap().into_hex()?;;
 
             output.push_str(&ed25519pk);
             output.push_str(":");
@@ -307,13 +307,13 @@ impl ShulginKeypair {
 
         output.push_str(&self.ed25519pk.to_hexadecimal().expect("Failed To Get ED25519 Public Key"));
         output.push_str(":");
-        output.push_str(&self.sphincspk.to_hex().expect("Failed To Convert To Hexadecimal For SPHINCS+ Public Key"));
+        output.push_str(&self.sphincspk.into_hex().expect("Failed To Convert To Hexadecimal For SPHINCS+ Public Key"));
 
         output.push_str("/");
 
         output.push_str(&self.ed25519sk.clone().unwrap().to_hexadecimal().unwrap());
         output.push_str(":");
-        output.push_str(&self.sphincssk.clone().unwrap().to_hex().unwrap());
+        output.push_str(&self.sphincssk.clone().unwrap().into_hex().unwrap());
 
         return Ok(output)
     }

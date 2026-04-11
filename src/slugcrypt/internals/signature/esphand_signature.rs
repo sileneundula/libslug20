@@ -93,7 +93,7 @@ impl IntoX59PublicKey for EsphandKeypair {
         let mut output: String = String::new();
         
         let clpk = self.clpk.to_hexadecimal();
-        let pqpk = self.pqpk.to_hex();
+        let pqpk = self.pqpk.into_hex();
 
         let output_cl = match clpk {
             Ok(v) => v,
@@ -160,8 +160,8 @@ impl IntoX59SecretKey for EsphandKeypair {
 
         let x = self.clpk.to_hexadecimal()?;
         let x_2 = self.clsk.clone().unwrap().to_hexadecimal()?;
-        let y = self.pqpk.to_hex()?;
-        let y_2 = self.pqsk.clone().unwrap().to_hex()?;
+        let y = self.pqpk.into_hex()?;
+        let y_2 = self.pqsk.clone().unwrap().into_hex()?;
 
         output.push_str(&x);
         output.push_str(":");
@@ -216,7 +216,7 @@ impl IntoX59Signature for EsphandSignature {
         let mut output: String = String::new();
         
         let ed25519_sig = self.clsig.to_hexadecimal()?;
-        let falcon1024_sig = self.pqsig.to_hex()?;
+        let falcon1024_sig = self.pqsig.into_hex()?;
 
         output.push_str(&ed25519_sig);
         output.push_str(":");
@@ -622,7 +622,7 @@ impl EsphandSignature {
 
         output.push_str(&self.clsig.to_hexadecimal()?);
         output.push_str(":");
-        output.push_str(&self.pqsig.to_hex()?);
+        output.push_str(&self.pqsig.into_hex()?);
 
         return Ok(output)
     }

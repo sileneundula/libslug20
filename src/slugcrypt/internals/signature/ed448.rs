@@ -81,7 +81,7 @@ pub struct Ed448Keypair {
 }
 
 impl IntoEncoding for Ed448PublicKey {
-    fn to_base32(&self) -> Result<String,SlugErrors> {
+    fn into_base32(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
         let output = x.encode(&self.pk)?;
 
@@ -89,31 +89,31 @@ impl IntoEncoding for Ed448PublicKey {
 
         
     }
-    fn to_base32_unpadded(&self) -> Result<String,SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
         let output = x.encode(&self.pk)?;
 
         return Ok(output)
     }
-    fn to_base58(&self) -> Result<String,SlugErrors> {
+    fn into_base58(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base58);
         let output = x.encode(&self.pk)?;
 
         return Ok(output)
     }
-    fn to_base64(&self) -> Result<String,SlugErrors> {
+    fn into_base64(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64);
         let output = x.encode(&self.pk)?;
 
         return Ok(output)
     }
-    fn to_base64_url_safe(&self) -> Result<String,SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = x.encode(&self.pk)?;
 
         return Ok(output)
     }
-    fn to_hex(&self) -> Result<String,SlugErrors> {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output = x.encode(&self.pk)?;
 
@@ -122,7 +122,7 @@ impl IntoEncoding for Ed448PublicKey {
 }
 
 impl IntoEncoding for Ed448SecretKey {
-    fn to_base32(&self) -> Result<String,SlugErrors> {
+    fn into_base32(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
         let output = x.encode(&self.sk)?;
 
@@ -130,31 +130,31 @@ impl IntoEncoding for Ed448SecretKey {
 
         
     }
-    fn to_base32_unpadded(&self) -> Result<String,SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
         let output = x.encode(&self.sk)?;
 
         return Ok(output)
     }
-    fn to_base58(&self) -> Result<String,SlugErrors> {
+    fn into_base58(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base58);
         let output = x.encode(&self.sk)?;
 
         return Ok(output)
     }
-    fn to_base64(&self) -> Result<String,SlugErrors> {
+    fn into_base64(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64);
         let output = x.encode(&self.sk)?;
 
         return Ok(output)
     }
-    fn to_base64_url_safe(&self) -> Result<String,SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = x.encode(&self.sk)?;
 
         return Ok(output)
     }
-    fn to_hex(&self) -> Result<String,SlugErrors> {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output = x.encode(&self.sk)?;
 
@@ -163,7 +163,7 @@ impl IntoEncoding for Ed448SecretKey {
 }
 
 impl IntoEncoding for Ed448Signature {
-    fn to_base32(&self) -> Result<String,SlugErrors> {
+    fn into_base32(&self) -> Result<String,SlugErrors> {
         let mut output_final = String::new();
         
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
@@ -182,7 +182,7 @@ impl IntoEncoding for Ed448Signature {
             return Ok(output)
         }
     }
-    fn to_base32_unpadded(&self) -> Result<String,SlugErrors> {
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
         let mut output_final = String::new();
         
         let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
@@ -201,7 +201,7 @@ impl IntoEncoding for Ed448Signature {
             return Ok(output)
         }
     }
-    fn to_base58(&self) -> Result<String,SlugErrors> {
+    fn into_base58(&self) -> Result<String,SlugErrors> {
         let mut output_final = String::new();
         
         let x = SlugEncodingUsage::new(SlugEncodings::Base58);
@@ -220,7 +220,7 @@ impl IntoEncoding for Ed448Signature {
             return Ok(output)
         }
     }
-    fn to_base64(&self) -> Result<String,SlugErrors> {
+    fn into_base64(&self) -> Result<String,SlugErrors> {
         let mut output_final = String::new();
         
         let x = SlugEncodingUsage::new(SlugEncodings::Base64);
@@ -239,7 +239,7 @@ impl IntoEncoding for Ed448Signature {
             return Ok(output)
         }
     }
-    fn to_base64_url_safe(&self) -> Result<String,SlugErrors> {
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
         let mut output_final = String::new();
         
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
@@ -258,7 +258,7 @@ impl IntoEncoding for Ed448Signature {
             return Ok(output)
         }
     }
-    fn to_hex(&self) -> Result<String,SlugErrors> {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
         let mut output_final = String::new();
         
         let x = SlugEncodingUsage::new(SlugEncodings::Hex);
