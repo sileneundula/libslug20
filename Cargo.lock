@@ -3092,6 +3092,7 @@ dependencies = [
  "pqcrypto-hqc",
  "pqcrypto-sphincsplus",
  "pqcrypto-traits",
+ "protobuf",
  "rand 0.8.5",
  "rsa",
  "schnorrkel",
@@ -3782,6 +3783,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "paste-complete"
+version = "1.0.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a4cf96a295ab7f0ec2334fa557745c0e9526595f6ebabbb129563a98dfc1b2a"
+
+[[package]]
 name = "pathdiff"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4312,6 +4319,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "protobuf"
+version = "4.34.1-release"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5af3157e12bb2193b1ee85fd61fe9ebe737b63a22ab3774d7cbb7fb5f32b6425"
+dependencies = [
+ "cc",
+ "paste-complete",
+ "protobuf-macros",
+]
+
+[[package]]
+name = "protobuf-macros"
+version = "4.34.1-release"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b19d8dd07383acc9acc88034d66dec66da7ef87f54df25c8c924e5245606409"
+dependencies = [
+ "quote",
+ "syn 2.0.117",
 ]
 
 [[package]]

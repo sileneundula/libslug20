@@ -4,6 +4,12 @@
 //! 
 //! ## Features
 //! 
+//! ## Verified Implemented Traits
+//! 
+//! - [X] FromEncoding (TODO: Fix Errors)
+//! - [X] IntoEncoding
+//! 
+//! 
 //! ### Generation
 //! 
 //! - [X] Operating System Randomness
@@ -47,6 +53,8 @@ use crate::errors::SlugErrors;
 use subtle_encoding::hex;
 use subtle_encoding::Error;
 
+use slugencode::prelude::*;
+
 use bip39::ErrorKind;
 
 use base32;
@@ -55,7 +63,7 @@ use serde_big_array::BigArray;
 use slugencode::prelude::*;
 use pem::Pem;
 
-use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret,IntoPemSignature};
+use crate::slugcrypt::traits::{IntoEncoding, IntoPemPublic, IntoPemSecret, IntoPemSignature,FromEncoding};
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 
 /// # ED25519: Public Key (Verifying Key)
@@ -503,6 +511,210 @@ impl ED25519Signature {
 }
 
 
+impl IntoEncoding for ED25519PublicKey {
+    fn to_hex(&self) -> Result<String,SlugErrors> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output: String = encoder.encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base32(&self) -> Result<String,SlugErrors> {
+        let output: String = SlugEncodingUsage::new(SlugEncodings::Base32).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base32_unpadded(&self) -> Result<String,SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base32unpadded).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base58(&self) -> Result<String,SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base58).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base64(&self) -> Result<String,SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base64).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base64_url_safe(&self) -> Result<String,SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe).encode(&self.0)?;
+        Ok(output)
+    }
+}
+
+impl IntoEncoding for ED25519SecretKey {
+    fn to_hex(&self) -> Result<std::string::String, SlugErrors> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output: String = encoder.encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base32(&self) -> Result<std::string::String, SlugErrors> {
+        let output: String = SlugEncodingUsage::new(SlugEncodings::Base32).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base32_unpadded(&self) -> Result<std::string::String, SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base32unpadded).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base58(&self) -> Result<std::string::String, SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base58).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base64(&self) -> Result<std::string::String, SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base64).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base64_url_safe(&self) -> Result<std::string::String, SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe).encode(&self.0)?;
+        Ok(output)
+    }
+}
+
+impl IntoEncoding for ED25519Signature {
+    fn to_hex(&self) -> Result<std::string::String, SlugErrors> {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output: String = encoder.encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base32(&self) -> Result<std::string::String, SlugErrors> {
+        let output: String = SlugEncodingUsage::new(SlugEncodings::Base32).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base32_unpadded(&self) -> Result<std::string::String, SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base32unpadded).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base58(&self) -> Result<std::string::String, SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base58).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base64(&self) -> Result<std::string::String, SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base64).encode(&self.0)?;
+        Ok(output)
+    }
+
+    fn to_base64_url_safe(&self) -> Result<std::string::String, SlugErrors> {
+        let output = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe).encode(&self.0)?;
+        Ok(output)
+    }
+}
+
+impl FromEncoding for ED25519PublicKey {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Hex).decode(hex_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32<T: AsRef<str>>(bs32_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Base32).decode(bs32_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base58<T: AsRef<str>>(base58_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Base58).decode(base58_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64<T: AsRef<str>>(b64_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let bytes = decoder.decode(b64_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(b64u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(b64u_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(bs32u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(bs32u_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+}
+impl FromEncoding for ED25519SecretKey {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Hex).decode(hex_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32<T: AsRef<str>>(bs32_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Base32).decode(bs32_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base58<T: AsRef<str>>(base58_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Base58).decode(base58_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64<T: AsRef<str>>(b64_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let bytes = decoder.decode(b64_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(b64u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(b64u_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(bs32u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(bs32u_str.as_ref())?;
+        let x = Self::from_slice(&bytes)?;
+        Ok(x)
+    }
+}
+impl FromEncoding for ED25519Signature {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Hex).decode(hex_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32<T: AsRef<str>>(bs32_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Base32).decode(bs32_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base58<T: AsRef<str>>(base58_str: T) -> Result<Self, SlugErrors> {
+        let bytes = SlugEncodingUsage::new(SlugEncodings::Base58).decode(base58_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64<T: AsRef<str>>(b64_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let bytes = decoder.decode(b64_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(b64u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(b64u_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(bs32u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(bs32u_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+}
 #[test]
 fn run() {
     let sk = ED25519SecretKey::generate();

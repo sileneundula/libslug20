@@ -51,3 +51,5 @@ pub const MLDSA3_PEM_LABEL_SIGNATURE: &str = "OpenInternetCryptography/ML-DSA3-P
 pub const SCHNORR_PEM_LABEL_SIGNATURE: &str = "OpenInternetCryptography/Schnorr-PEM/Signature";
 pub const SHULGINSIGNING_PEM_LABEL_SIGNATURE: &str = "OpenInternetCryptography/ShulginSigning-PEM/Signature";
 pub const SPHINCS_PLUS_PEM_LABEL_SIGNATURE: &str = "OpenInternetCryptography/SPHINCS-PLUS-SHAKE256-PEM/Signature";
+
+pub const ENCODING_NAME: &str = "lacima";

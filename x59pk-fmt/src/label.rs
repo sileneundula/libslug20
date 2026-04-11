@@ -105,6 +105,10 @@ pub struct X59Value {
     pub data: Vec<u8>,
 }
 
+pub struct X59ValueString {
+    pub data: String,
+}
+
 impl X59Value {
     pub fn from_str<T: AsRef<str>>(s: T) -> Self {
         Self {

@@ -1,3 +1,11 @@
 - [ ] IntoPemPublic
 - [ ] IntoPemSecret
 - [ ] IntoPemSignature
+
+
+## INTOENCODING + FROMENCODING
+
+- [X] SPHINCS+
+- [X] ED25519
+- [X] ED448
+- [X] FALCON1024

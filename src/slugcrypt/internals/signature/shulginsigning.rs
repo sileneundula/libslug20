@@ -126,6 +126,79 @@ impl IntoX59PublicKey for ShulginKeypair {
     }
 }
 
+impl IntoX59SecretKey for ShulginKeypair {
+    fn into_x59(&self) -> Result<String,SlugErrors> {
+
+        let mut output: String = String::new();
+        
+        if self.ed25519sk.is_some() == true && self.sphincssk.is_some() == true {
+            let ed25519pk = &self.ed25519pk.to_hexadecimal()?;
+            let ed25519sk = &self.ed25519sk.clone().unwrap().to_hexadecimal()?;
+            let sphincspk = &self.sphincspk.to_hex()?;
+            let sphincssk = &self.sphincssk.clone().unwrap().to_hex()?;
+
+            output.push_str(&ed25519pk);
+            output.push_str(":");
+            output.push_str(&sphincspk);
+            output.push_str("/");
+            output.push_str(ed25519sk);
+            output.push_str(":");
+            output.push_str(sphincssk);
+
+            return Ok(output)
+
+        }
+        else {
+            Err(SlugErrors::Other(String::from("Could Not Convert To X59")))
+        }
+    }
+    fn from_x59<T: AsRef<str>>(x59_encoded_secret_key: T) -> Result<Self,SlugErrors> {
+        let x: Option<(&str, &str)> = x59_encoded_secret_key.as_ref().split_once("/");
+
+        if x.is_some() {
+            let pk: &str = x.unwrap().0;
+            let sk: &str = x.unwrap().1;
+
+            let pk_keys: Option<(&str, &str)> = pk.split_once(":");
+            let sk_keys: Option<(&str, &str)> = pk.split_once(":");
+
+            if pk_keys.is_some() == true {
+                let (ed25519_pk, sphincs_pk) = pk_keys.unwrap();
+
+                if sk_keys.is_some() == true {
+                    let (ed25519_sk, sphincs_sk) = sk_keys.unwrap();
+
+                    let output_ed25519_pk = ED25519PublicKey::from_hex(ed25519_pk)?;
+                    let output_sphincs_pk = SPHINCSPublicKey::from_hex_string_final(sphincs_pk)?;
+
+                    let output_ed25519_sk = ED25519SecretKey::from_hex(ed25519_sk)?;
+                    let output_sphincs_sk = SPHINCSSecretKey::from_hex(sphincs_sk)?;
+
+                    return Ok(Self {
+                        ed25519pk: output_ed25519_pk,
+                        sphincspk: output_sphincs_pk,
+                        ed25519sk: Some(output_ed25519_sk),
+                        sphincssk: Some(output_sphincs_sk),
+                    })
+                }
+                else {
+                    return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_SHULGINSIGNING, encoding: crate::errors::EncodingError::X59_fmt, other: None })
+                }
+            }
+            else {
+                return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_SHULGINSIGNING, encoding: crate::errors::EncodingError::X59_fmt, other: None })
+            }
+
+        }
+        else {
+            return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_SHULGINSIGNING, encoding: crate::errors::EncodingError::X59_fmt, other: None })
+        }
+    }
+    fn x59_metadata() -> String {
+        return String::from("libslug20/ShulginSigning")
+    }
+}
+
 impl ShulginKeypair {
     /// # To X59 Public Key Format
     /// 

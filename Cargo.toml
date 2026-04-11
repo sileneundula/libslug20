@@ -111,6 +111,9 @@ log = "0.4.29"
 der = "0.8.0"
 pem = "3.0.6"
 
+# Protobuf
+protobuf = "4.34.1-release"
+
 [features]
 default = ["full"]
 full = ["ecies-ed25519-sha3","kyber1024","aes256","xchacha20", "full-digests", "experimental", "full-signatures", "csprng", "bip39", "filesystem","bip32"]

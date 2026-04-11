@@ -58,12 +58,12 @@ use crate::errors::SlugErrors;
 /// 
 /// Contains Constant-Time Encodings For Various Types
 pub trait IntoEncoding {
-    fn to_hex(&self) -> Result<String,SlugEncodingError>;
-    fn to_base32(&self) -> Result<String,SlugEncodingError>;
-    fn to_base32_unpadded(&self) -> Result<String,SlugEncodingError>;
-    fn to_base58(&self) -> Result<String,SlugEncodingError>;
-    fn to_base64(&self) -> Result<String,SlugEncodingError>;
-    fn to_base64_url_safe(&self) -> Result<String,SlugEncodingError>;
+    fn to_hex(&self) -> Result<String,SlugErrors>;
+    fn to_base32(&self) -> Result<String,SlugErrors>;
+    fn to_base32_unpadded(&self) -> Result<String,SlugErrors>;
+    fn to_base58(&self) -> Result<String,SlugErrors>;
+    fn to_base64(&self) -> Result<String,SlugErrors>;
+    fn to_base64_url_safe(&self) -> Result<String,SlugErrors>;
 }
 
 pub trait FromEncoding: Sized {

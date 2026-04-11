@@ -34,6 +34,8 @@ use serde_big_array::BigArray;
 
 use slugencode::{SlugEncodingUsage,SlugEncodings,errors::SlugEncodingError};
 
+use crate::slugcrypt::traits::{FromEncoding, IntoEncoding};
+use crate::errors::SlugErrors;
 /// # Falcon1024: Public Key
 /// 
 /// ## Description
@@ -558,6 +560,291 @@ impl Falcon1024Signature {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = x.encode(self.as_bytes())?;
         Ok(output)
+    }
+}
+
+
+impl IntoEncoding for Falcon1024PublicKey {
+    fn to_hex(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base32(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base58(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base64(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+}
+impl IntoEncoding for Falcon1024SecretKey {
+    fn to_hex(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base32(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base58(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base64(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+}
+impl IntoEncoding for Falcon1024Signature {
+    fn to_hex(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base32(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base58(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base64(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(self.as_bytes())?;
+        Ok(output)
+    }
+}
+
+impl FromEncoding for Falcon1024PublicKey {
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Hexadecimal, other: None })
+        }
+    }
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base32, other: None })
+        }
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base32unpadded, other: None })
+        }
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base58, other: None })
+        }
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base64, other: None })
+        }
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base64urlsafe, other: None })
+        }
+    }
+}
+impl FromEncoding for Falcon1024SecretKey {
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Hexadecimal, other: None })
+        }
+    }
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base32, other: None })
+        }
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base32unpadded, other: None })
+        }
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base58, other: None })
+        }
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base64, other: None })
+        }
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base64urlsafe, other: None })
+        }
+    }
+}
+impl FromEncoding for Falcon1024Signature {
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Hexadecimal, other: None })
+        }
+    }
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base32, other: None })
+        }
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base32unpadded, other: None })
+        }
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base58, other: None })
+        }
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base64, other: None })
+        }
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.decode(s.as_ref())?;
+        let final_output = Self::from_bytes(&output);
+
+        match final_output {
+            Ok(v) => return Ok(v),
+            Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base64urlsafe, other: None })
+        }
     }
 }
 

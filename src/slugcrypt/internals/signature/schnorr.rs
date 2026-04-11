@@ -6,8 +6,9 @@ use std::string::FromUtf8Error;
 
 use schnorrkel::*;
 
+use slugencode::SlugEncodingUsage;
 use zeroize::{Zeroize,ZeroizeOnDrop};
-use crate::errors::SlugErrors;
+use crate::{errors::SlugErrors, slugcrypt::traits::IntoEncoding};
 use serde::{Serialize,Deserialize};
 use serde_big_array::BigArray;
 
@@ -21,6 +22,7 @@ use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret, IntoPemSignature};
 use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 
+use crate::slugcrypt::traits::FromEncoding;
 /// SLUGCRYPT CONTEXT
 pub const SLUGCRYPT_CONTEXT: &str = "SlugCrypt";
 
@@ -297,3 +299,195 @@ impl SchnorrSignature {
     }
 }
 
+impl IntoEncoding for SchnorrPublicKey {
+    fn to_hex(&self) -> Result<String, SlugErrors> {
+        let encoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Hex);
+        let x: String = encoder.encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base32(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32unpadded).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base58(&self) -> Result<String, SlugErrors> {
+        let x = self.0.to_base58();
+        Ok(x)
+    }
+    fn to_base64(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64urlsafe).encode(&self.0)?;
+        Ok(x)
+    }
+}
+
+impl IntoEncoding for SchnorrSecretKey {
+    fn to_hex(&self) -> Result<String, SlugErrors> {
+        let x: String = SlugEncodingUsage::new(slugencode::SlugEncodings::Hex).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base32(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32unpadded).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base58(&self) -> Result<String, SlugErrors> {
+        let x = self.0.to_base58();
+        Ok(x)
+    }
+    fn to_base64(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64urlsafe).encode(&self.0)?;
+        Ok(x)
+    }
+}
+impl IntoEncoding for SchnorrSignature {
+    fn to_hex(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Hex).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base32(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32unpadded).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base58(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base58).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base64(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64).encode(&self.0)?;
+        Ok(x)
+    }
+    fn to_base64_url_safe(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64urlsafe).encode(&self.0)?;
+        Ok(x)
+    }
+}
+
+impl FromEncoding for SchnorrPublicKey {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Hex);
+        let bytes = decoder.decode(hex_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32<T: AsRef<str>>(bs32_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32);
+        let bytes = decoder.decode(bs32_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(bs32u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(bs32u_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base58<T: AsRef<str>>(bs58_str: T) -> Result<Self, SlugErrors> {
+        let bytes = bs58_str.as_ref().from_base58()?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64<T: AsRef<str>>(b64_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64);
+        let bytes = decoder.decode(b64_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(b64u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(b64u_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+}
+impl FromEncoding for SchnorrSecretKey {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Hex);
+        let bytes = decoder.decode(hex_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32<T: AsRef<str>>(bs32_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32);
+        let bytes = decoder.decode(bs32_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(bs32u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(bs32u_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base58<T: AsRef<str>>(bs58_str: T) -> Result<Self, SlugErrors> {
+        let bytes = bs58_str.as_ref().from_base58()?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64<T: AsRef<str>>(b64_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64);
+        let bytes = decoder.decode(b64_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(b64u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(b64u_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+}
+impl FromEncoding for SchnorrSignature {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Hex);
+        let bytes = decoder.decode(hex_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32<T: AsRef<str>>(bs32_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32);
+        let bytes = decoder.decode(bs32_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(bs32u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(bs32u_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base58<T: AsRef<str>>(bs58_str: T) -> Result<Self, SlugErrors> {
+        let bytes = bs58_str.as_ref().from_base58()?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64<T: AsRef<str>>(b64_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64);
+        let bytes = decoder.decode(b64_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(b64u_str: T) -> Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(b64u_str.as_ref())?;
+        let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+}

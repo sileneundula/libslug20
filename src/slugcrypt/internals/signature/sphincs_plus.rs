@@ -14,6 +14,15 @@
 //! 
 //! This implementation uses pqcrypto sphincs+
 //! 
+//! ## Verified Implementations
+//! 
+//! ### Basic Encoding
+//! 
+//! - [X] FromEncoding (TODO: Fix Errors)
+//! - [X] IntoEncoding
+//! 
+//! ### X59 Format
+//! 
 //! ## TODO
 //! 
 //! - Remove Message Struct
@@ -33,8 +42,9 @@ use serde_big_array::BigArray;
 use subtle_encoding::hex;
 use base58::{FromBase58, FromBase58Error, ToBase58};
 use slugencode::prelude::*;
-use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret,IntoPemSignature};
+use crate::slugcrypt::traits::{FromEncoding, IntoPemPublic, IntoPemSecret, IntoPemSignature};
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
+use crate::slugcrypt::traits::IntoEncoding;
 /// # SPHINCS: Public Key
 /// 
 /// Size of 64 bytes
@@ -564,18 +574,332 @@ impl SPHINCSSignature {
     }
 }
 
-#[test]
-fn keypair_ls() {
-    let keypair = SPHINCSSecretKey::generate();
 
-    let message: Message = Message::new("This is a signed message");
+impl IntoEncoding for SPHINCSPublicKey {
+    fn to_hex(&self) -> Result<String, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output: String = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base32(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base32_unpadded(&self) -> Result<String, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base58(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base64(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base64_url_safe(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+}
+impl IntoEncoding for SPHINCSSecretKey {
+    fn to_hex(&self) -> std::result::Result<String, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output: String = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base32(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base32_unpadded(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base58(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base64(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base64_url_safe(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+}
+impl IntoEncoding for SPHINCSSignature {
+    fn to_hex(&self) -> std::result::Result<String, SlugErrors> {
+        let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output: String = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base32(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base32_unpadded(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base58(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base64(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+    fn to_base64_url_safe(&self) -> std::result::Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(&self.as_bytes())?;
+        return Ok(output)
+    }
+}
 
-    println!("Public Key Length: {}",keypair.0.as_bytes().len());
-    println!("Secret Key Length: {}",keypair.1.as_bytes().len());
+impl FromEncoding for SPHINCSPublicKey {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let bytes = decoder.decode(hex_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Public Key Hex Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let pk: SPHINCSPublicKey = SPHINCSPublicKey::from_bytes(&output)?;
+            return Ok(pk)
+        }
+    }
 
-    let signature = keypair.1.sign("Hello World. This is using SPHINCS+.").unwrap();
+    fn from_base32<T: AsRef<str>>(b32_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let bytes = decoder.decode(b32_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Public Key Base32 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let pk: SPHINCSPublicKey = SPHINCSPublicKey::from_bytes(&output)?;
+            return Ok(pk)
+        }
+    }
 
-    let length: usize = signature.to_bytes().len();
+    fn from_base32_unpadded<T: AsRef<str>>(b32_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(b32_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Public Key Base32 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let pk: SPHINCSPublicKey = SPHINCSPublicKey::from_bytes(&output)?;
+            return Ok(pk)
+        }
+    }
+    fn from_base58<T: AsRef<str>>(bs58_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let bytes = decoder.decode(bs58_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Public Key Base58 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let pk: SPHINCSPublicKey = SPHINCSPublicKey::from_bytes(&output)?;
+            return Ok(pk)
+        }
+    }
 
-    println!("SPHINCS+ Signature Length: {}", length);
+    fn from_base64<T: AsRef<str>>(b64_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let bytes = decoder.decode(b64_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Public Key Base64 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let pk: SPHINCSPublicKey = SPHINCSPublicKey::from_bytes(&output)?;
+            return Ok(pk)
+        }
+    }
+
+    fn from_base64_url_safe<T: AsRef<str>>(b64_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(b64_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Public Key Base64 URL Safe Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let pk: SPHINCSPublicKey = SPHINCSPublicKey::from_bytes(&output)?;
+            return Ok(pk)
+        }
+    }
+}
+impl FromEncoding for SPHINCSSecretKey {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let bytes = decoder.decode(hex_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Secret Key Hex Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let sk: SPHINCSSecretKey = SPHINCSSecretKey::from_bytes(&output)?;
+            return Ok(sk)
+        }
+    }
+
+    fn from_base32<T: AsRef<str>>(b32_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let bytes = decoder.decode(b32_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Secret Key Base32 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let sk: SPHINCSSecretKey = SPHINCSSecretKey::from_bytes(&output)?;
+            return Ok(sk)
+        }
+    }
+
+    fn from_base32_unpadded<T: AsRef<str>>(b32_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(b32_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Secret Key Base32 Unpadded Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let sk: SPHINCSSecretKey = SPHINCSSecretKey::from_bytes(&output)?;
+            return Ok(sk)
+        }
+    }
+
+    fn from_base58<T: AsRef<str>>(bs58_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let bytes = decoder.decode(bs58_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Secret Key Base58 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let sk: SPHINCSSecretKey = SPHINCSSecretKey::from_bytes(&output)?;
+            return Ok(sk)
+        }
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> std::result::Result<Self,SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let bytes = decoder.decode(s.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Secret Key Base64 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let sk: SPHINCSSecretKey = SPHINCSSecretKey::from_bytes(&output)?;
+            return Ok(sk)
+        }
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> std::result::Result<Self,SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(s.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Secret Key Base64 URL Safe Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let sk: SPHINCSSecretKey = SPHINCSSecretKey::from_bytes(&output)?;
+            return Ok(sk)
+        }
+    }
+}
+impl FromEncoding for SPHINCSSignature {
+    fn from_hex<T: AsRef<str>>(hex_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let bytes = decoder.decode(hex_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Signature Hex Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let signature: SPHINCSSignature = SPHINCSSignature::from_bytes(&output)?;
+            return Ok(signature)
+        }
+    }
+    fn from_base32<T: AsRef<str>>(b32_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let bytes = decoder.decode(b32_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Signature Base32 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let signature: SPHINCSSignature = SPHINCSSignature::from_bytes(&output)?;
+            return Ok(signature)
+        }
+    }
+
+    fn from_base32_unpadded<T: AsRef<str>>(b32_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let bytes = decoder.decode(b32_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Signature Base32 Unpadded Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let signature: SPHINCSSignature = SPHINCSSignature::from_bytes(&output)?;
+            return Ok(signature)
+        }
+    }
+
+    fn from_base58<T: AsRef<str>>(bs58_str: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let bytes = decoder.decode(bs58_str.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Signature Base58 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let signature: SPHINCSSignature = SPHINCSSignature::from_bytes(&output)?;
+            return Ok(signature)
+        }
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let bytes = decoder.decode(s.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Signature Base64 Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let signature: SPHINCSSignature = SPHINCSSignature::from_bytes(&output)?;
+            return Ok(signature)
+        }
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> std::result::Result<Self, SlugErrors> {
+        let decoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let bytes = decoder.decode(s.as_ref());
+        if bytes.is_err() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Signature Base64 URL Safe Decoding Error")))
+        }
+        else {
+            let output = bytes.unwrap();
+            let signature: SPHINCSSignature = SPHINCSSignature::from_bytes(&output)?;
+            return Ok(signature)
+        }
+    }
 }
