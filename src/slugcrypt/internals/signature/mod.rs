@@ -111,3 +111,5 @@ pub mod bls;
 /// One-Time Signatures (Lamport Signatures, Winternitz-OTS)
 #[cfg(feature = "experimental")]
 pub mod onetimesigs;
+
+pub mod constants;

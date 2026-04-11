@@ -2,6 +2,19 @@
 //! 
 //! This is a collection of common-traits used by the libslug library.
 //! 
+//! ## Verified Traits
+//! 
+//! ## Encoding
+//! 
+//! - [X] IntoEncoding
+//! - [X] FromEncoding
+//! 
+//! ## PEM
+//! 
+//! - [ ] IntoPemPublic
+//! - [ ] IntoPemSecret
+//! - [ ] IntoPemSignature
+//! 
 //! ## Traits
 //! 
 //! - [X] IntoPEM
@@ -39,6 +52,35 @@ use crate::slugcrypt::internals::signature::esphand_signature::EsphandKeypair;
 
 use crate::errors::SlugErrors;
 
+//=====VERIFIED=====//
+
+/// # Into Encoding
+/// 
+/// Contains Constant-Time Encodings For Various Types
+pub trait IntoEncoding {
+    fn to_hex(&self) -> Result<String,SlugEncodingError>;
+    fn to_base32(&self) -> Result<String,SlugEncodingError>;
+    fn to_base32_unpadded(&self) -> Result<String,SlugEncodingError>;
+    fn to_base58(&self) -> Result<String,SlugEncodingError>;
+    fn to_base64(&self) -> Result<String,SlugEncodingError>;
+    fn to_base64_url_safe(&self) -> Result<String,SlugEncodingError>;
+}
+
+pub trait FromEncoding: Sized {
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+}
+
+pub trait StandardExport {
+    fn export(&self) -> Result<String,SlugErrors>;
+}
+
+//=====END OF VERIFIED=====//
+
 /// # Recoverable Public Key
 /// 
 /// This type can recover its public key from its secret key.
@@ -46,6 +88,9 @@ pub trait RecoverablePublicKey {
 
 }
 
+/// # HybridCryptographyRevert
+/// 
+/// Verifies one of the signatures.
 pub trait HybridCryptographyRevert: Sized {
     fn verify_classical(&self) -> bool;
     fn verify_pq(&self) -> bool;
@@ -57,6 +102,12 @@ pub trait HybridCryptographyRevert: Sized {
 pub trait IntoPemX59: Sized {
     fn into_pem_x59_standard(&self) -> Result<String,SlugErrors>;
     fn from_pem_x59_standard<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+    fn info_pem_x59_standard_label() -> String;
+}
+
+pub trait IntoPemX59PublicKey: Sized {
+    fn into_pem_x59_standard_pk(&self) -> Result<String,SlugErrors>;
+    fn from_pem_x59_standard_pk<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
     fn info_pem_x59_standard_label() -> String;
 }
 
@@ -123,69 +174,8 @@ pub trait IsMessage {
 }
 
 
-/// # Into Encoding
-/// 
-/// Contains Constant-Time Encodings For Various Types
-pub trait IntoEncoding {
-    fn to_hex(&self) -> Result<String,SlugEncodingError>;
-    fn to_base32(&self) -> Result<String,SlugEncodingError>;
-    fn to_base32_unpadded(&self) -> Result<String,SlugEncodingError>;
-    fn to_base58(&self) -> Result<String,SlugEncodingError>;
-    fn to_base64(&self) -> Result<String,SlugEncodingError>;
-    fn to_base64_url_safe(&self) -> Result<String,SlugEncodingError>;
-}
 
-pub trait FromEncoding: Sized {
-    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
-    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
-    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
-    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
-    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
-    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
-}
 
 pub trait SignatureDigest {
     fn as_digest(&self) -> String;
-}
-
-
-
-
-
-
-
-
-
-
-
-pub trait Signature {
-
-}
-
-pub trait AsymmetricEncryption {
-
-}
-
-pub trait SymmetricEncryption {
-    
-}
-
-pub trait Hashing {
-
-}
-
-pub trait Rand {
-
-}
-
-pub trait X59Signature {
-
-}
-
-pub trait X59Encryption {
-
-}
-
-pub trait X59SymmetricEncryption {
-    
 }

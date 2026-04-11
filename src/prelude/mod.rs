@@ -1,5 +1,8 @@
 pub use crate::slugcrypt::api::*;
 
+pub mod prelude;
+pub mod signatures;
+
 /// # Core Usage
 /// 
 /// This is where all the internal stuff occurs. It is lower-level and useful to use. It can be found in the slugcrypt module.
@@ -39,15 +42,6 @@ pub mod SymmetricEncryption {
 /// - [X] Kyber1024
 pub mod PublicKeyEncryption {
     pub use crate::slugcrypt::api::SlugAsyCrypt;
-}
-
-/// # Digital Signatures
-/// 
-/// ## Algorithms
-/// 
-/// - [X] ED25519
-pub mod signatures {
-    pub use crate::slugcrypt::api::SlugED25519Signatures;
 }
 
 /// # Digests
