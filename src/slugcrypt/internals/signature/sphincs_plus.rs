@@ -46,6 +46,7 @@ use crate::slugcrypt::traits::{FromEncoding, IntoPemPublic, IntoPemSecret, IntoP
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 use crate::slugcrypt::traits::IntoEncoding;
 use std::string::String;
+use slugencode::errors::SlugEncodingError;
 
 /// # SPHINCS: Public Key
 /// 
@@ -578,12 +579,12 @@ impl SPHINCSSignature {
 
 
 impl IntoEncoding for SPHINCSPublicKey {
-    fn into_hex(&self) -> Result<String, SlugErrors> {
+    fn into_hex(&self) -> core::result::Result<String, SlugErrors> {
         let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output: String = x.encode(&self.as_bytes())?;
         return Ok(output)
     }
-    fn into_base32(&self) -> Result<String, SlugErrors> {
+    fn into_base32(&self) -> core::result::Result<String, SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
         let output = x.encode(&self.as_bytes())?;
         return Ok(output)
@@ -642,32 +643,32 @@ impl IntoEncoding for SPHINCSSecretKey {
     }
 }
 impl IntoEncoding for SPHINCSSignature {
-    fn into_hex(&self) -> Result<String, SlugErrors> {
+    fn into_hex(&self) -> core::result::Result<String, SlugErrors> {
         let x: SlugEncodingUsage = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output: String = x.encode(&self.as_bytes())?;
         return Ok(output)
     }
-    fn into_base32(&self) -> Result<String,SlugErrors> {
+    fn into_base32(&self) -> core::result::Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
         let output = x.encode(&self.as_bytes())?;
         return Ok(output)
     }
-    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
+    fn into_base32_unpadded(&self) -> core::result::Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
         let output = x.encode(&self.as_bytes())?;
         return Ok(output)
     }
-    fn into_base58(&self) -> Result<String,SlugErrors> {
+    fn into_base58(&self) -> core::result::Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base58);
         let output = x.encode(&self.as_bytes())?;
         return Ok(output)
     }
-    fn into_base64(&self) -> Result<String,SlugErrors> {
+    fn into_base64(&self) -> core::result::Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64);
         let output = x.encode(&self.as_bytes())?;
         return Ok(output)
     }
-    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
+    fn into_base64_url_safe(&self) -> core::result::Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = x.encode(&self.as_bytes())?;
         return Ok(output)

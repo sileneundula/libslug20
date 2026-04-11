@@ -543,7 +543,6 @@ impl IntoEncoding for ED25519PublicKey {
         Ok(output)
     }
 }
-
 impl IntoEncoding for ED25519SecretKey {
     fn into_hex(&self) -> Result<std::string::String, SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
@@ -576,7 +575,6 @@ impl IntoEncoding for ED25519SecretKey {
         Ok(output)
     }
 }
-
 impl IntoEncoding for ED25519Signature {
     fn into_hex(&self) -> Result<std::string::String, SlugErrors> {
         let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
