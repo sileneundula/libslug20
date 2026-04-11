@@ -478,7 +478,46 @@ impl IntoEncoding for BLSPublicKey {
         let output = encoder.encode(self.pk)?;
         return Ok(output)
     }
+}
+
+impl IntoEncoding for BLSSecretKey {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(&self.sk)?;
+        return Ok(output)
     }
+    fn into_base32(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(&self.sk)?;
+        return Ok(output)
+    }
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(&self.sk)?;
+        return Ok(output)    
+    }
+    fn into_base58(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(&self.sk)?;
+        return Ok(output)
+    }
+    fn into_base64(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(&self.sk)?;
+        return Ok(output)
+    }
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(&self.sk)?;
+        return Ok(output)
+    }
+}
+
+impl IntoEncoding for BLSSignature {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
+        
+    }
+}
 
 impl FromEncoding for BLSPublicKey {
     fn from_hex<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
