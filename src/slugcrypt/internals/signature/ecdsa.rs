@@ -4,6 +4,12 @@
 //! 
 //! ECDSA signatures using Secp256k1
 //! 
+//! ## Verified Traits
+//! 
+//! - [X] Encoding
+//!     - [X] IntoEncoding
+//!     - [X] FromEncoding
+//! 
 //! ## Features
 //! 
 //! - [X] Generation
@@ -670,6 +676,8 @@ impl ECDSAPublicKey {
     }
 }
 
+//=====ENCODING IMPLEMENTATION=====//
+
 impl FromEncoding for ECDSAPublicKey {
     fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Hex);
@@ -708,7 +716,6 @@ impl FromEncoding for ECDSAPublicKey {
         return Ok(output)
     }
 }
-
 impl FromEncoding for ECDSASecretKey {
     fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
@@ -747,7 +754,6 @@ impl FromEncoding for ECDSASecretKey {
         return Ok(output)
     }
 }
-
 impl FromEncoding for ECDSASignature {
     fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Base32);
@@ -883,6 +889,8 @@ impl IntoEncoding for ECDSASignature {
         return Ok(output)
     }
 }
+
+//=====END OF ENCODING IMPLEMENTATION=====//
 
 #[test]
 fn ECDSA() {

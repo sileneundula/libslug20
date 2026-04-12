@@ -77,6 +77,10 @@ pub trait FromEncoding: Sized {
     fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
 }
 
+pub trait IntoCipherSuite {
+    fn cipher_suite() -> String;
+}
+
 pub trait StandardExport {
     fn export(&self) -> Result<String,SlugErrors>;
 }
