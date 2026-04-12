@@ -449,22 +449,22 @@ impl BLSSignature {
 
 impl IntoEncoding for BLSPublicKey {
     fn into_hex(&self) -> Result<String, SlugErrors> {
-        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex) {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
         let output = encoder.encode(self.pk)?;
         return Ok(output)
     }
     fn into_base32(&self) -> Result<String, SlugErrors> {
-        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32) {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32);
         let output = encoder.encode(self.pk)?;
         return Ok(output)
     }
     fn into_base32_unpadded(&self) -> Result<String, SlugErrors> {
-        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded) {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
         let output = encoder.encode(self.pk)?;
         return Ok(output)
     }
     fn into_base58(&self) -> Result<String, SlugErrors> {
-        let encoder = SlugEncodingUsage::new(SlugEncodings::Base58); {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base58);
         let output = encoder.encode(self.pk)?;
         return Ok(output)
     }
@@ -474,12 +474,11 @@ impl IntoEncoding for BLSPublicKey {
         return Ok(output)
     }
     fn into_base64_url_safe(&self) -> Result<String, SlugErrors> {
-        let encoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe) {
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = encoder.encode(self.pk)?;
         return Ok(output)
     }
 }
-
 impl IntoEncoding for BLSSecretKey {
     fn into_hex(&self) -> Result<String,SlugErrors> {
         let x = SlugEncodingUsage::new(SlugEncodings::Hex);
@@ -512,138 +511,186 @@ impl IntoEncoding for BLSSecretKey {
         return Ok(output)
     }
 }
-
 impl IntoEncoding for BLSSignature {
     fn into_hex(&self) -> Result<String,SlugErrors> {
-        
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(&self.signature)?;
+        return Ok(output)
+    }
+    fn into_base32(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(&self.signature)?;
+        return Ok(output)
+    }
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(&self.signature)?;
+        return Ok(output)
+    }
+    fn into_base58(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(&self.signature)?;
+        return Ok(output)
+    }
+    fn into_base64(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(&self.signature)?;
+        return Ok(output)  
+    }
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(&self.signature)?;
+        return Ok(output) 
     }
 }
 
 impl FromEncoding for BLSPublicKey {
     fn from_hex<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base32<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base58<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base64<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-    }
-}
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.decode(s.as_ref())?;
 
-impl IntoEncoding for BLSSecretKey {
-    fn into_hex(&self) -> Result<String, SlugErrors> {
-        self.to_hex().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base32(&self) -> Result<String, SlugErrors> {
-        self.to_base32().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base32_unpadded(&self) -> Result<String, SlugErrors> {
-        self.to_base32_unpadded().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base58(&self) -> Result<String, SlugErrors> {
-        self.to_base58().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base64(&self) -> Result<String, SlugErrors> {
-        self.to_base64().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base64_url_safe(&self) -> Result<String, SlugErrors> {
-        self.to_base64_url_safe().map_err(|_| SlugErrors::EncodingError)
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 }
 
 impl FromEncoding for BLSSecretKey {
     fn from_hex<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_hex(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base32<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base32(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base32_unpadded(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base58<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base58(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base64<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base64(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.decode(s.as_ref())?;
+
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 
     fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base64_url_safe(s)
-    }
-}
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.decode(s.as_ref())?;
 
-impl IntoEncoding for BLSSignature {
-    fn into_hex(&self) -> Result<String, SlugErrors> {
-        self.to_hex().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base32(&self) -> Result<String, SlugErrors> {
-        self.to_base32().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base32_unpadded(&self) -> Result<String, SlugErrors> {
-        self.to_base32_unpadded().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base58(&self) -> Result<String, SlugErrors> {
-        self.to_base58().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base64(&self) -> Result<String, SlugErrors> {
-        self.to_base64().map_err(|_| SlugErrors::EncodingError)
-    }
-
-    fn into_base64_url_safe(&self) -> Result<String, SlugErrors> {
-        self.to_base64_url_safe().map_err(|_| SlugErrors::EncodingError)
+        let pk = Self::from_bytes(&output)?;
+        return Ok(pk)
     }
 }
 
 impl FromEncoding for BLSSignature {
     fn from_hex<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_hex(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.decode(s.as_ref())?;
+
+        let sig = Self::from_bytes(&output)?;
+        return Ok(sig)
     }
 
     fn from_base32<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base32(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.decode(s.as_ref())?;
+
+        let sig = Self::from_bytes(&output)?;
+        return Ok(sig)
     }
 
     fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base32_unpadded(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.decode(s.as_ref())?;
+
+        let sig = Self::from_bytes(&output)?;
+        return Ok(sig)
     }
 
     fn from_base58<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base58(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.decode(s.as_ref())?;
+
+        let sig = Self::from_bytes(&output)?;
+        return Ok(sig)
     }
 
     fn from_base64<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base64(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.decode(s.as_ref())?;
+
+        let sig = Self::from_bytes(&output)?;
+        return Ok(sig)
     }
 
     fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
-        Self::from_base64_url_safe(s)
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.decode(s.as_ref())?;
+
+        let sig = Self::from_bytes(&output)?;
+        return Ok(sig)
     }
 }
 
