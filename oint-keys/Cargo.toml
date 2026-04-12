@@ -13,7 +13,7 @@ edition = "2024"
 
 [dependencies]
 # /silene/libslug20: Cryptography Library
-libslug = {version="0.9.3"}
+libslug = {version="0.10.0"}
 
 fixedstr = {version="0.5.10", features=["serde","pub-tstr"]}
 

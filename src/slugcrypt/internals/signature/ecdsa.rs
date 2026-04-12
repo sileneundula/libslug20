@@ -43,6 +43,8 @@ use slugencode::SlugEncodingUsage;
 use slugencode::SlugEncodings;
 use slugencode::errors::SlugEncodingError;
 
+use crate::slugcrypt::traits::FromEncoding;
+use crate::slugcrypt::traits::IntoEncoding;
 use crate::slugcrypt::traits::RecoverablePublicKey;
 
 use crate::errors::SlugErrors;
@@ -668,7 +670,219 @@ impl ECDSAPublicKey {
     }
 }
 
+impl FromEncoding for ECDSAPublicKey {
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+}
 
+impl FromEncoding for ECDSASecretKey {
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+}
+
+impl FromEncoding for ECDSASignature {
+    fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base32_unpadded<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base58<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base64<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+    fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output_bytes = x.decode(s.as_ref())?;
+        let output = Self::from_slice(&output_bytes)?;
+        return Ok(output)
+    }
+}
+
+impl IntoEncoding for ECDSAPublicKey {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base32(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base58(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base64(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+}
+impl IntoEncoding for ECDSASecretKey {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base32(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base58(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base64(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+}
+impl IntoEncoding for ECDSASignature {
+    fn into_hex(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base32(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base32_unpadded(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base32unpadded);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base58(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base58);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base64(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+    fn into_base64_url_safe(&self) -> Result<String,SlugErrors> {
+        let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
+        let output = x.encode(self.0)?;
+        return Ok(output)
+    }
+}
 
 #[test]
 fn ECDSA() {
