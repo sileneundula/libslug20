@@ -36,6 +36,8 @@ use fixedstr::str64;
 use fixedstr::str256;
 use std::str::FromStr;
 
+use blake2_rfc::blake2b::Blake2b;
+
 use slugencode::prelude::*;
 
 /// # X59 Label
@@ -98,7 +100,7 @@ pub struct X59Label {
 /// - [X] Contains easy conversions
 /// - [X] Contains From_str and From_bytes
 /// - [X] Contains Into_String For Text Values
-/// - [ ] Contains checksum
+/// - [X] Contains checksum
 /// - [ ] Contains Default function
 /// - [ ] Contains Default for attribute/data type function formatting
 pub struct X59Value {
@@ -137,7 +139,39 @@ impl X59Value {
             data:  x_2
         }
         )
-    } 
+    }
+    pub fn checksum_advanced(&self, size: usize, encoding: SlugEncodings) -> Result<String,SlugEncodingError> {
+        let mut checksum = Blake2b::new(size);
+        let encoder = SlugEncodingUsage::new(encoding);
+        
+        checksum.update(&self.data);
+        let output = checksum.finalize();
+        
+        let final_output = encoder.encode(output.as_bytes())?;
+
+        return Ok(final_output)
+    }
+    pub fn checksum_8(&self) -> Result<String,SlugEncodingError> {
+        self.checksum_advanced(8, SlugEncodings::Hex)
+    }
+    pub fn checksum_12(&self) -> Result<String,SlugEncodingError> {
+        self.checksum_advanced(12, SlugEncodings::Hex)
+    }
+    pub fn checksum_20(&self) -> Result<String, SlugEncodingError> {
+        self.checksum_advanced(20, SlugEncodings::Hex)
+    }
+    pub fn checksum_28(&self) -> Result<String, SlugEncodingError> {
+        self.checksum_advanced(28, SlugEncodings::Hex)
+    }
+    pub fn checksum_32(&self) -> Result<String, SlugEncodingError> {
+        self.checksum_advanced(32, SlugEncodings::Hex)
+    }
+    pub fn checksum_48(&self) -> Result<String, SlugEncodingError> {
+        self.checksum_advanced(48, SlugEncodings::Hex)
+    }
+    pub fn checksum_64(&self) -> Result<String, SlugEncodingError> {
+        self.checksum_advanced(64, SlugEncodings::Hex)
+    }
 }
 
 

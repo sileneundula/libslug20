@@ -7,6 +7,9 @@ edition = "2024"
 # Encoding
 slugencode = {version = "0.1.0", optional=true}
 
+# Checksum
+blake2-rfc = "0.2.18"
+
 # FixedStr
 fixedstr = "0.5.10"
 
