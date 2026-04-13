@@ -112,4 +112,6 @@ pub mod bls;
 #[cfg(feature = "experimental")]
 pub mod onetimesigs;
 
+pub mod rsa;
+
 pub mod constants;
