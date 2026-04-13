@@ -70,7 +70,7 @@ pub enum SlugErrors {
     Other(String),
     #[error("[Error] SlugEncodingError: {0:?}")]
     SlugEncodingErrors(SlugEncodingError),
-    #[error("[Error] BincodeError: {0:?}")]
+    #[error("[Error] BincodeError: {alg:?}")]
     BincodeError {
         alg: SlugErrorAlgorithms,
     },
