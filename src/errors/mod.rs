@@ -19,6 +19,9 @@ use slugencode::errors::SlugEncodingError;
 use thiserror::Error;
 use std::convert::From;
 
+use bincode::ErrorKind;
+use bincode::Error;
+
 
 /// # SlugErrors
 /// 
@@ -67,6 +70,10 @@ pub enum SlugErrors {
     Other(String),
     #[error("[Error] SlugEncodingError: {0:?}")]
     SlugEncodingErrors(SlugEncodingError),
+    #[error("[Error] BincodeError: {0:?}")]
+    BincodeError {
+        alg: SlugErrorAlgorithms,
+    },
 }
 
 #[derive(Debug, Error)]
@@ -83,6 +90,24 @@ impl From<SlugEncodingError> for SlugErrors {
         
     }
 }
+
+impl From<Error> for SlugErrors {
+    fn from(value: Error) -> Self {
+        match value {
+            _ => return SlugErrors::Other(value.to_string())
+        }
+    }
+}
+
+impl From<bincode::ErrorKind> for SlugErrors {
+    fn from(value: ErrorKind) -> Self {
+        match value {
+            _ => return SlugErrors::Other(value.to_string())
+        }
+    }
+}
+
+impl 
 
 impl From<SignatureError> for SlugErrors {
     fn from(value: SignatureError) -> Self {

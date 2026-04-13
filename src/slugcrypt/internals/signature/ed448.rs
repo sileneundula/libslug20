@@ -32,6 +32,8 @@ use crate::slugcrypt::traits::FromEncoding;
 use crate::errors::SlugErrors;
 use slugencode::SlugEncodingUsage;
 use slugencode::SlugEncodings;
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
 
 pub const ED448_CONTEXT: &str = "libslug20";
 
@@ -692,6 +694,49 @@ impl Ed448Signature {
         }
     }
 }
+
+impl IntoBincode for Ed448PublicKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let x = bincode::serialize(self)?;
+        Ok(x)
+    }
+}
+
+impl IntoBincode for Ed448SecretKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let x = bincode::serialize(self)?;
+        Ok(x)
+    }
+}
+
+impl IntoBincode for Ed448Signature {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let x = bincode::serialize(self)?;
+        Ok(x)
+    }
+}
+
+impl FromBincode for Ed448PublicKey {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+
+impl FromBincode for Ed448SecretKey {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+
+impl FromBincode for Ed448Signature {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+
 
 
 #[test]

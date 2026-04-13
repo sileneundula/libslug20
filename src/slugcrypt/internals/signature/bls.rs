@@ -22,6 +22,7 @@ use slugencode::{SlugEncodingUsage, SlugEncodings, errors::SlugEncodingError};
 use crate::errors::SlugErrors;
 use rand::rngs::OsRng;
 use crate::slugcrypt::traits::{IntoEncoding, FromEncoding};
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
 
 
 
@@ -694,6 +695,47 @@ impl FromEncoding for BLSSignature {
     }
 }
 
+impl FromBincode for BLSPublicKey {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let output = bincode::deserialize(bytes.as_ref())?;
+        Ok(output)
+    }
+}
+
+impl FromBincode for BLSSecretKey {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let output = bincode::deserialize(bytes.as_ref())?;
+        Ok(output)
+    }
+}
+
+impl FromBincode for BLSSignature {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let output = bincode::deserialize(bytes.as_ref())?;
+        Ok(output)
+    }
+}
+
+impl IntoBincode for BLSPublicKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let output = bincode::serialize(self)?;
+        Ok(output)
+    }
+}
+
+impl IntoBincode for BLSSecretKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let output = bincode::serialize(self)?;
+        Ok(output)
+    }
+}
+
+impl IntoBincode for BLSSignature {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let output = bincode::serialize(self)?;
+        Ok(output)
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;

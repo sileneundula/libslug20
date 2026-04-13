@@ -49,9 +49,12 @@ use slugencode::SlugEncodingUsage;
 use slugencode::SlugEncodings;
 use slugencode::errors::SlugEncodingError;
 
+use crate::errors::SlugErrorAlgorithms;
 use crate::slugcrypt::traits::FromEncoding;
 use crate::slugcrypt::traits::IntoEncoding;
 use crate::slugcrypt::traits::RecoverablePublicKey;
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
 
 use crate::errors::SlugErrors;
 
@@ -887,6 +890,72 @@ impl IntoEncoding for ECDSASignature {
         let x = SlugEncodingUsage::new(SlugEncodings::Base64urlsafe);
         let output = x.encode(self.0)?;
         return Ok(output)
+    }
+}
+
+impl IntoBincode for ECDSAPublicKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let output = bincode::serialize(self);
+
+        match output {
+            Ok(v) => Ok(v),
+            Err(_) => return Err(SlugErrors::BincodeError{ alg: SlugErrorAlgorithms::SIG_SECP256k1 })
+        }
+    }
+}
+
+impl IntoBincode for ECDSASecretKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let output = bincode::serialize(self);
+
+        match output {
+            Ok(v) => Ok(v),
+            Err(_) => return Err(SlugErrors::BincodeError{ alg: SlugErrorAlgorithms::SIG_SECP256k1 })
+        }
+    }
+}
+
+impl IntoBincode for ECDSASignature {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let output = bincode::serialize(self);
+
+        match output {
+            Ok(v) => Ok(v),
+            Err(_) => return Err(SlugErrors::BincodeError{ alg: SlugErrorAlgorithms::SIG_SECP256k1 })
+        }
+    }
+}
+
+impl FromBincode for ECDSAPublicKey {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let output: Result<Self, Box<bincode::ErrorKind>> = bincode::deserialize(bytes.as_ref());
+
+        match output {
+            Ok(v) => Ok(v),
+            Err(_) => return Err(SlugErrors::BincodeError{ alg: SlugErrorAlgorithms::SIG_SECP256k1 })
+        }
+    }
+}
+
+impl FromBincode for ECDSASecretKey {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let output: Result<Self, Box<bincode::ErrorKind>> = bincode::deserialize(bytes.as_ref());
+
+        match output {
+            Ok(v) => Ok(v),
+            Err(_) => return Err(SlugErrors::BincodeError{ alg: SlugErrorAlgorithms::SIG_SECP256k1 })
+        }
+    }
+}
+
+impl FromBincode for ECDSASignature {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let output: Result<Self, Box<bincode::ErrorKind>> = bincode::deserialize(bytes.as_ref());
+
+        match output {
+            Ok(v) => Ok(v),
+            Err(_) => return Err(SlugErrors::BincodeError{ alg: SlugErrorAlgorithms::SIG_SECP256k1 })
+        }
     }
 }
 

@@ -51,6 +51,9 @@ use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 use crate::slugcrypt::traits::{FromEncoding,IntoEncoding};
 
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
+
 use slugencode::prelude::*;
 
 pub mod protocol_info {
@@ -643,4 +646,29 @@ impl EsphandSignature {
         })
     }
     
+}
+
+impl IntoBincode for EsphandKeypair {
+    fn into_bincode(&self) -> Result<Vec<u8>,SlugErrors> {
+        let encoded = bincode::serialize(self)?;
+        Ok(encoded)
+    }
+}
+impl IntoBincode for EsphandSignature {
+    fn into_bincode(&self) -> Result<Vec<u8>,SlugErrors> {
+        let encoded = bincode::serialize(self)?;
+        Ok(encoded)
+    }
+}
+impl FromBincode for EsphandKeypair {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+impl FromBincode for EsphandSignature {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
 }

@@ -44,6 +44,8 @@ use hybrid_array_new::ArrayN;
 
 use rand::RngCore;
 use rand::CryptoRng;
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
 
 pub const MLDSA3_PUBLIC_KEY_SIZE: usize = 1952;
 pub const MLDSA3_SECRET_KEY_SIZE: usize = 4032;
@@ -472,6 +474,48 @@ impl MLDSA3Signature {
         let hybrid = hybrid_array_new::ArrayN::<u8, 3309>::from_slice(&self.signature);
         let usable: ml_dsa::Signature<ml_dsa::MlDsa65> = ml_dsa::Signature::decode(hybrid).unwrap();
         return usable;
+    }
+}
+
+impl IntoBincode for MLDSA3PublicKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let encoded = bincode::serialize(self)?;
+        Ok(encoded)
+    }
+}
+
+impl IntoBincode for MLDSA3SecretKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let encoded = bincode::serialize(self)?;
+        Ok(encoded)
+    }
+}
+
+impl IntoBincode for MLDSA3Signature {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let encoded = bincode::serialize(self)?;
+        Ok(encoded)
+    }
+}
+
+impl FromBincode for MLDSA3PublicKey {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let decoded: MLDSA3PublicKey = bincode::deserialize(bincode.as_ref())?;
+        Ok(decoded)
+    }
+}
+
+impl FromBincode for MLDSA3SecretKey {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let decoded: MLDSA3SecretKey = bincode::deserialize(bincode.as_ref())?;
+        Ok(decoded)
+    }
+}
+
+impl FromBincode for MLDSA3Signature {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let decoded: MLDSA3Signature = bincode::deserialize(bincode.as_ref())?;
+        Ok(decoded)
     }
 }
 

@@ -65,6 +65,8 @@ use pem::Pem;
 
 use crate::slugcrypt::traits::{IntoEncoding, IntoPemPublic, IntoPemSecret, IntoPemSignature,FromEncoding};
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
 
 /// # ED25519: Public Key (Verifying Key)
 /// 
@@ -713,6 +715,50 @@ impl FromEncoding for ED25519Signature {
         Ok(x)
     }
 }
+
+impl IntoBincode for ED25519PublicKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let encoded = bincode::serialize(&self)?;
+        Ok(encoded)
+    }
+}
+
+impl IntoBincode for ED25519SecretKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let encoded = bincode::serialize(&self)?;
+        Ok(encoded)
+    }
+}
+
+impl IntoBincode for ED25519Signature {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let encoded = bincode::serialize(&self)?;
+        Ok(encoded)
+    }
+}
+
+impl FromBincode for ED25519PublicKey {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let decoded: Self = bincode::deserialize(bytes.as_ref())?;
+        Ok(decoded)
+    }
+}
+
+impl FromBincode for ED25519SecretKey {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let decoded: Self = bincode::deserialize(bytes.as_ref())?;
+        Ok(decoded)
+    }
+}
+
+impl FromBincode for ED25519Signature {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
+        let decoded: Self = bincode::deserialize(bytes.as_ref())?;
+        Ok(decoded)
+    }
+}
+
+
 #[test]
 fn run() {
     let sk = ED25519SecretKey::generate();

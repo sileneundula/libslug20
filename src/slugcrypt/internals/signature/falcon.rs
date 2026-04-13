@@ -33,6 +33,8 @@ use zeroize::{Zeroize,ZeroizeOnDrop};
 use serde_big_array::BigArray;
 
 use slugencode::{SlugEncodingUsage,SlugEncodings,errors::SlugEncodingError};
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
 
 use crate::slugcrypt::traits::{FromEncoding, IntoEncoding};
 use crate::errors::SlugErrors;
@@ -845,6 +847,48 @@ impl FromEncoding for Falcon1024Signature {
             Ok(v) => return Ok(v),
             Err(_) => return Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::Base64urlsafe, other: None })
         }
+    }
+}
+
+impl IntoBincode for Falcon1024PublicKey {
+    fn into_bincode(&self) -> Result<Vec<u8>,SlugErrors> {
+        let encoded = bincode::serialize(&self)?;
+        Ok(encoded)
+    }
+}
+
+impl IntoBincode for Falcon1024SecretKey {
+    fn into_bincode(&self) -> Result<Vec<u8>,SlugErrors> {
+        let encoded = bincode::serialize(&self)?;
+        Ok(encoded)
+    }
+}
+
+impl IntoBincode for Falcon1024Signature {
+    fn into_bincode(&self) -> Result<Vec<u8>,SlugErrors> {
+        let encoded = bincode::serialize(&self)?;
+        Ok(encoded)
+    }
+}
+
+impl FromBincode for Falcon1024PublicKey {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self,SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+
+impl FromBincode for Falcon1024SecretKey {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self,SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+
+impl FromBincode for Falcon1024Signature {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self,SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
     }
 }
 

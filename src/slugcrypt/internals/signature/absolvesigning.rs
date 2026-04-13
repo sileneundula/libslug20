@@ -47,6 +47,9 @@ use crate::slugcrypt::traits::{FromEncoding,IntoEncoding};
 use crate::errors::{SlugErrorAlgorithms,EncodingError};
 // IntoPEMX59
 use crate::slugcrypt::traits::IntoPemX59;
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
+
 
 
 /// # AbsolveKeypair
@@ -333,5 +336,33 @@ impl IntoPemX59 for AbsolveKeypair {
     /// `libslug20/AbsolveSigningX59FMT`
     fn info_pem_x59_standard_label() -> String {
         String::from("libslug20/AbsolveSigningX59FMT")
+    }
+}
+
+impl IntoBincode for AbsolveKeypair {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let output = bincode::serialize(self)?;
+        Ok(output)
+    }
+}
+
+impl IntoBincode for AbsolveSignature {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let output = bincode::serialize(self)?;
+        Ok(output)
+    }
+}
+
+impl FromBincode for AbsolveKeypair {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+
+impl FromBincode for AbsolveSignature {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
     }
 }

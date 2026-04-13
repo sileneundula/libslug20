@@ -77,6 +77,14 @@ pub trait FromEncoding: Sized {
     fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
 }
 
+pub trait IntoBincode {
+    fn into_bincode(&self) -> Result<Vec<u8>,SlugErrors>;
+}
+
+pub trait FromBincode: Sized {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self,SlugErrors>;
+}
+
 /// # SlugFormat
 /// 
 /// ## Formatting

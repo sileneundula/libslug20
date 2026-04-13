@@ -47,7 +47,7 @@ use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signatur
 use crate::slugcrypt::traits::IntoEncoding;
 use std::string::String;
 use slugencode::errors::SlugEncodingError;
-
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
 /// # SPHINCS: Public Key
 /// 
 /// Size of 64 bytes
@@ -904,5 +904,47 @@ impl FromEncoding for SPHINCSSignature {
             let signature: SPHINCSSignature = SPHINCSSignature::from_bytes(&output)?;
             return Ok(signature)
         }
+    }
+}
+
+impl IntoBincode for SPHINCSPublicKey {
+    fn into_bincode(&self) -> std::result::Result<Vec<u8>,SlugErrors> {
+        let x = bincode::serialize(&self)?;
+        return Ok(x)
+    }
+}
+
+impl IntoBincode for SPHINCSSecretKey {
+    fn into_bincode(&self) -> std::result::Result<Vec<u8>,SlugErrors> {
+        let x = bincode::serialize(&self)?;
+        return Ok(x)
+    }
+}
+
+impl IntoBincode for SPHINCSSignature {
+    fn into_bincode(&self) -> std::result::Result<Vec<u8>,SlugErrors> {
+        let x = bincode::serialize(&self)?;
+        return Ok(x)
+    }
+}
+
+impl FromBincode for SPHINCSPublicKey {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> std::result::Result<Self,SlugErrors> {
+        let x = bincode::deserialize(&bytes.as_ref())?;
+        return Ok(x)
+    }
+}
+
+impl FromBincode for SPHINCSSecretKey {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> std::result::Result<Self,SlugErrors> {
+        let x = bincode::deserialize(&bytes.as_ref())?;
+        return Ok(x)
+    }
+}
+
+impl FromBincode for SPHINCSSignature {
+    fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> std::result::Result<Self,SlugErrors> {
+        let x = bincode::deserialize(&bytes.as_ref())?;
+        return Ok(x)
     }
 }

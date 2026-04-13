@@ -3064,6 +3064,7 @@ dependencies = [
  "ascon-aead128",
  "base32",
  "base58",
+ "bincode",
  "bip32",
  "blake2",
  "blake3",
@@ -7307,6 +7308,7 @@ name = "x59-fmt"
 version = "0.1.0"
 dependencies = [
  "blake2-rfc",
+ "blake3",
  "fixedstr",
  "serde",
  "slugencode",

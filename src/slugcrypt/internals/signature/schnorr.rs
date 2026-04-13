@@ -4,6 +4,7 @@
 
 use std::string::FromUtf8Error;
 
+use rsa::pkcs8::der::asn1::Int;
 use schnorrkel::*;
 
 use slugencode::SlugEncodingUsage;
@@ -21,6 +22,8 @@ use schnorrkel::context::SigningContext;
 use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret, IntoPemSignature};
 use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
 
 use crate::slugcrypt::traits::FromEncoding;
 /// SLUGCRYPT CONTEXT
@@ -491,6 +494,45 @@ impl FromEncoding for SchnorrSignature {
         let decoder = SlugEncodingUsage::new(slugencode::SlugEncodings::Base64urlsafe);
         let bytes = decoder.decode(b64u_str.as_ref())?;
         let x = Self::from_bytes(&bytes)?;
+        Ok(x)
+    }
+}
+
+impl FromBincode for SchnorrPublicKey {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+impl FromBincode for SchnorrSecretKey {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+impl FromBincode for SchnorrSignature {
+    fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
+        let x = bincode::deserialize(bincode.as_ref())?;
+        Ok(x)
+    }
+}
+impl IntoBincode for SchnorrPublicKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let x = bincode::serialize(&self)?;
+        Ok(x)
+    }
+}
+
+impl IntoBincode for SchnorrSecretKey {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let x = bincode::serialize(&self)?;
+        Ok(x)
+    }
+}
+
+impl IntoBincode for SchnorrSignature {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        let x = bincode::serialize(&self)?;
         Ok(x)
     }
 }

@@ -37,6 +37,7 @@ use fixedstr::str256;
 use std::str::FromStr;
 
 use blake2_rfc::blake2b::Blake2b;
+use blake3::Hash;
 
 use slugencode::prelude::*;
 
@@ -171,6 +172,12 @@ impl X59Value {
     }
     pub fn checksum_64(&self) -> Result<String, SlugEncodingError> {
         self.checksum_advanced(64, SlugEncodings::Hex)
+    }
+    pub fn checksum_blake3(&self) -> Result<String, SlugEncodingError> {
+        let x = blake3::hash(&self.data);
+        let encoder = SlugEncodingUsage::new(SlugEncodings::Hex);
+        let output = encoder.encode(x.as_bytes())?;
+        return Ok(output)
     }
 }
 

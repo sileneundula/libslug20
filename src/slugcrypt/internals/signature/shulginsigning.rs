@@ -54,6 +54,8 @@ use crate::slugcrypt::internals::signature::shulginsigning::protocol_values::{SH
 use crate::slugcrypt::internals::signature::sphincs_plus::{SPHINCSPublicKey,SPHINCSSecretKey,SPHINCSSignature};
 use crate::errors::SlugErrors;
 use crate::errors::SlugErrorAlgorithms;
+use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+
 
 use fixedstr::str128;
 
@@ -993,4 +995,28 @@ fn check_len() {
     let is_valid = keypair_2.verify(msg, &signature).unwrap();
     println!("{}",is_valid);
 
+}
+
+impl IntoBincode for ShulginKeypair {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        Ok(bincode::serialize(&self)?)
+    }
+}
+
+impl IntoBincode for ShulginSignature {
+    fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
+        Ok(bincode::serialize(&self)?)
+    }
+}
+
+impl FromBincode for ShulginKeypair {
+    fn from_bincode<T: AsRef<[u8]>>(bincode_encoded: T) -> Result<Self, SlugErrors> {
+        Ok(bincode::deserialize(bincode_encoded.as_ref())?)
+    }
+}
+
+impl FromBincode for ShulginSignature {
+    fn from_bincode<T: AsRef<[u8]>>(bincode_encoded: T) -> Result<Self, SlugErrors> {
+        Ok(bincode::deserialize(bincode_encoded.as_ref())?)
+    }
 }
