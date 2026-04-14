@@ -66,6 +66,20 @@ impl SlugSecretKey {
             Self::MLDSA3(_) => return Algorithms::MLDSA3,
         }
     }
+    pub fn as_type(&self) -> &str {
+        match self {
+            Self::ShulginSigning(x) => return x,
+            Self::EsphandSigning(x) => return "EsphandSigning",
+            Self::AbsolveSigning(x) => return "AbsolveSigning",
+            Self::ED25519(x) => return "ED25519",
+            Self::ED448(x) => return "ED448",
+            Self::ECDSA(x) => return "ECDSA",
+            Self::BLS12_381(x) => return "BLS12_381",
+            Self::SchnorrOverRistretto(x) => return "SchnorrOverRistretto",
+            Self::SPHINCS(x) => return "SPHINCS",
+            Self::FALCON1024(x) => return "FALCON1024",
+            Self::MLDSA3(x) => return "MLDSA3",
+        }
     pub fn export_secret(&self) -> Result<String,SlugErrors> {
          match self {
             Self::ShulginSigning(x) => x.into_standard_pem(),
