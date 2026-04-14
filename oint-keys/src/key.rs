@@ -74,6 +74,7 @@ pub mod oint_keys {
     use crate::traits::base::{FromX59, IntoX59, OintKeypairTrait, OintSigning, OintVerification};
 
     use crate::traits::base::{IntoEncodingPublicKey,IntoEncodingKeypair,IntoEncodingSecretKey,IntoEncodingSignature};
+    use libslug::slugcrypt::traits::{FromBincode,IntoBincode,FromStandardPem,IntoStandardPem};
 
     use crate::constants::*;
 
@@ -83,6 +84,12 @@ pub mod oint_keys {
     pub struct OpenInternetKeypair {
         pub pk: OpenInternetPublicKey,
         pub sk: OpenInternetSecretKey,
+    }
+
+    impl OpenInternetKeypair {
+        pub fn from_keys(pk: OpenInternetPublicKey, sk: OpenInternetSecretKey) -> Self {
+            Self { pk, sk }
+        }
     }
 
     impl OintKeypairTrait for OpenInternetKeypair {
@@ -862,7 +869,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugPublicKey::ED448(pk) => {
-                    let x = pk.to_hex()?;
+                    let x = pk.into_hex()?;
 
                     return Ok(x)
                 }
@@ -916,7 +923,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::ED448(sk) => {
-                    let x = sk.to_base32()?;
+                    let x = sk.into_base32()?;
 
                     return Ok(x)
                 }
@@ -929,7 +936,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::MLDSA3((sk, _)) => {
-                    let x = sk.to_base32()?;
+                    let x = sk.into_base32()?;
 
                     return Ok(x)
                 }
@@ -967,7 +974,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::ED448(sk) => {
-                    let x = sk.to_base32_unpadded()?;
+                    let x = sk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
@@ -980,7 +987,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::MLDSA3((sk, _)) => {
-                    let x = sk.to_base32_unpadded()?;
+                    let x = sk.into_base32_unpadded()?;
 
                     return Ok(x)
                 }
@@ -1018,7 +1025,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::ED448(sk) => {
-                    let x = sk.to_base58()?;
+                    let x = sk.into_base58()?;
 
                     return Ok(x)
                 }
@@ -1031,7 +1038,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::MLDSA3((sk, _)) => {
-                    let x = sk.to_base58()?;
+                    let x = sk.into_base58()?;
 
                     return Ok(x)
                 }
@@ -1069,7 +1076,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::ED448(sk) => {
-                    let x = sk.to_base64()?;
+                    let x = sk.into_base64()?;
 
                     return Ok(x)
                 }
@@ -1082,7 +1089,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::MLDSA3((sk, _)) => {
-                    let x = sk.to_base64()?;
+                    let x = sk.into_base64()?;
 
                     return Ok(x)
                 }
@@ -1120,7 +1127,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::ED448(sk) => {
-                    let x = sk.to_base64_url_safe()?;
+                    let x = sk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
@@ -1133,7 +1140,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::MLDSA3((sk, _)) => {
-                    let x = sk.to_base64_url_safe()?;
+                    let x = sk.into_base64_url_safe()?;
 
                     return Ok(x)
                 }
@@ -1171,7 +1178,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::ED448(sk) => {
-                    let x = sk.to_hex()?;
+                    let x = sk.into_hex()?;
 
                     return Ok(x)
                 }
@@ -1184,7 +1191,7 @@ pub mod oint_keys {
                     return Ok(x)
                 }
                 SlugSecretKey::MLDSA3((sk, _)) => {
-                    let x = sk.to_hex()?;
+                    let x = sk.into_hex()?;
 
                     return Ok(x)
                 }
@@ -1227,7 +1234,7 @@ pub mod oint_keys {
                     return Ok(pk)
                 }
                 SlugPublicKey::ED448(x) => {
-                    let pk = x.to_hex()?;
+                    let pk = x.into_hex()?;
 
                     return Ok(pk)
                 }
@@ -1237,12 +1244,12 @@ pub mod oint_keys {
                     return Ok(pk)
                 }
                 SlugPublicKey::FALCON1024(x) => {
-                    let pk = x.to_hex()?;
+                    let pk = x.into_hex()?;
 
                     return Ok(pk)
                 }
                 SlugPublicKey::MLDSA3(x) => {
-                    let pk = x.to_hex()?;
+                    let pk = x.into_hex()?;
 
                     return Ok(pk)
                 }
@@ -1252,7 +1259,7 @@ pub mod oint_keys {
                     return Ok(pk)
                 }
                 SlugPublicKey::SchnorrOverRistretto(x) => {
-                    let pk = x.to_hex_string()?;
+                    let pk = x.into_hex()?;
 
                     return Ok(pk)
                 }

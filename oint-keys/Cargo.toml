@@ -13,10 +13,11 @@ edition = "2024"
 
 [dependencies]
 # /silene/libslug20: Cryptography Library
-libslug = {version="0.10.0"}
+libslug = {version="0.11.0"}
 
 fixedstr = {version="0.5.10", features=["serde","pub-tstr"]}
 
 # Serialization and Zeroization
 serde = { version="1.0.228", features=["derive"]}
 zeroize = {version="1.8.2", features=["derive"]}
+pem = "3.0.6"
