@@ -33,6 +33,8 @@ use crate::errors::SlugErrors;
 use slugencode::SlugEncodingUsage;
 use slugencode::SlugEncodings;
 use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 
 
 pub const ED448_CONTEXT: &str = "libslug20";

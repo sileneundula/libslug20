@@ -85,6 +85,24 @@ pub trait FromBincode: Sized {
     fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self,SlugErrors>;
 }
 
+pub trait IntoStandardEncoding {
+    fn into_standard_encoding(&self) -> Result<String,SlugErrors>;
+}
+
+pub trait FromStandardEncoding: Sized {
+    fn from_standard_encoding<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+}
+
+pub trait IntoStandardPem {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors>;
+    fn label_for_standard_pem() -> String;
+    fn label_for_standard_pem_secret() -> String;
+}
+
+pub trait FromStandardPem: Sized {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
+}
+
 /// # SlugFormat
 /// 
 /// ## Formatting

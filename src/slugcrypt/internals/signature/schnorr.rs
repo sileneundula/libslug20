@@ -2,8 +2,9 @@
 //! 
 //! Schnorr signatures over Ristresto.
 
-use std::string::FromUtf8Error;
+use std::{str::FromStr, string::FromUtf8Error};
 
+use pem::Pem;
 use rsa::pkcs8::der::asn1::Int;
 use schnorrkel::*;
 
@@ -23,6 +24,8 @@ use crate::slugcrypt::traits::{IntoPemPublic,IntoPemSecret, IntoPemSignature};
 use crate::slugcrypt::traits::IntoPem;
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 
 
 use crate::slugcrypt::traits::FromEncoding;
@@ -534,5 +537,80 @@ impl IntoBincode for SchnorrSignature {
     fn into_bincode(&self) -> Result<Vec<u8>, SlugErrors> {
         let x = bincode::serialize(&self)?;
         Ok(x)
+    }
+}
+
+impl IntoStandardPem for SchnorrPublicKey {
+    fn into_standard_pem(&self) -> Result<String, SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/SCHNORR-PUBLIC-KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/SCHNORR-SECRET-KEY")
+    }
+}
+
+impl IntoStandardPem for SchnorrSecretKey {
+    fn into_standard_pem(&self) -> Result<String, SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/SCHNORR-SECRET-KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/SCHNORR-SECRET-KEY")
+    }
+}
+
+impl IntoStandardPem for SchnorrSignature {
+    fn into_standard_pem(&self) -> Result<String, SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/SCHNORR-SIGNATURE")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/SCHNORR-SECRET-KEY")
+    }
+}
+
+impl FromStandardPem for SchnorrPublicKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("Schnorr Public Key PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let pk = Self::from_bincode(bytes)?;
+        return Ok(pk)
+    }
+}
+
+impl FromStandardPem for SchnorrSecretKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("Schnorr Secret Key PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let sk = Self::from_bincode(bytes)?;
+        return Ok(sk)
+    }
+}
+
+impl FromStandardPem for SchnorrSignature {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("Schnorr Signature PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let sig = Self::from_bincode(bytes)?;
+        return Ok(sig)
     }
 }

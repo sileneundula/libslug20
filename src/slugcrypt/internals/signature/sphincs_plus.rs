@@ -28,7 +28,9 @@
 //! - Remove Message Struct
 
 use std::primitive;
+use std::str::FromStr;
 
+use pem::Pem;
 use pqcrypto_sphincsplus::sphincsshake256ssimple::{PublicKey as PublicKeySphincs, SecretKey as SecretKeySphincs, DetachedSignature as DetachedSignatureSphincs};
 use pqcrypto_sphincsplus::sphincsshake256ssimple::*;
 use pqcrypto_traits::sign::VerificationError;
@@ -48,6 +50,10 @@ use crate::slugcrypt::traits::IntoEncoding;
 use std::string::String;
 use slugencode::errors::SlugEncodingError;
 use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
+
+
 /// # SPHINCS: Public Key
 /// 
 /// Size of 64 bytes
@@ -946,5 +952,86 @@ impl FromBincode for SPHINCSSignature {
     fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> std::result::Result<Self,SlugErrors> {
         let x = bincode::deserialize(&bytes.as_ref())?;
         return Ok(x)
+    }
+}
+
+impl IntoStandardPem for SPHINCSPublicKey {
+    fn into_standard_pem(&self) -> std::result::Result<String, SlugErrors> {
+        let bytes = self.into_bincode()?;
+        let pem: Pem = Pem::new(Self::label_for_standard_pem(), bytes);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        return String::from("OpenInternetCryptographyProject/SPHINCS+ PUBLIC KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        return String::from("OpenInternetCryptographyProject/SPHINCS+ SECRET KEY")
+    }
+}
+
+impl IntoStandardPem for SPHINCSSecretKey {
+    fn into_standard_pem(&self) -> std::result::Result<String, SlugErrors> {
+        let bytes = self.into_bincode()?;
+        let pem: Pem = Pem::new(Self::label_for_standard_pem(), bytes);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        return String::from("OpenInternetCryptographyProject/SPHINCS+ SECRET KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        return String::from("OpenInternetCryptographyProject/SPHINCS+ SECRET KEY")
+    }
+}
+
+impl IntoStandardPem for SPHINCSSignature {
+    fn into_standard_pem(&self) -> std::result::Result<String, SlugErrors> {
+        let bytes = self.into_bincode()?;
+        let pem: Pem = Pem::new(Self::label_for_standard_pem(), bytes);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        return String::from("OpenInternetCryptographyProject/SPHINCS+ SIGNATURE")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        return String::from("OpenInternetCryptographyProject/SPHINCS+ SECRET KEY")
+    }
+}
+
+impl FromStandardPem for SPHINCSPublicKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Public Key PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let pk = Self::from_bincode(bytes)?;
+        return Ok(pk)
+    }
+}
+
+impl FromStandardPem for SPHINCSSecretKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Secret Key PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let sk = Self::from_bincode(bytes)?;
+        return Ok(sk)
+    }
+}
+
+impl FromStandardPem for SPHINCSSignature {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("SPHINCS+ Signature PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let sig = Self::from_bincode(bytes)?;
+        return Ok(sig)
     }
 }

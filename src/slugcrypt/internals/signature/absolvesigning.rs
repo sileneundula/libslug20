@@ -48,6 +48,8 @@ use crate::errors::{SlugErrorAlgorithms,EncodingError};
 // IntoPEMX59
 use crate::slugcrypt::traits::IntoPemX59;
 use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 
 
 

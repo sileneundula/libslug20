@@ -72,6 +72,8 @@ use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signatur
 use crate::slugcrypt::traits::{IntoEncoding,FromEncoding};
 use securerand_rs::securerand::SecureRandom;
 use securerand_rs::rngs::FuschineCSPRNG;
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 
 use serde_json;
 
@@ -944,6 +946,74 @@ fn secret_key_to_compact(keypair: &ShulginKeypair) -> Result<String, FromUtf8Err
 
 fn remove_first(s: &str) -> Option<&str> {
     s.chars().next().map(|c| &s[c.len_utf8()..])
+}
+
+impl IntoStandardPem for ShulginKeypair {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        if self.sphincssk.is_some() && self.ed25519sk.is_some() {
+            let key = self.into_bincode()?;
+            let pem = Pem::new(Self::label_for_standard_pem_secret(), key);
+            return Ok(pem.to_string())
+        }
+        else if self.sphincssk.is_none() && self.ed25519sk.is_none() {
+            let key = self.into_bincode()?;
+            let pem = Pem::new(Self::label_for_standard_pem(), key);
+            return Ok(pem.to_string())
+        }
+        else {
+            return Err(SlugErrors::Other(String::from("Cannot Convert To PEM. Both Secret Keys Must Be Present Or Both Secret Keys Must Be Absent.")))
+        }
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ShulginSigning-Public-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ShulginSigning-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for ShulginSignature {
+    fn into_standard_pem(&self) -> Result<String, SlugErrors> {
+        let key = self.into_bincode()?;
+        let pem = Pem::new(String::from(Self::label_for_standard_pem()), key);
+        return Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ShulginSigning-Signature")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ShulginSigning-Secret-Key")
+    }
+}
+
+impl FromStandardPem for ShulginKeypair {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> Result<Self, SlugErrors> {
+        let pem = Pem::from_str(pem_str.as_ref())?;
+
+        if pem.tag() == Self::label_for_standard_pem() || pem.tag() == Self::label_for_standard_pem_secret() {
+            let key = pem.contents();
+            let keypair = Self::from_bincode(key)?;
+            return Ok(keypair)
+        }
+        else {
+            return Err(SlugErrors::Other(String::from("PEM Label Does Not Match Expected Label For ShulginSigning Keypair.")))
+        }
+    }
+}
+
+impl FromStandardPem for ShulginSignature {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> Result<Self, SlugErrors> {
+        let pem = Pem::from_str(pem_str.as_ref())?;
+
+        if pem.tag() == Self::label_for_standard_pem() {
+            let key = pem.contents();
+            let signature = Self::from_bincode(key)?;
+            return Ok(signature)
+        }
+        else {
+            return Err(SlugErrors::Other(String::from("PEM Label Does Not Match Expected Label For ShulginSigning Signature.")))
+        }
+    }
 }
 
 #[test]

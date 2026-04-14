@@ -107,8 +107,6 @@ impl From<bincode::ErrorKind> for SlugErrors {
     }
 }
 
-impl 
-
 impl From<SignatureError> for SlugErrors {
     fn from(value: SignatureError) -> Self {
         match value {

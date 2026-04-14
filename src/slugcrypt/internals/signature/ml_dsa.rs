@@ -22,7 +22,10 @@
 //!         - [X] Secret Key
 //!         - [X] Signature
 //!     - [ ] IntoPem
+use std::str::FromStr;
+
 use ml_dsa::{self, KeyGen};
+use pem::Pem;
 use rand::rngs::OsRng;
 
 use serde::{Serialize, Deserialize};
@@ -38,6 +41,8 @@ use subtle_encoding::hex;
 use subtle_encoding::Error as HexError;
 use slugencode::SlugEncodingUsage;
 use slugencode::SlugEncodings;
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 
 //use hybrid_array::ArrayN;
 use hybrid_array_new::ArrayN;
@@ -516,6 +521,81 @@ impl FromBincode for MLDSA3Signature {
     fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self, SlugErrors> {
         let decoded: MLDSA3Signature = bincode::deserialize(bincode.as_ref())?;
         Ok(decoded)
+    }
+}
+
+impl IntoStandardPem for MLDSA3PublicKey {
+    fn into_standard_pem(&self) -> Result<String, SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/MLDSA3-PUBLIC-KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/MLDSA3-SECRET-KEY")
+    }
+}
+
+impl IntoStandardPem for MLDSA3SecretKey {
+    fn into_standard_pem(&self) -> Result<String, SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/MLDSA3-SECRET-KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/MLDSA3-SECRET-KEY")
+    }
+}
+
+impl IntoStandardPem for MLDSA3Signature {
+    fn into_standard_pem(&self) -> Result<String, SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/MLDSA3-SIGNATURE")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/MLDSA3-SECRET-KEY")
+    }
+}
+
+impl FromStandardPem for MLDSA3PublicKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("MLDSA3 Public Key PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let key = Self::from_bincode(bytes)?;
+        return Ok(key)
+    }
+}
+
+impl FromStandardPem for MLDSA3SecretKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("MLDSA3 Secret Key PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let key = Self::from_bincode(bytes)?;
+        return Ok(key)
+    }
+}
+
+impl FromStandardPem for MLDSA3Signature {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> std::result::Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("MLDSA3 Signature PEM Label Mismatch")))
+        }
+        let bytes = pem.contents();
+        let sig = Self::from_bincode(bytes)?;
+        return Ok(sig)
     }
 }
 

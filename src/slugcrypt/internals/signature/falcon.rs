@@ -21,6 +21,9 @@
 //! 
 //! The Public Key and Secret Key must be kept together. The Public Key *cannot* be derived from the secret key in this implementation.
 
+use std::str::FromStr;
+
+use pem::Pem;
 use pqcrypto_falcon::falconpadded1024;
 
 use pqcrypto_traits::sign::{PublicKey,SecretKey,DetachedSignature};
@@ -35,7 +38,8 @@ use serde_big_array::BigArray;
 use slugencode::{SlugEncodingUsage,SlugEncodings,errors::SlugEncodingError};
 use crate::slugcrypt::traits::{FromBincode,IntoBincode};
 
-
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 use crate::slugcrypt::traits::{FromEncoding, IntoEncoding};
 use crate::errors::SlugErrors;
 /// # Falcon1024: Public Key
@@ -890,6 +894,80 @@ impl FromBincode for Falcon1024Signature {
         let x = bincode::deserialize(bincode.as_ref())?;
         Ok(x)
     }
+}
+
+impl IntoStandardPem for Falcon1024PublicKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/FALCON1024-PUBLIC-KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/FALCON1024-PRIVATE-KEY")
+    }
+}
+
+impl IntoStandardPem for Falcon1024SecretKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem_secret(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/FALCON1024-SECRET-KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/FALCON1024-SECRET-KEY")
+    }
+}
+
+impl IntoStandardPem for Falcon1024Signature {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let pem = Pem::new(Self::label_for_standard_pem(), self.into_bincode()?);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/FALCON1024-SIGNATURE")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/FALCON1024-SECRET-KEY")
+    }
+}
+
+impl FromStandardPem for Falcon1024PublicKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> Result<Self, SlugErrors> {
+        let pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() == Self::label_for_standard_pem() {
+            let decoded: Falcon1024PublicKey = Self::from_bincode(pem.contents())?;
+            Ok(decoded)
+        } else {
+            Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None })
+        }
+    }
+}
+
+impl FromStandardPem for Falcon1024SecretKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> Result<Self, SlugErrors> {
+        let pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() == Self::label_for_standard_pem_secret() {
+            let decoded: Falcon1024SecretKey = Self::from_bincode(pem.contents())?;
+            Ok(decoded)
+        } else {
+            Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None })
+        }
+    }
+}
+
+impl FromStandardPem for Falcon1024Signature {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> Result<Self, SlugErrors> {
+        let pem = Pem::from_str(pem_str.as_ref())?;
+        if pem.tag() == Self::label_for_standard_pem() {
+            let decoded: Falcon1024Signature = Self::from_bincode(pem.contents())?;
+            Ok(decoded)
+        } else {
+            Err(SlugErrors::DecodingError { alg: crate::errors::SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None }) }
+        }
 }
 
 #[test]

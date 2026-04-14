@@ -66,6 +66,8 @@ use pem::Pem;
 use crate::slugcrypt::traits::{IntoEncoding, IntoPemPublic, IntoPemSecret, IntoPemSignature,FromEncoding};
 use crate::slugcrypt::traits::{IntoX59PublicKey,IntoX59SecretKey,IntoX59Signature};
 use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 
 
 /// # ED25519: Public Key (Verifying Key)

@@ -54,6 +54,8 @@ use crate::slugcrypt::traits::FromEncoding;
 use crate::slugcrypt::traits::IntoEncoding;
 use crate::slugcrypt::traits::RecoverablePublicKey;
 use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 
 
 use crate::errors::SlugErrors;

@@ -23,6 +23,8 @@ use crate::errors::SlugErrors;
 use rand::rngs::OsRng;
 use crate::slugcrypt::traits::{IntoEncoding, FromEncoding};
 use crate::slugcrypt::traits::{FromBincode,IntoBincode};
+use crate::slugcrypt::traits::{FromStandardPem, IntoStandardPem};
+use crate::slugcrypt::traits::{IntoStandardEncoding,FromStandardEncoding};
 
 
 
