@@ -36,6 +36,8 @@
 //! - More encodings
 //! - Certificate Encoding
 
+use std::str::FromStr;
+
 use bip39::Language;
 use ed25519_dalek::{Signer,Verifier};
 use ed25519_dalek::ed25519::SignatureEncoding;
@@ -756,6 +758,81 @@ impl FromBincode for ED25519SecretKey {
 impl FromBincode for ED25519Signature {
     fn from_bincode<T: AsRef<[u8]>>(bytes: T) -> Result<Self, SlugErrors> {
         let decoded: Self = bincode::deserialize(bytes.as_ref())?;
+        Ok(decoded)
+    }
+}
+
+impl IntoStandardPem for ED25519PublicKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let x = self.into_bincode()?;
+        let pem = Pem::new(&Self::label_for_standard_pem(), x);
+        return Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ED25519-Public-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ED25519-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for ED25519SecretKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let x = self.into_bincode()?;
+        let pem = Pem::new(&Self::label_for_standard_pem_secret(), x);
+        return Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ED25519-Secret-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ED25519-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for ED25519Signature {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let x = self.into_bincode()?;
+        let pem = Pem::new(&Self::label_for_standard_pem(), x);
+        return Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ED25519-Signature")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ED25519-Secret-Key")
+    }
+}
+
+impl FromStandardPem for ED25519PublicKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref()).unwrap();
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("ED25519 Public Key From Standard Pem Failure")))
+        }
+        let decoded: ED25519PublicKey = Self::from_bincode(&pem.contents())?;
+        Ok(decoded)
+    }
+}
+
+impl FromStandardPem for ED25519SecretKey {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref()).unwrap();
+        if pem.tag() != Self::label_for_standard_pem_secret() {
+            return Err(SlugErrors::Other(String::from("ED25519 Secret Key From Standard Pem Failure")))
+        }
+        let decoded: ED25519SecretKey = Self::from_bincode(&pem.contents())?;
+        Ok(decoded)
+    }
+}
+
+impl FromStandardPem for ED25519Signature {
+    fn from_standard_pem<T: AsRef<str>>(pem_str: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(pem_str.as_ref()).unwrap();
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::Other(String::from("ED25519 Signature From Standard Pem Failure")))
+        }
+        let decoded: ED25519Signature = Self::from_bincode(&pem.contents())?;
         Ok(decoded)
     }
 }

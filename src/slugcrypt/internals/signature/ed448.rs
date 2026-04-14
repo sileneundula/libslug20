@@ -14,9 +14,12 @@
 //! 
 //! - [ ] Signature Verifying
 
+use std::str::FromStr;
+
 use ed448_goldilocks_plus::{EdwardsPoint, CompressedEdwardsY, Scalar, elliptic_curve::hash2curve::ExpandMsgXof, sha3::Shake256};
 use ed448_goldilocks_plus::{SigningKey, VerifyingKey};
 use ed448_goldilocks_plus::SecretKey;
+use pem::Pem;
 use rand::rngs::OsRng;
 use serde_big_array::BigArray;
 use zeroize::ZeroizeOnDrop;
@@ -739,6 +742,86 @@ impl FromBincode for Ed448Signature {
     }
 }
 
+impl IntoStandardPem for Ed448PublicKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let bytes: Vec<u8>= self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem(), bytes);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ED448-PUBLIC-KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ED448-SECRET-KEY")
+    }
+}
+
+impl IntoStandardPem for Ed448SecretKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let bytes: Vec<u8>= self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem_secret(), bytes);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ED448-SECRET-KEY")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ED448-SECRET-KEY")
+    }
+}
+
+impl IntoStandardPem for Ed448Signature {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let bytes: Vec<u8>= self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem(), bytes);
+        Ok(pem.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ED448-SIGNATURE")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ED448-SECRET-KEY")
+    }
+}
+
+impl FromStandardPem for Ed448PublicKey {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let pem = Pem::from_str(s.as_ref())?;
+
+        if pem.tag() != &Self::label_for_standard_pem() {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+
+        let x: Ed448PublicKey = Self::from_bincode(pem.contents())?;
+        Ok(x)
+    }
+}
+
+impl FromStandardPem for Ed448SecretKey {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let pem = Pem::from_str(s.as_ref())?;
+
+        if pem.tag() != &Self::label_for_standard_pem_secret() {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+
+        let x: Ed448SecretKey = Self::from_bincode(pem.contents())?;
+        Ok(x)
+    }
+}
+
+impl FromStandardPem for Ed448Signature {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let pem: Pem = Pem::from_str(s.as_ref())?;
+
+        if pem.tag() != &Self::label_for_standard_pem() {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+
+        let x: Ed448Signature = Self::from_bincode(pem.contents())?;
+        Ok(x)
+    }
+}
 
 
 #[test]

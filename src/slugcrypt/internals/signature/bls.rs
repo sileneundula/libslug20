@@ -13,6 +13,8 @@
 //! - [ ] Refactor
 //! - [ ] Examples
 //! - [ ] Verify it works correctly with other BLS implementations.
+use std::str::FromStr;
+
 use bls_signatures::Serialize as BLSSerialize;
 use pem::Pem;
 use serde::{Serialize, Deserialize};
@@ -738,6 +740,86 @@ impl IntoBincode for BLSSignature {
         Ok(output)
     }
 }
+
+impl IntoStandardPem for BLSPublicKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let output = self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem(), output);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/BLS12-381-Public-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/BLS12-381-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for BLSSecretKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let output = self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem(), output);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/BLS12-381-Secret-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/BLS12-381-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for BLSSignature {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let output = self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem(), output);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/BLS12-381-Signature")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/BLS12-381-Secret-Key")
+    }
+}
+
+impl FromStandardPem for BLSPublicKey {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(s.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::InvalidLengthFromBytes)
+        }
+        let output: BLSPublicKey = Self::from_bincode(pem.contents())?;
+        return Ok(output)
+    }
+}
+
+impl FromStandardPem for BLSSecretKey {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(s.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::InvalidLengthFromBytes)
+        }
+        let output: BLSSecretKey = Self::from_bincode(pem.contents())?;
+        return Ok(output)
+    }
+}
+
+impl FromStandardPem for BLSSignature {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(s.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::InvalidLengthFromBytes)
+        }
+        let output: BLSSignature = Self::from_bincode(pem.contents())?;
+        return Ok(output)
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;

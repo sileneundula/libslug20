@@ -74,6 +74,8 @@ pub enum SlugErrors {
     BincodeError {
         alg: SlugErrorAlgorithms,
     },
+    #[error("[Error] Invalid PEM Label")]
+    InvalidPemLabel,
 }
 
 #[derive(Debug, Error)]

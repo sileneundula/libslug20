@@ -674,3 +674,87 @@ impl FromBincode for EsphandSignature {
         Ok(x)
     }
 }
+
+impl IntoStandardPem for EsphandKeypair {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        if self.clsk.is_some() && self.pqsk.is_some() {
+            let output = self.into_bincode()?;
+            let output = Pem::new(Self::label_for_standard_pem_secret(), output).to_string();
+            return Ok(output)
+        }
+        else if self.clsk.is_none() && self.pqsk.is_none() {
+             let output = self.into_bincode()?;
+             let output = Pem::new(Self::label_for_standard_pem(), output).to_string();
+             return Ok(output)
+        }
+        else {
+            return Err(SlugErrors::Other(String::from("Invalid Keypair State For PEM Encoding")))
+        }
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/EsphandSignature-Public-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/EsphandSignature-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for EsphandSignature {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let output = self.into_bincode()?;
+        let output = Pem::new(Self::label_for_standard_pem(), output).to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/EsphandSignature-Signature")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/EsphandSignature-Secret-Key")
+    }
+}
+
+impl FromStandardPem for EsphandKeypair {
+    fn from_standard_pem<T: AsRef<str>>(pem: T) -> Result<Self, SlugErrors> {
+        let x: Result<Pem, pem::PemError> = Pem::from_str(pem.as_ref());
+
+        let output = match x {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None })
+        };
+
+        let label = output.tag();
+
+        if label == Self::label_for_standard_pem() {
+            let decoded: EsphandKeypair = Self::from_bincode(output.contents())?;
+            return Ok(decoded)
+        }
+        else if label == Self::label_for_standard_pem_secret() {
+            let decoded: EsphandKeypair = Self::from_bincode(output.contents())?;
+            return Ok(decoded)
+        }
+        else {
+            return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: Some(String::from("PEM Label Does Not Match For Esphand Signature")) })
+        }
+    }
+}
+
+impl FromStandardPem for EsphandSignature {
+    fn from_standard_pem<T: AsRef<str>>(pem: T) -> Result<Self, SlugErrors> {
+        let x: Result<Pem, pem::PemError> = Pem::from_str(pem.as_ref());
+
+        let output = match x {
+            Ok(v) => v,
+            Err(_) => return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: None })
+        };
+
+        let label = output.tag();
+
+        if label == Self::label_for_standard_pem() {
+            let decoded: EsphandSignature = Self::from_bincode(output.contents())?;
+            return Ok(decoded)
+        }
+        else {
+            return Err(SlugErrors::DecodingError { alg: SlugErrorAlgorithms::SIG_FALCON, encoding: crate::errors::EncodingError::PEM, other: Some(String::from("PEM Label Does Not Match For Esphand Signature")) })
+        }
+    }
+}

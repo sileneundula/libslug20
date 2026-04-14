@@ -368,3 +368,72 @@ impl FromBincode for AbsolveSignature {
         Ok(x)
     }
 }
+
+impl IntoStandardPem for AbsolveKeypair {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        if self.ed25519sk.is_none() || self.mldsa3sk.is_none() {
+            let bincode = self.into_bincode()?;
+            let output: Pem = Pem::new(Self::label_for_standard_pem(), bincode);
+            return Ok(output.to_string())
+        }
+        else if self.ed25519sk.is_some() && self.mldsa3sk.is_some() {
+            let bincode = self.into_bincode()?;
+            let output: Pem = Pem::new(Self::label_for_standard_pem_secret(), bincode);
+            return Ok(output.to_string())
+        }
+        else {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+    }
+    
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/AbsolveSigning-Public-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/AbsolveSigning-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for AbsolveSignature {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let bincode = self.into_bincode()?;
+        let output: Pem = Pem::new(Self::label_for_standard_pem(), bincode);
+        return Ok(output.to_string())
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/AbsolveSigning-Signature")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/AbsolveSigning-Secret-Key")
+    }
+
+}
+
+impl FromStandardPem for AbsolveSignature {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let pem = Pem::from_str(s.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+        let output: AbsolveSignature = Self::from_bincode(pem.contents())?;
+        return Ok(output)
+    }
+}
+
+impl FromStandardPem for AbsolveKeypair {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors> {
+        let pem = Pem::from_str(s.as_ref())?;
+
+        if pem.tag() == Self::label_for_standard_pem() {
+            let output: AbsolveKeypair = Self::from_bincode(pem.contents())?;
+            return Ok(output)
+        }
+        else if pem.tag() == Self::label_for_standard_pem_secret() {
+            let output: AbsolveKeypair = Self::from_bincode(pem.contents())?;
+            return Ok(output)
+        }
+        else {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+    }
+}

@@ -29,6 +29,8 @@
 //! - [X] Other
 //!     - [X] Derive Public Key From Secret
 
+use std::str::FromStr;
+
 use bip32::PublicKey;
 //use ecdsa::signature::Keypair;
 use ecdsa::PrimeCurve;
@@ -38,6 +40,7 @@ use ecdsa::signature::Keypair;
 use k256::ecdsa::{SigningKey, Signature, VerifyingKey};
 use k256::Secp256k1;
 use k256::ecdsa::signature::Verifier;
+use pem::Pem;
 use rand::rngs::OsRng;
 
 use serde::{Serialize,Deserialize};
@@ -962,6 +965,84 @@ impl FromBincode for ECDSASignature {
 }
 
 //=====END OF ENCODING IMPLEMENTATION=====//
+
+impl IntoStandardPem for ECDSAPublicKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let bytes: Vec<u8>= self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem(), bytes);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ECDSA-SECP256K1-Public-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ECDSA-SECP256K1-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for ECDSASecretKey {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let bytes: Vec<u8>= self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem_secret(), bytes);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ECDSA-SECP256K1-Secret-Key")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ECDSA-SECP256K1-Secret-Key")
+    }
+}
+
+impl IntoStandardPem for ECDSASignature {
+    fn into_standard_pem(&self) -> Result<String,SlugErrors> {
+        let bytes: Vec<u8>= self.into_bincode()?;
+        let pem: Pem = Pem::new(&Self::label_for_standard_pem(), bytes);
+        let output = pem.to_string();
+        return Ok(output)
+    }
+    fn label_for_standard_pem() -> String {
+        String::from("OpenInternetCryptographyProject/ECDSA-SECP256K1-Signature")
+    }
+    fn label_for_standard_pem_secret() -> String {
+        String::from("OpenInternetCryptographyProject/ECDSA-SECP256K1-Secret-Key")
+    }
+}
+
+impl FromStandardPem for ECDSAPublicKey {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(s.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+        let output: ECDSAPublicKey = Self::from_bincode(pem.contents())?;
+        return Ok(output)
+    }
+}
+
+impl FromStandardPem for ECDSASecretKey {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(s.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem_secret() {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+        let output: ECDSASecretKey = Self::from_bincode(pem.contents())?;
+        return Ok(output)
+    }
+}
+
+impl FromStandardPem for ECDSASignature {
+    fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self, SlugErrors> {
+        let pem: Pem = Pem::from_str(s.as_ref())?;
+        if pem.tag() != Self::label_for_standard_pem() {
+            return Err(SlugErrors::InvalidPemLabel)
+        }
+        let output: ECDSASignature = Self::from_bincode(pem.contents())?;
+        return Ok(output)
+    }
+}
 
 #[test]
 fn ECDSA() {
