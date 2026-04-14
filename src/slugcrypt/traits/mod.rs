@@ -68,6 +68,9 @@ pub trait IntoEncoding {
     fn into_base64_url_safe(&self) -> Result<String,SlugErrors>;
 }
 
+/// # From Encoding
+/// 
+/// Contains Constant-Time Decoding For Various Types
 pub trait FromEncoding: Sized {
     fn from_hex<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
     fn from_base32<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
@@ -77,11 +80,23 @@ pub trait FromEncoding: Sized {
     fn from_base64_url_safe<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
 }
 
+/// # Into Bincode
+/// 
+/// Contains methods for converting the implementing type into a vector of bytes using bincode as the underlying serialization format.
 pub trait IntoBincode {
+    /// # Into Bincode
+    /// 
+    /// Converts the given type into a vector of bytes using bincode as the underlying serialization format.
     fn into_bincode(&self) -> Result<Vec<u8>,SlugErrors>;
 }
 
+/// # From Bincode
+/// 
+/// Contains methods for converting the given vector of bytes into the type implementing this trait using bincode as the underlying deserialization format.
 pub trait FromBincode: Sized {
+    /// # From Bincode
+    /// 
+    /// Converts the given vector of bytes into the type implementing this trait using bincode as the underlying deserialization format.
     fn from_bincode<T: AsRef<[u8]>>(bincode: T) -> Result<Self,SlugErrors>;
 }
 
@@ -93,13 +108,31 @@ pub trait FromStandardEncoding: Sized {
     fn from_standard_encoding<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
 }
 
+/// # Into Standard PEM
+/// 
+/// Contains methods for converting various types into a standard PEM format using bincode as the underlying serialization format.
 pub trait IntoStandardPem {
+    /// # Into Standard PEM
+    /// 
+    /// Converts the given type into a standard PEM format using bincode as the underlying serialization format. The PEM label is determined by the type implementing this trait.
     fn into_standard_pem(&self) -> Result<String,SlugErrors>;
+    /// # Label For Standard PEM
+    /// 
+    /// Returns the PEM label for the type implementing this trait.
     fn label_for_standard_pem() -> String;
+    /// # Label For Standard PEM Secret
+    /// 
+    /// Returns the PEM label for the type implementing this trait. This is used for secret keys, while the `label_for_standard_pem` is used for public keys and signatures.
     fn label_for_standard_pem_secret() -> String;
 }
 
+/// # From Standard PEM
+/// 
+/// Contains methods for converting from a standard PEM format into the type implementing this trait using bincode as the underlying deserialization format.
 pub trait FromStandardPem: Sized {
+    /// # From Standard PEM
+    /// 
+    /// Converts the given PEM string into the type implementing this trait. The PEM string is expected to be in the standard PEM format with the appropriate label. The underlying serialization format is expected to be bincode.
     fn from_standard_pem<T: AsRef<str>>(s: T) -> Result<Self,SlugErrors>;
 }
 
