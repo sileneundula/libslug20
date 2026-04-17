@@ -68,7 +68,7 @@ impl SlugSecretKey {
     }
     pub fn as_type(&self) -> &str {
         match self {
-            Self::ShulginSigning(x) => return x,
+            Self::ShulginSigning(x) => return "ShulginSigning",
             Self::EsphandSigning(x) => return "EsphandSigning",
             Self::AbsolveSigning(x) => return "AbsolveSigning",
             Self::ED25519(x) => return "ED25519",
@@ -79,75 +79,6 @@ impl SlugSecretKey {
             Self::SPHINCS(x) => return "SPHINCS",
             Self::FALCON1024(x) => return "FALCON1024",
             Self::MLDSA3(x) => return "MLDSA3",
-        }
-    pub fn export_secret(&self) -> Result<String,SlugErrors> {
-         match self {
-            Self::ShulginSigning(x) => x.into_standard_pem(),
-            Self::EsphandSigning(x) => x.into_standard_pem(),
-            Self::AbsolveSigning(x) => x.into_standard_pem(),
-            Self::ED25519(x) => x.into_standard_pem(),
-            Self::ED448(x) => x.into_standard_pem(),
-            Self::ECDSA(x) => x.into_standard_pem(),
-            Self::BLS12_381(x) => x.into_standard_pem(),
-            Self::SchnorrOverRistretto(x) => x.into_standard_pem(),
-            Self::SPHINCS((sk, _)) => sk.into_standard_pem(),
-            Self::FALCON1024((sk, _)) => sk.into_standard_pem(),
-            Self::MLDSA3((sk, _)) => sk.into_standard_pem(),
-        }
-    }
-    pub fn from_exported_secret<T: AsRef<str>>(ss_sk: T) -> Result<SlugSecretKey,SlugErrors> {
-        let pem = Pem::from_str(ss_sk.as_ref())?;
-
-        match pem.tag() {
-            ShulginKeypair::label_for_standard_pem()
-             => {
-                let sk: ShulginKeypair = ShulginKeypair::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::ShulginSigning(sk));
-            },
-            EsphandKeypair::label_for_standard_pem() => {
-                let sk = EsphandKeypair::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::EsphandSigning(sk));
-            },
-            AbsolveKeypair::label_for_standard_pem() => {
-                let sk = AbsolveKeypair::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::AbsolveSigning(sk));
-            },
-            ED25519SecretKey::label_for_standard_pem() => {
-                let sk = ED25519SecretKey::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::ED25519(sk));
-            }
-            Ed448SecretKey::label_for_standard_pem() => {
-                let sk = Ed448SecretKey::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::ED448(sk));
-            },
-            ECDSASecretKey::label_for_standard_pem() => {
-                let sk = ECDSASecretKey::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::ECDSA(sk));
-            }
-            BLSSecretKey::label_for_standard_pem() => {
-                let sk = BLSSecretKey::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::BLS12_381(sk));
-            },
-            SchnorrSecretKey::label_for_standard_pem() => {
-                let sk = SchnorrSecretKey::from_standard_pem(ss_sk)?; 
-                return Ok(SlugSecretKey::SchnorrOverRistretto(sk));
-            }
-            SPHINCSSecretKey::label_for_standard_pem() => {
-                let sk = SPHINCSSecretKey::from_standard_pem(ss_sk)?;
-                let pk = SPHINCSPublicKey::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::SPHINCS((sk, pk)));
-            },
-            Falcon1024SecretKey::label_for_standard_pem() => {
-                let sk = Falcon1024SecretKey::from_standard_pem(ss_sk)?;
-                let pk = Falcon1024PublicKey::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::FALCON1024((sk, pk)));
-            },
-            MLDSA3SecretKey::label_for_standard_pem() => {
-                let sk = MLDSA3SecretKey::from_standard_pem(ss_sk)?;
-                let pk = MLDSA3PublicKey::from_standard_pem(ss_sk)?;
-                return Ok(SlugSecretKey::MLDSA3((sk, pk)));
-            }
-            _ => return Err(SlugErrors::InvalidSecretKey)
         }
     }
 }
