@@ -150,7 +150,7 @@ impl SlugSecretKey {
             _ => return Err(SlugErrors::InvalidSecretKey)
         }
     }
-
+}
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]

@@ -1,0 +1,12 @@
+[package]
+name = "openinternetcryptographykeys"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libslug = "0.11.0"
+serde = {version="1.0.0", features=["derive"], optional=true}
+
+[features]
+full = ["dep:serde"]
+default = ["full"]

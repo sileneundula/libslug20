@@ -27,6 +27,11 @@ use libslug::errors::SlugErrors;
 use crate::key::oint_keys::{OpenInternetKeypair,OpenInternetPublicKey,OpenInternetSecretKey,OpenInternetSignature};
 use crate::algorithms::slug::Algorithms;
 
+
+pub trait IntoPem {
+    fn into_pem(&self) -> Result<String, SlugErrors>;
+}
+
 pub trait OpenInternetExport {
     fn export(&self) -> Result<String, SlugErrors>;
 }
