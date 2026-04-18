@@ -429,11 +429,10 @@ impl OpenInternetFromStandardPEM for OpenInternetCryptographySecretKey {
         }
     }
     fn from_standard_pem<T: AsRef<str>>(pem: T) -> Result<Self, SlugErrors> {
-        match Slug20SecretKey {
-            Slug20SecretKey::AbsolveSigning(x) => {
-                
-            }
+        for x in Slug20SecretKey {
+            
         }
+        if pem.as_ref().contains()
         
         OpenInternetCryptographySecretKey::from_standard_pem_with_algorithm(pem, alg)
     }
