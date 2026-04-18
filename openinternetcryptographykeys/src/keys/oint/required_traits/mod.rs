@@ -53,3 +53,12 @@ pub trait OpenInternetGeneration: Sized {
 }
 
 //=====OPENINTERNETCRYPTOGRAPHYKEYS OINT REQUIRED TRAITS END=====
+
+pub trait OpenInternetIntoStandardPEM {
+    fn into_standard_pem(&self) -> Result<String, SlugErrors>;
+}
+
+pub trait OpenInternetFromStandardPEM: Sized {
+    fn from_standard_pem_with_algorithm<T: AsRef<str>>(pem: T, alg: Slug20Algorithm) -> Result<Self, SlugErrors>;
+    fn from_standard_pem<T: AsRef<str>>(pem: T) -> Result<Self, SlugErrors>;
+}
