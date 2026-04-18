@@ -13,3 +13,5 @@ pub mod prelude;
 
 /// Core components and functionalities of the Open Internet Cryptography Keys (OICK) library, including key management, serialization, and cryptographic operations.
 pub mod core;
+
+pub mod keys;

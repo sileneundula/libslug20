@@ -1,0 +1,49 @@
+//! # Required Traits for Open Internet Cryptography Keys (OICK)
+//! 
+//! ## Description
+//! 
+//! This module contains the required traits to be implemented for OpenInternetCryptographyKeys (OICK) key types, ensuring that they adhere to the necessary functionality for signing, verifying, key derivation, and generation as defined by the OICK specification.
+//! 
+//! ## Traits
+//! 
+//! - [X] `OpenInternetSigner`: Trait for signing messages with a context to produce a signature.
+//! - [X] `OpenInternetVerifier`: Trait for verifying signatures against messages and contexts.
+//! - [X] `OpenInternetPublicKeyDerive`: Trait for deriving a public key from a secret key.
+//! - [X] `OpenInternetGeneration`: Trait for generating keys based on a provided string input.
+
+use fixedstr::str192;
+use libslug::errors::SlugErrors;
+
+use crate::keys::oint::{__types::Slug20Algorithm, usage::{OpenInternetCryptographyPublicKey, OpenInternetCryptographySignature}};
+
+//=====OPENINTERNETCRYPTOGRAPHYKEYS OINT REQUIRED TRAITS=====
+
+/// # OpenInternetSigner Trait
+/// 
+/// This trait implements signing functionality for the Open Internet Cryptography Keys (OICK) library, allowing for signing messages with a context to produce a signature.
+pub trait OpenInternetSigner: Sized {
+    fn sign_with_context<T: AsRef<[u8]>>(&self, message: T, context: T) -> Result<Self, SlugErrors>;
+}
+
+/// # OpenInternetVerifier Trait
+/// 
+/// This trait implements verification functionality for the Open Internet Cryptography Keys (OICK) library, allowing for verifying signatures against messages and contexts.
+pub trait OpenInternetVerifier: Sized {
+    fn verify_with_context<T: AsRef<[u8]>>(&self, message: T, context: T, signature: &OpenInternetCryptographySignature) -> Result<bool, SlugErrors>;
+}
+
+/// # OpenInternetPublicKeyDerive Trait
+/// 
+/// This trait implements key derivation functionality for the Open Internet Cryptography Keys (OICK) library, allowing for deriving a public key from a secret key.
+pub trait OpenInternetPublicKeyDerive: Sized {
+    fn derive_public_key(&self) -> Result<OpenInternetCryptographyPublicKey, SlugErrors>;
+}
+
+/// # OpenInternetGeneration Trait
+/// 
+/// This trait implements key generation functionality for the Open Internet Cryptography Keys (OICK) library, allowing for generating keys based on a provided string input.
+pub trait OpenInternetGeneration: Sized {
+    fn generate_with_algorithm(alg: Slug20Algorithm) -> Result<Self, SlugErrors>;
+}
+
+//=====OPENINTERNETCRYPTOGRAPHYKEYS OINT REQUIRED TRAITS END=====
