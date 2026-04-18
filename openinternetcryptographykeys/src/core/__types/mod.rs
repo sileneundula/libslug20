@@ -13,6 +13,8 @@ use libslug::slugcrypt::traits::{FromBincode,IntoBincode,FromStandardPem,IntoSta
 use libslug::slugfmt::key;
 
 use crate::core::__types::algorithms::Algorithms;
+/// Standardized Key and Signature Types
+pub mod standards;
 
 /// # Standardized Key and Signature Types
 /// 
@@ -88,15 +90,15 @@ impl StandardPrivateKey {
     pub fn generate(alg: Algorithms) -> Self {
         match alg {
             Algorithms::ShulginSigning => {
-                let keypair = ShulginKeypair::generate();
+                let keypair: ShulginKeypair = ShulginKeypair::generate();
                 StandardPrivateKey::ShulginSigning(keypair)
             }
             Algorithms::AbsolveSigning => {
-                let keypair = AbsolveKeypair::generate();
+                let keypair: AbsolveKeypair = AbsolveKeypair::generate();
                 StandardPrivateKey::AbsolveSigning(keypair)
             }
             Algorithms::EsphandSigning => {
-                let keypair = EsphandKeypair::generate();
+                let keypair: EsphandKeypair = EsphandKeypair::generate();
                 StandardPrivateKey::EsphandSigning(keypair)
             }
         }
@@ -104,15 +106,15 @@ impl StandardPrivateKey {
     pub fn from_pem<T: AsRef<str>>(pem: T, alg: Algorithms) -> Result<Self, SlugErrors> {
         match alg {
             Algorithms::ShulginSigning => {
-                let keypair = ShulginKeypair::from_standard_pem(pem.as_ref())?;
+                let keypair: ShulginKeypair = ShulginKeypair::from_standard_pem(pem.as_ref())?;
                 Ok(StandardPrivateKey::ShulginSigning(keypair))
             }
             Algorithms::AbsolveSigning => {
-                let keypair = AbsolveKeypair::from_standard_pem(pem.as_ref())?;
+                let keypair: AbsolveKeypair = AbsolveKeypair::from_standard_pem(pem.as_ref())?;
                 Ok(StandardPrivateKey::AbsolveSigning(keypair))
             }
             Algorithms::EsphandSigning => {
-                let keypair = EsphandKeypair::from_standard_pem(pem.as_ref())?;
+                let keypair: EsphandKeypair = EsphandKeypair::from_standard_pem(pem.as_ref())?;
                 Ok(StandardPrivateKey::EsphandSigning(keypair))
             }
         }

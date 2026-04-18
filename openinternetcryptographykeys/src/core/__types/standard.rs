@@ -99,7 +99,7 @@ impl OintSecretKey {
     pub fn from_standard(secret_key: StandardPrivateKey) -> Self {
         OintSecretKey { key: secret_key }
     }
-    pub fn from_pem<T: AsRef<str>>(pem: T, alg: Algorithms) -> Result<OintSecretKey, SlugErrors> {
+    pub fn from_pem_with_algorithm<T: AsRef<str>>(pem: T, alg: Algorithms) -> Result<OintSecretKey, SlugErrors> {
         match alg {
             Algorithms::ShulginSigning => {
                 let keypair = ShulginKeypair::from_standard_pem(pem.as_ref())?;
@@ -115,6 +115,18 @@ impl OintSecretKey {
             }
         }
     }
+    pub fn from_pem<T: AsRef<str>>(pem: T) -> Result<OintSecretKey, SlugErrors> {
+        let pem_str = pem.as_ref();
+        if pem_str.contains(&ShulginKeypair::label_for_standard_pem()) {
+            Self::from_pem_with_algorithm(pem, Algorithms::ShulginSigning)
+        } else if pem_str.contains(&AbsolveKeypair::label_for_standard_pem()) {
+            Self::from_pem_with_algorithm(pem, Algorithms::AbsolveSigning)
+        } else if pem_str.contains(&EsphandKeypair::label_for_standard_pem()) {
+            Self::from_pem_with_algorithm(pem, Algorithms::EsphandSigning)
+        } else {
+            Err(SlugErrors::Other(String::from("Unable to determine algorithm from PEM string")))
+        }
+    }
     pub fn into_pem_secret(&self) -> Result<String, SlugErrors> {
         match &self.key {
             StandardPrivateKey::ShulginSigning(keypair) => keypair.into_standard_pem(),
@@ -122,12 +134,13 @@ impl OintSecretKey {
             StandardPrivateKey::EsphandSigning(keypair) => keypair.into_standard_pem(),
         }
     }
-    pub fn into_public_key(&self) -> StandardPublicKey {
-        match &self.key {
+    pub fn into_public_key(&self) -> OintPublicKey {
+        let x = match &self.key {
             StandardPrivateKey::ShulginSigning(keypair) => StandardPublicKey::ShulginSigning(keypair.into_public_key()),
             StandardPrivateKey::AbsolveSigning(keypair) => StandardPublicKey::AbsolveSigning(keypair.into_public_key()),
             StandardPrivateKey::EsphandSigning(keypair) => StandardPublicKey::EsphandSigning(keypair.into_public_key()),
-        }
+        };
+        OintPublicKey { key: x }
     }
     pub fn sign_with_context<T: AsRef<[u8]>>(&self, message: T, context: Option<T>) -> Result<OintSignature,SlugErrors> {
             match &self.key {
