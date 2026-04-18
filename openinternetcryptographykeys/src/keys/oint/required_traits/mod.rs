@@ -22,7 +22,10 @@ use crate::keys::oint::{__types::Slug20Algorithm, usage::{OpenInternetCryptograp
 /// 
 /// This trait implements signing functionality for the Open Internet Cryptography Keys (OICK) library, allowing for signing messages with a context to produce a signature.
 pub trait OpenInternetSigner: Sized {
-    fn sign_with_context<T: AsRef<[u8]>>(&self, message: T, context: T) -> Result<Self, SlugErrors>;
+    fn sign_with_context<T: AsRef<[u8]>>(&self, message: T, context: T) -> Result<OpenInternetCryptographySignature, SlugErrors>;
+    fn sign<T: AsRef<[u8]>>(&self, message: T) -> Result<OpenInternetCryptographySignature, SlugErrors> {
+        self.sign_with_context(message.as_ref(), "OpenInternetCryptographyStandardContext".as_bytes())
+    }
 }
 
 /// # OpenInternetVerifier Trait
@@ -30,6 +33,9 @@ pub trait OpenInternetSigner: Sized {
 /// This trait implements verification functionality for the Open Internet Cryptography Keys (OICK) library, allowing for verifying signatures against messages and contexts.
 pub trait OpenInternetVerifier: Sized {
     fn verify_with_context<T: AsRef<[u8]>>(&self, message: T, context: T, signature: &OpenInternetCryptographySignature) -> Result<bool, SlugErrors>;
+    fn verify<T: AsRef<[u8]>>(&self, message: T, signature: &OpenInternetCryptographySignature) -> Result<bool, SlugErrors> {
+        self.verify_with_context(message.as_ref(), "OpenInternetCryptographyStandardContext".as_bytes(), signature)
+    }
 }
 
 /// # OpenInternetPublicKeyDerive Trait
