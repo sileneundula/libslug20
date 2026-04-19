@@ -14,7 +14,7 @@
 use fixedstr::str192;
 use libslug::errors::SlugErrors;
 
-use crate::keys::oint::{__types::Slug20Algorithm, usage::{OpenInternetCryptographyPublicKey, OpenInternetCryptographySignature}};
+use crate::keys::oint::{__types::{FromPemAny, Slug20Algorithm}, usage::{OpenInternetCryptographyPublicKey, OpenInternetCryptographySignature}};
 
 //=====OPENINTERNETCRYPTOGRAPHYKEYS OINT REQUIRED TRAITS=====
 
@@ -73,4 +73,8 @@ pub trait OpenInternetFromStandardPEM: Sized {
     fn get_standard_pem_label(&self) -> String;
     fn get_standard_pem_label_with_algorithm(alg: Slug20Algorithm) -> String;
     fn enumerate_standard_pem_labels() -> Vec<String>;
+}
+
+pub trait OpenInternetFromPemAny: Sized {
+    fn from_pem<T: AsRef<str>>(pem: T) -> Result<FromPemAny, SlugErrors>;
 }

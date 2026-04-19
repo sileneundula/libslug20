@@ -1,3 +1,4 @@
+use libslug::errors::SlugErrors;
 use serde::{Serialize, Deserialize};
 use zeroize::{Zeroize,ZeroizeOnDrop};
 
@@ -17,6 +18,8 @@ use libslug::slugcrypt::internals::signature::{
     sphincs_plus::{SPHINCSPublicKey, SPHINCSSecretKey, SPHINCSSignature},
     bls::{BLSPublicKey, BLSSecretKey, BLSSignature}
 };
+
+use crate::prelude::essentials::{OpenInternetCryptographyPublicKey, OpenInternetCryptographySecretKey, OpenInternetCryptographySignature};
 
 #[derive(Debug,Clone,Serialize,Deserialize)]
 pub struct PemEncodingSuites {
@@ -70,11 +73,19 @@ pub enum Slug20Signature {
     BLS(BLSSignature),
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20KeyType {
     Public,
     Secret,
     Signature,
     Keypair,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
+pub enum FromPemAny {
+    PublicKey(OpenInternetCryptographyPublicKey),
+    SecretKey(OpenInternetCryptographySecretKey),
+    Signature(OpenInternetCryptographySignature),
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
@@ -349,9 +360,38 @@ impl PemEncodingSuites {
             "OpenInternetCryptographyProject/SCHNORR-Signature" => (Slug20Algorithm::Schnorr,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/BLS12-381-Signature" => (Slug20Algorithm::BLS,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/ShulginSigning-Signature" => (Slug20Algorithm::ShulginSigning,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/AbsolveSigning-Signature" => (Slug20Algorithm::AbsolveSigning,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/EsphandSignature-Signature" => (Slug20Algorithm::EsphandSigning,Slug20KeyType::Signature),
 
             _ => panic!("PemEncodingSuites::get_algorithm: label not found")
         }
+    }
+    pub fn enumerate_pem_labels(&self) {
+        
+    }
+    pub fn parse_pem<T: AsRef<str>>(label: T) -> Result<String,SlugErrors> {
+        let pem: String = label.as_ref().to_string();
+
+        let x: PemEncodingSuites = PemEncodingSuites::new();
+
+
+        for i in x.public_key.iter() {
+            if pem.contains(i.as_str()) {
+                return Ok(i.to_owned())
+            }
+        }
+        for i in x.secret_key.iter() {
+            if pem.contains(i.as_str()) {
+                return Ok(i.to_owned())
+            }
+        }
+        for i in x.signatures.iter() {
+            if pem.contains(i.as_str()) {
+                return Ok(i.to_owned())
+            }
+        }
+
+        return Err(SlugErrors::InvalidPemLabel)
     }
 }
 

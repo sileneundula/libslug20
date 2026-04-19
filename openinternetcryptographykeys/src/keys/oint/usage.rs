@@ -11,6 +11,9 @@ use crate::prelude::essentials::{OpenInternetFromStandardPEM,OpenInternetIntoSta
 
 use libslug::slugcrypt::traits::{IntoBincode,FromBincode};
 use libslug::slugcrypt::traits::FromStandardPem;
+use crate::keys::oint::required_traits::OpenInternetFromPemAny;
+use crate::keys::oint::__types::{FromPemAny, Slug20KeyType};
+use crate::keys::oint::__types::PemEncodingSuites;
 
 
 use libslug::slugcrypt::internals::signature::{
@@ -74,6 +77,8 @@ pub struct OpenInternetCryptographyCipherSuite {
     pub cipher_suite: str192,
     pub variant: Option<str192>,
 }
+
+pub struct OpenInternetCryptographyAPI;
 
 //=====OPENINTERNETCRYPTOGRAPHYKEYS OINT USAGE=====
 
@@ -423,6 +428,8 @@ impl OpenInternetIntoStandardPEM for OpenInternetCryptographySignature {
     }
 }
 
+
+
 impl OpenInternetFromStandardPEM for OpenInternetCryptographySecretKey {
     fn from_standard_pem_with_algorithm<T: AsRef<str>>(pem: T, alg: Slug20Algorithm) -> Result<Self, SlugErrors> {
         match alg {
@@ -521,5 +528,225 @@ impl OpenInternetFromStandardPEM for OpenInternetCryptographySecretKey {
     }
     fn get_standard_pem_label(&self) -> String {
         return String::from("Test")
+    }
+}
+
+impl OpenInternetFromStandardPEM for OpenInternetCryptographyPublicKey {
+    fn from_standard_pem_with_algorithm<T: AsRef<str>>(pem: T, alg: Slug20Algorithm) -> Result<Self, SlugErrors> {
+        match alg {
+            Slug20Algorithm::ShulginSigning => {
+                let x = ShulginKeypair::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::ShulginSigning(x) })
+            },
+            Slug20Algorithm::AbsolveSigning => {
+                let x = AbsolveKeypair::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::AbsolveSigning(x) })
+            },
+            Slug20Algorithm::EsphandSigning => {
+                let x = EsphandKeypair::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::EsphandSigning(x) })
+            }
+            Slug20Algorithm::BLS => {
+                let x = BLSPublicKey::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::BLS(x) })
+            }
+            Slug20Algorithm::ECDSA => {
+                let x = ECDSAPublicKey::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::ECDSA(x) })
+            }
+            Slug20Algorithm::Ed25519 => {
+                let x = ED25519PublicKey::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::Ed25519(x) })
+            }
+            Slug20Algorithm::Ed448 => {
+                let x = Ed448PublicKey::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::Ed448(x) })
+            }
+            Slug20Algorithm::Falcon => {
+                let x = Falcon1024PublicKey::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::Falcon(x) })
+            }
+            Slug20Algorithm::MLDSA => {
+                let x = MLDSA3PublicKey::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::MLDSA(x) })
+            }
+            Slug20Algorithm::Schnorr => {
+                let x = SchnorrPublicKey::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::Schnorr(x) })
+            }
+            Slug20Algorithm::SPHINCSPlus => {
+                let x = SPHINCSPublicKey::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::SPHINCSPlus(x) })
+            }
+            _ => panic!("OpenInternetCryptographyPublicKey::from_standard_pem_with_algorithm: algorithm not supported"),
+        }
+    }
+    fn get_standard_pem_label_with_algorithm(alg: Slug20Algorithm) -> String {
+        match alg {
+            Slug20Algorithm::ShulginSigning => ShulginKeypair::label_for_standard_pem(),
+            Slug20Algorithm::AbsolveSigning => AbsolveKeypair::label_for_standard_pem(),
+            Slug20Algorithm::EsphandSigning => EsphandKeypair::label_for_standard_pem(),
+            Slug20Algorithm::BLS => BLSPublicKey::label_for_standard_pem(),
+            Slug20Algorithm::ECDSA => ECDSAPublicKey::label_for_standard_pem(),
+            Slug20Algorithm::Ed25519 => ED25519PublicKey::label_for_standard_pem(),
+            Slug20Algorithm::Ed448 => Ed448PublicKey::label_for_standard_pem(),
+            Slug20Algorithm::Falcon => Falcon1024PublicKey::label_for_standard_pem(),
+            Slug20Algorithm::MLDSA => MLDSA3PublicKey::label_for_standard_pem(),
+            Slug20Algorithm::Schnorr => SchnorrPublicKey::label_for_standard_pem(),
+            Slug20Algorithm::SPHINCSPlus => SPHINCSPublicKey::label_for_standard_pem(),
+            _ => panic!("OpenInternetCryptographyPublicKey::get_standard_pem_label_with_algorithm: algorithm not supported"),
+        }
+    }
+    fn get_standard_pem_label(&self) -> String {
+        match &self.key {
+            Slug20PublicKey::ShulginSigning(x) => ShulginKeypair::label_for_standard_pem(),
+            Slug20PublicKey::AbsolveSigning(x) => AbsolveKeypair::label_for_standard_pem(),
+            Slug20PublicKey::EsphandSigning(x) => EsphandKeypair::label_for_standard_pem(),
+            Slug20PublicKey::BLS(x) => BLSPublicKey::label_for_standard_pem(),
+            Slug20PublicKey::ECDSA(x) => ECDSAPublicKey::label_for_standard_pem(),
+            Slug20PublicKey::Ed25519(x) => ED25519PublicKey::label_for_standard_pem(),
+            Slug20PublicKey::Ed448(x) => Ed448PublicKey::label_for_standard_pem(),
+            Slug20PublicKey::Falcon(x) => Falcon1024PublicKey::label_for_standard_pem(),
+            Slug20PublicKey::MLDSA(x) => MLDSA3PublicKey::label_for_standard_pem(),
+            Slug20PublicKey::Schnorr(x) => SchnorrPublicKey::label_for_standard_pem(),
+            Slug20PublicKey::SPHINCSPlus(x) => SPHINCSPublicKey::label_for_standard_pem(),
+        }  
+    }
+    fn enumerate_standard_pem_labels() -> Vec<String> {
+        vec![
+            ShulginKeypair::label_for_standard_pem(),
+            AbsolveKeypair::label_for_standard_pem(),
+            EsphandKeypair::label_for_standard_pem(),
+            BLSPublicKey::label_for_standard_pem(),
+            ECDSAPublicKey::label_for_standard_pem(),
+            ED25519PublicKey::label_for_standard_pem(),
+            Ed448PublicKey::label_for_standard_pem(),
+            Falcon1024PublicKey::label_for_standard_pem(),
+            MLDSA3PublicKey::label_for_standard_pem(),
+            SchnorrPublicKey::label_for_standard_pem(),
+            SPHINCSPublicKey::label_for_standard_pem(),
+        ]
+    }
+}
+
+impl OpenInternetFromStandardPEM for OpenInternetCryptographySignature {
+    fn enumerate_standard_pem_labels() -> Vec<String> {
+        vec![
+            ShulginSignature::label_for_standard_pem(),
+            AbsolveSignature::label_for_standard_pem(),
+            EsphandSignature::label_for_standard_pem(),
+            BLSSignature::label_for_standard_pem(),
+            ECDSASignature::label_for_standard_pem(),
+            ED25519Signature::label_for_standard_pem(),
+            Ed448Signature::label_for_standard_pem(),
+            Falcon1024Signature::label_for_standard_pem(),
+            MLDSA3Signature::label_for_standard_pem(),
+            SchnorrSignature::label_for_standard_pem(),
+            SPHINCSSignature::label_for_standard_pem(),
+        ]
+    }
+    fn from_standard_pem_with_algorithm<T: AsRef<str>>(pem: T, alg: Slug20Algorithm) -> Result<Self, SlugErrors> {
+        match alg {
+            Slug20Algorithm::ShulginSigning => {
+                let x: ShulginSignature = ShulginSignature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::ShulginSigning(x)))
+            }
+            Slug20Algorithm::AbsolveSigning => {
+                let x: AbsolveSignature = AbsolveSignature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::AbsolveSigning(x)))
+            }
+            Slug20Algorithm::EsphandSigning => {
+                let x: EsphandSignature = EsphandSignature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::EsphandSigning(x)))
+            }
+            Slug20Algorithm::BLS => {
+                let x: BLSSignature = BLSSignature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::BLS(x)))
+            }
+            Slug20Algorithm::ECDSA => {
+                let x: ECDSASignature = ECDSASignature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::ECDSA(x)))
+            }
+            Slug20Algorithm::Ed25519 => {
+                let x: ED25519Signature = ED25519Signature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::Ed25519(x)))
+            }
+            Slug20Algorithm::Ed448 => {
+                let x: Ed448Signature = Ed448Signature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::Ed448(x)))
+            }
+            Slug20Algorithm::Falcon => {
+                let x: Falcon1024Signature = Falcon1024Signature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::Falcon(x)))
+            }
+            Slug20Algorithm::MLDSA => {
+                let x: MLDSA3Signature = MLDSA3Signature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::MLDSA(x)))
+            }
+            Slug20Algorithm::Schnorr => {
+                let x: SchnorrSignature = SchnorrSignature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::Schnorr(x)))
+            }
+            Slug20Algorithm::SPHINCSPlus => {
+                let x: SPHINCSSignature = SPHINCSSignature::from_standard_pem(pem.as_ref())?;
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::SPHINCSPlus(x)))
+            }
+        }
+    }
+    fn get_standard_pem_label(&self) -> String {
+        match &self.signature {
+            Slug20Signature::ShulginSigning(_) => ShulginSignature::label_for_standard_pem(),
+            Slug20Signature::AbsolveSigning(_) => AbsolveSignature::label_for_standard_pem(),
+            Slug20Signature::EsphandSigning(_) => EsphandSignature::label_for_standard_pem(),
+            Slug20Signature::BLS(_) => BLSSignature::label_for_standard_pem(),
+            Slug20Signature::ECDSA(_) => ECDSASignature::label_for_standard_pem(),
+            Slug20Signature::Ed25519(_) => ED25519Signature::label_for_standard_pem(),
+            Slug20Signature::Ed448(_) => Ed448Signature::label_for_standard_pem(),
+            Slug20Signature::Falcon(_) => Falcon1024Signature::label_for_standard_pem(),
+            Slug20Signature::MLDSA(_) => MLDSA3Signature::label_for_standard_pem(),
+            Slug20Signature::Schnorr(_) => SchnorrSignature::label_for_standard_pem(),
+            Slug20Signature::SPHINCSPlus(_) => SPHINCSSignature::label_for_standard_pem(),
+        }
+    }
+    fn get_standard_pem_label_with_algorithm(alg: Slug20Algorithm) -> String {
+        match alg {
+            Slug20Algorithm::ShulginSigning => ShulginSignature::label_for_standard_pem(),
+            Slug20Algorithm::AbsolveSigning => AbsolveSignature::label_for_standard_pem(),
+            Slug20Algorithm::EsphandSigning => EsphandSignature::label_for_standard_pem(),
+            Slug20Algorithm::BLS => BLSSignature::label_for_standard_pem(),
+            Slug20Algorithm::ECDSA => ECDSASignature::label_for_standard_pem(),
+            Slug20Algorithm::Ed25519 => ED25519Signature::label_for_standard_pem(),
+            Slug20Algorithm::Ed448 => Ed448Signature::label_for_standard_pem(),
+            Slug20Algorithm::Falcon => Falcon1024Signature::label_for_standard_pem(),
+            Slug20Algorithm::MLDSA => MLDSA3Signature::label_for_standard_pem(),
+            Slug20Algorithm::Schnorr => SchnorrSignature::label_for_standard_pem(),
+            Slug20Algorithm::SPHINCSPlus => SPHINCSSignature::label_for_standard_pem(),
+        }
+    }
+}
+
+impl OpenInternetFromPemAny for OpenInternetCryptographyAPI {
+    fn from_pem<T: AsRef<str>>(pem: T) -> Result<FromPemAny, SlugErrors> {
+        let x: PemEncodingSuites = PemEncodingSuites::new();
+        let y: String = PemEncodingSuites::parse_pem(pem.as_ref())?;
+        let alg: (Slug20Algorithm, super::__types::Slug20KeyType) = PemEncodingSuites::get_algorithm(&y);
+
+        match alg.1 {
+            Slug20KeyType::Public => {
+                let public_key: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_standard_pem_with_algorithm(pem.as_ref(), alg.0)?;
+                Ok(FromPemAny::PublicKey(public_key))
+            },
+            Slug20KeyType::Secret => {
+                let secret_key: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_standard_pem_with_algorithm(pem.as_ref(), alg.0)?;
+                Ok(FromPemAny::SecretKey(secret_key))
+            },
+            Slug20KeyType::Signature => {
+                let signature: OpenInternetCryptographySignature = OpenInternetCryptographySignature::from_standard_pem_with_algorithm(pem.as_ref(), alg.0)?;
+                Ok(FromPemAny::Signature(signature))
+            },
+            _ => {
+                Err(SlugErrors::InvalidPemLabel)
+            }
+        }
     }
 }
