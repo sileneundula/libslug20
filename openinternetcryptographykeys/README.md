@@ -1,5 +1,6 @@
 # OpenInternetCryptographyKeys: A Modern Web 3.20 Cryptography Library With Ease of Access
 
+![Static Badge](https://img.shields.io/badge/WeSpeakInCursive-Silene?style=flat-square&label=OpenInternetCryptographyProject)
 ![Crates.io Version](https://img.shields.io/crates/v/openinternetcryptographykeys?style=flat-square)
 ![Crates.io Total Downloads](https://img.shields.io/crates/d/openinternetcryptographykeys?style=flat-square)
 ![Deps.rs Crate Dependencies (latest)](https://img.shields.io/deps-rs/openinternetcryptographykeys/latest?style=flat-square)
