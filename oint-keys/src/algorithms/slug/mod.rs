@@ -82,7 +82,6 @@ impl SlugSecretKey {
         }
     }
 }
-}
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum SlugSignature {

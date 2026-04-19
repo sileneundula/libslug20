@@ -56,9 +56,21 @@ pub trait OpenInternetGeneration: Sized {
 
 pub trait OpenInternetIntoStandardPEM {
     fn into_standard_pem(&self) -> Result<String, SlugErrors>;
+    fn as_standard_pem_label(&self) -> String;
 }
 
 pub trait OpenInternetFromStandardPEM: Sized {
+    /// # From Standard PEM (With Algorithm)
+    /// 
+    /// Converts a standard PEM format into the type implementing this trait using bincode as the underlying deserialization format.
     fn from_standard_pem_with_algorithm<T: AsRef<str>>(pem: T, alg: Slug20Algorithm) -> Result<Self, SlugErrors>;
-    fn from_standard_pem<T: AsRef<str>>(pem: T) -> Result<Self, SlugErrors>;
+    /// # From Standard PEM
+    /// 
+    /// Converts a standard PEM format into the type implementing this trait using bincode as the underlying deserialization format.
+    //fn from_standard_pem<T: AsRef<str>>(pem: T) -> Result<Self, SlugErrors>;
+    
+    // PEM Label
+    fn get_standard_pem_label(&self) -> String;
+    fn get_standard_pem_label_with_algorithm(alg: Slug20Algorithm) -> String;
+    fn enumerate_standard_pem_labels() -> Vec<String>;
 }
