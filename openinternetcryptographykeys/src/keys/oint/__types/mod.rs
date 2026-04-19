@@ -224,14 +224,14 @@ impl Slug20Algorithm {
                 ShulginKeypair::label_for_standard_pem(),
                 AbsolveKeypair::label_for_standard_pem(),
                 EsphandKeypair::label_for_standard_pem(),
-                ED25519SecretKey::label_for_standard_pem(),
-                Ed448SecretKey::label_for_standard_pem(),
-                ECDSASecretKey::label_for_standard_pem(),
-                Falcon1024SecretKey::label_for_standard_pem(),
-                MLDSA3SecretKey::label_for_standard_pem(),
-                SchnorrSecretKey::label_for_standard_pem(),
-                SPHINCSSecretKey::label_for_standard_pem(),
-                BLSSecretKey::label_for_standard_pem(),
+                ED25519PublicKey::label_for_standard_pem(),
+                Ed448PublicKey::label_for_standard_pem(),
+                ECDSAPublicKey::label_for_standard_pem(),
+                Falcon1024PublicKey::label_for_standard_pem(),
+                MLDSA3PublicKey::label_for_standard_pem(),
+                SchnorrPublicKey::label_for_standard_pem(),
+                SPHINCSPublicKey::label_for_standard_pem(),
+                BLSPublicKey::label_for_standard_pem(),
             ]
         };
         let secret_keys_pem_labels = {
@@ -316,43 +316,39 @@ impl PemEncodingSuites {
             //=====PUBLIC KEYS=====//
             "OpenInternetCryptographyProject/ShulginSigning-Public-Key" => (Slug20Algorithm::ShulginSigning,Slug20KeyType::Public),
             "OpenInternetCryptographyProject/AbsolveSigning-Public-Key" => (Slug20Algorithm::AbsolveSigning,Slug20KeyType::Public),
-            "OpenInternetCryptographyProject/EsphandSigning-Public-Key" => (Slug20Algorithm::EsphandSigning,Slug20KeyType::Public),
-            "OpenInternetCryptographyProject/Ed25519-Public-Key" => (Slug20Algorithm::Ed25519,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/EsphandSigature-Public-Key" => (Slug20Algorithm::EsphandSigning,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/ED25519-Public-Key" => (Slug20Algorithm::Ed25519,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/ED448-PUBLIC-KEY" => (Slug20Algorithm::Ed448,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/ECDSA-SECP256K1-Public-Key" => (Slug20Algorithm::ECDSA,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/FALCON1024-PUBLIC-KEY" => (Slug20Algorithm::Falcon,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/MLDSA3-PUBLIC-KEY" => (Slug20Algorithm::MLDSA,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/SCHNORR-PUBLIC-KEY" => (Slug20Algorithm::Schnorr,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/SPHINCS+ PUBLIC KEY" => (Slug20Algorithm::SPHINCSPlus,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/BLS12-381-Public-Key" => (Slug20Algorithm::BLS,Slug20KeyType::Public),
 
             //=====SECRET KEYS=====//
             "OpenInternetCryptographyProject/ED25519-Secret-Key" => (Slug20Algorithm::Ed25519,Slug20KeyType::Secret),
             "OpenInternetCryptographyProject/ED448-SECRET-KEY" => (Slug20Algorithm::Ed448,Slug20KeyType::Secret),
-            "OpenInternetCryptographyProject/ECDSA-SECP256K1-Secret-Key" => (Slug20Algorithm::ECDSA,Slug20KeyType::Secret)
-            "OpenInternetCryptographyProject/Falcon1024-SECRET-KEY" => (Slug20Algorithm::Falcon,Slug20KeyType::Secret),
+            "OpenInternetCryptographyProject/ECDSA-SECP256K1-Secret-Key" => (Slug20Algorithm::ECDSA,Slug20KeyType::Secret),
+            "OpenInternetCryptographyProject/FALCON1024-SECRET-KEY" => (Slug20Algorithm::Falcon,Slug20KeyType::Secret),
             "OpenInternetCryptographyProject/MLDSA3-SECRET-KEY" => (Slug20Algorithm::MLDSA,Slug20KeyType::Secret),
             "OpenInternetCryptographyProject/SCHNORR-SECRET-KEY" => (Slug20Algorithm::Schnorr,Slug20KeyType::Secret),
-            "OpenInternetCryptographyProject/SPHINCS+ SECRET KEY" => (Slug20Algorithm::SPHINCS,Slug20KeyType::Secret),
+            "OpenInternetCryptographyProject/SPHINCS+ SECRET KEY" => (Slug20Algorithm::SPHINCSPlus,Slug20KeyType::Secret),
             "OpenInternetCryptographyProject/BLS12-381-Secret-Key" => (Slug20Algorithm::BLS,Slug20KeyType::Secret),
             "OpenInternetCryptographyProject/ShulginSigning-Secret-Key" => (Slug20Algorithm::ShulginSigning,Slug20KeyType::Secret),
             "OpenInternetCryptographyProject/AbsolveSigning-Secret-Key" => (Slug20Algorithm::AbsolveSigning,Slug20KeyType::Secret),
             "OpenInternetCryptographyProject/EsphandSignature-Secret-Key" => (Slug20Algorithm::EsphandSigning,Slug20KeyType::Secret),
 
-            "OpenInternetCryptographyProject/SPHINCS+ Signature" => (Slug20Algorithm::SPHINCSPlus,Slug20KeyType::Signature),
-
-
-
-            "OpenInternetCryptographyProject/Ed448-Public-Key" => Slug20Algorithm::Ed448,
-            "OpenInternetCryptographyProject/ECDSA-Public-Key" => Slug20Algorithm::ECDSA,
-            "OpenInternetCryptographyProject/Falcon-Public-Key" => Slug20Algorithm::Falcon,
-            "OpenInternetCryptographyProject/MLDSA3-Public-Key" => Slug20Algorithm::MLDSA,
-            "OpenInternetCryptographyProject/Schnorr-Public-Key" => Slug20Algorithm::Schnorr,
-            "OpenInternetCryptographyProject/SPHINCS-Public-Key" => Slug20Algorithm::SPHINCS,
-            "OpenInternetCryptographyProject/BLSSecretKey-Public-Key" => Slug20Algorithm::BLSSecretKey,
-            "OpenInternetCryptographyProject/ShulginSigning-Signature" => Slug20Algorithm::ShulginSigning,
-            "OpenInternetCryptographyProject/AbsolveSigning-Signature" => Slug20Algorithm::AbsolveSigning,
-            "OpenInternetCryptographyProject/EsphandSigning-Signature" => Slug20Algorithm::EsphandSigning,
-            "OpenInternetCryptographyProject/ED25519-Signature" => Slug20Algorithm::Ed25519,
-            "OpenInternetCryptographyProject/Ed448-Signature" => Slug20Algorithm::Ed448,
-            "OpenInternetCryptographyProject/ECDSA-Signature" => Slug20Algorithm::ECDSA,
-            "OpenInternetCryptographyProject/Falcon1024-Signature" => Slug20Algorithm::Falcon,
-            "OpenInternetCryptographyProject/MLDSA3-Signature" => Slug20Algorithm::MLDSA,
-            "OpenInternetCryptographyProject/SCHNORR-Signature" => Slug20Algorithm::Schnorr,
-            "OpenInternetCryptographyProject/BLS-Signature" => Slug20Algorithm::BLSSecretKey,
+            //=====SIGNATURES=====//
+            "OpenInternetCryptographyProject/SPHINCS+ SIGNATURE" => (Slug20Algorithm::SPHINCSPlus,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/ED25519-Signature" => (Slug20Algorithm::Ed25519,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/ED448-Signature" => (Slug20Algorithm::Ed448,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/ECDSA-SECP256K1-Signature" => (Slug20Algorithm::ECDSA,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/FALCON1024-Signature" => (Slug20Algorithm::Falcon,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/MLDSA3-Signature" => (Slug20Algorithm::MLDSA,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/SCHNORR-Signature" => (Slug20Algorithm::Schnorr,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/BLS12-381-Signature" => (Slug20Algorithm::BLS,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/ShulginSigning-Signature" => (Slug20Algorithm::ShulginSigning,Slug20KeyType::Signature),
 
             _ => panic!("PemEncodingSuites::get_algorithm: label not found")
         }
