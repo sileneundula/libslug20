@@ -3651,17 +3651,32 @@ name = "openinternetcryptography"
 version = "0.1.0"
 dependencies = [
  "dirs",
- "libslug 0.7.2",
+ "libslug 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openinternetcryptographykeys 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "semver",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-opener",
+ "tauri-plugin-store",
 ]
 
 [[package]]
 name = "openinternetcryptographykeys"
 version = "0.1.0"
+dependencies = [
+ "fixedstr",
+ "libslug 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde",
+ "zeroize",
+]
+
+[[package]]
+name = "openinternetcryptographykeys"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb8ae069f42809cc2dd2305ed974a8feeb8f9cf5d2262164eed10afa5df98725"
 dependencies = [
  "fixedstr",
  "libslug 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -4868,11 +4883,12 @@ dependencies = [
 
 [[package]]
 name = "semver"
-version = "1.0.26"
+version = "1.0.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "56e6fa9c48d24d85fb3de5ad847117517440f6beceb7798af16b4a87d616b8d0"
+checksum = "8a7852d02fc848982e0c167ef163aaff9cd91dc640ba85e263cb1ce46fae51cd"
 dependencies = [
  "serde",
+ "serde_core",
 ]
 
 [[package]]
@@ -5698,6 +5714,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "tauri-plugin-store"
+version = "2.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5ca1a8ff83c269b115e98726ffc13f9e548a10161544a92ad121d6d0a96e16ea"
+dependencies = [
+ "dunce",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-plugin",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "tauri-runtime"
 version = "2.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5964,7 +5996,19 @@ dependencies = [
  "mio",
  "pin-project-lite",
  "socket2",
+ "tokio-macros",
  "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "tokio-macros"
+version = "2.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c55a2eff8b69ce66c84f85e1da1c233edc36ceb85a2058d11b0d6a3c7e7569c"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
 ]
 
 [[package]]

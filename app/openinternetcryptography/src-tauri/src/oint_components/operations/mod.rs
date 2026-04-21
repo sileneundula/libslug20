@@ -1,5 +1,5 @@
 //! # Operations
-//! 
+//!
 //! - [ ] Signatures
 //!     - [ ] ED25519
 

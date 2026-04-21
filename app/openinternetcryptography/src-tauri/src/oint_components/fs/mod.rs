@@ -1,8 +1,8 @@
 //! # File System
-//! 
+//!
 //! - [ ] Keys Storage (user directory/openinternet)
-//! 
-//! 
+//!
+//!
 //! - [ ] Folder Structure
 //!     - [X] .openinternetkeys
 //!         - [X] Trusted
@@ -11,17 +11,19 @@
 //!         - [X] Resolver
 //!         - [X] Logs
 
+use crate::oint_components::constants::{
+    FOLDER_CONFIG, FOLDER_IDENTITY, FOLDER_LOGS, FOLDER_PERSONAL, FOLDER_RESOLVER, FOLDER_TRUSTED,
+};
 use dirs::home_dir;
-use std::path::{PathBuf, Path};
 use std::fs;
-use crate::oint_components::constants::{FOLDER_CONFIG, FOLDER_IDENTITY, FOLDER_LOGS, FOLDER_PERSONAL, FOLDER_RESOLVER, FOLDER_TRUSTED};
+use std::path::{Path, PathBuf};
 
 use super::constants::FILE_NAME;
 
 #[derive(Debug)]
 pub struct Directories {
     pub root: PathBuf,
-    
+
     pub trusted: PathBuf,
     pub personal: PathBuf,
     pub identities: PathBuf,
@@ -37,7 +39,7 @@ impl Directories {
         x.push(FILE_NAME);
 
         let root = x.clone();
-        
+
         x.push(FOLDER_TRUSTED);
 
         let trusted = x.clone();
@@ -67,8 +69,6 @@ impl Directories {
 
         let resolver = x.clone();
 
-
-
         return Self {
             root: root,
             trusted: trusted,
@@ -77,7 +77,7 @@ impl Directories {
             config: config,
             logs: logs,
             resolvers: resolver,
-        }
+        };
     }
     pub fn init(&self) {
         fs::create_dir(&self.root);
@@ -88,7 +88,6 @@ impl Directories {
         fs::create_dir(&self.logs);
     }
 }
-
 
 pub struct CreateDirectories;
 
@@ -125,7 +124,7 @@ impl CreateDirectories {
         let mut resolver = root_path.clone();
 
         resolver.push(FOLDER_RESOLVER);
-        
+
         fs::create_dir(&resolver);
 
         let mut logs = root_path.clone();
@@ -146,13 +145,12 @@ impl CreateDirectories {
             resolvers: resolver,
             logs: logs,
             config: config,
-        }
-
+        };
     }
 }
 
 #[test]
 fn create() {
     let x = Directories::new();
-    println!("{:?}",x);
+    println!("{:?}", x);
 }
