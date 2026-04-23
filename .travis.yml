@@ -1,9 +1,29 @@
 language: rust
+
 rust:
   - stable
   - beta
   - nightly
-jobs:
+
+matrix:
   allow_failures:
     - rust: nightly
-  fast_finish: true
+
+cache: cargo
+
+before_install:
+  - rustup component add clippy
+  - rustup component add rustfmt
+
+script:
+  # Check formatting
+  - cargo fmt --all -- --check
+
+  # Linting
+  - cargo clippy --all-targets --all-features -- -D warnings
+
+  # Build
+  - cargo build --verbose
+
+  # Tests
+  - cargo test --verbose
