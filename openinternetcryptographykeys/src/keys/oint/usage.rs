@@ -44,7 +44,7 @@ pub const OpenInternetCryptographyStandardContext: &[u8] = b"OpenInternetCryptog
 /// This module defines the core types for the Open Internet Cryptography Keys (OICK) library, specifically for the OINT (Open Internet Cryptography Key) cipher suite. It includes standardized key and signature types, as well as a structure for representing cipher suites and their variants.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash,Zeroize, ZeroizeOnDrop)]
 pub struct OpenInternetCryptographyPublicKey {
-    pub key: Slug20PublicKey,
+    pub key: Box<Slug20PublicKey>,
 }
 
 /// # Open Internet Cryptography Keys (OICK) - OINT Types
@@ -52,7 +52,7 @@ pub struct OpenInternetCryptographyPublicKey {
 /// This module defines the core types for the Open Internet Cryptography Keys (OICK) library, specifically for the OINT (Open Internet Cryptography Key) cipher suite. It includes standardized key and signature types, as well as a structure for representing cipher suites and their variants.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash,Zeroize, ZeroizeOnDrop)]
 pub struct OpenInternetCryptographySecretKey {
-    pub key: Slug20SecretKey,
+    pub key: Box<Slug20SecretKey>,
 }
 
 /// # Open Internet Cryptography Keys (OICK) - OINT Types
@@ -60,7 +60,7 @@ pub struct OpenInternetCryptographySecretKey {
 /// This module defines the core types for the Open Internet Cryptography Keys (OICK) library, specifically for the OINT (Open Internet Cryptography Key) cipher suite. It includes standardized key and signature types, as well as a structure for representing cipher suites and their variants.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash,Zeroize, ZeroizeOnDrop)]
 pub struct OpenInternetCryptographySignature {
-    pub signature: Slug20Signature,
+    pub signature: Box<Slug20Signature>,
 }
 
 /// # Open Internet Cryptography Keypair
@@ -87,19 +87,19 @@ pub struct OpenInternetCryptographyAPI;
 //=====IMPLEMENTATION MANUAL=====//
 impl OpenInternetCryptographyPublicKey {
     pub fn from_slug20_public_key(key: Slug20PublicKey) -> Self {
-        OpenInternetCryptographyPublicKey { key }
+        OpenInternetCryptographyPublicKey { key: Box::new(key) as Box<Slug20PublicKey> }
     }
 }
 
 impl OpenInternetCryptographySecretKey {
     pub fn from_slug20_secret_key(key: Slug20SecretKey) -> Self {
-        OpenInternetCryptographySecretKey { key }
+        OpenInternetCryptographySecretKey { key: Box::new(key) as Box<Slug20SecretKey> }
     }
 }
 
 impl OpenInternetCryptographySignature {
     pub fn from_slug20_signature(signature: Slug20Signature) -> Self {
-        OpenInternetCryptographySignature { signature }
+        OpenInternetCryptographySignature { signature: Box::new(signature) as Box<Slug20Signature> }
     }
 }
 
@@ -123,7 +123,7 @@ impl OpenInternetCryptographyKeypair {
         &self.secret_key
     }
     pub fn algorithm(&self) -> Slug20Algorithm {
-        match self.public_key.key {
+        match &*self.public_key.key {
             Slug20PublicKey::ShulginSigning(_) => Slug20Algorithm::ShulginSigning,
             Slug20PublicKey::AbsolveSigning(_) => Slug20Algorithm::AbsolveSigning,
             Slug20PublicKey::EsphandSigning(_) => Slug20Algorithm::EsphandSigning,
@@ -146,47 +146,47 @@ impl OpenInternetGeneration for OpenInternetCryptographySecretKey {
         match alg {
             Slug20Algorithm::ShulginSigning => {
                 let keypair: ShulginKeypair = ShulginKeypair::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::ShulginSigning(keypair) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::ShulginSigning(Box::new(keypair))))
             },
             Slug20Algorithm::AbsolveSigning => {
                 let keypair: AbsolveKeypair = AbsolveKeypair::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::AbsolveSigning(keypair) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::AbsolveSigning(Box::new(keypair))))
             },
             Slug20Algorithm::EsphandSigning => {
                 let keypair: EsphandKeypair = EsphandKeypair::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::EsphandSigning(keypair) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::EsphandSigning(Box::new(keypair))))
             },
             Slug20Algorithm::Ed25519 => {
                 let secret_key: ED25519SecretKey = ED25519SecretKey::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::Ed25519(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Ed25519(secret_key)))
             },
             Slug20Algorithm::Ed448 => {
                 let secret_key: Ed448SecretKey = Ed448SecretKey::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::Ed448(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Ed448(secret_key)))
             },
             Slug20Algorithm::ECDSA => {
                 let secret_key: ECDSASecretKey = ECDSASecretKey::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::ECDSA(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::ECDSA(secret_key)))
             },
             Slug20Algorithm::Falcon => {
                 let (pk,sk): (Falcon1024PublicKey, Falcon1024SecretKey) = SlugFalcon1024::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::Falcon(sk) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Falcon(Box::new(sk))))
             },
             Slug20Algorithm::MLDSA => {
                 let secret_key: libslug::slugcrypt::internals::signature::ml_dsa::MLDSA3Keypair = SlugMLDSA3::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::MLDSA(MLDSA3SecretKey::from(secret_key.secret_key.clone())) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::MLDSA(Box::new(secret_key.secret_key.clone()))))
             },
             Slug20Algorithm::Schnorr => {
                 let secret_key: SchnorrSecretKey = SchnorrSecretKey::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::Schnorr(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Schnorr(secret_key)))
             },
             Slug20Algorithm::SPHINCSPlus => {
                 let secret_key: (SPHINCSPublicKey, SPHINCSSecretKey) = SPHINCSSecretKey::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::SPHINCSPlus(SPHINCSSecretKey::from(secret_key.1)) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::SPHINCSPlus(secret_key.1))) 
             },
             Slug20Algorithm::BLS => {
                 let secret_key = BLSSecretKey::generate();
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::BLS(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::BLS(secret_key)))
             },
         }
     }
@@ -194,19 +194,19 @@ impl OpenInternetGeneration for OpenInternetCryptographySecretKey {
 
 impl OpenInternetSigner for OpenInternetCryptographySecretKey {
     fn sign_with_context<T: AsRef<[u8]>>(&self, message: T, context: T) -> Result<OpenInternetCryptographySignature, SlugErrors> {
-        match &self.key {
+        match &*self.key {
             Slug20SecretKey::ShulginSigning(keypair) => {
                 let signature: ShulginSignature = keypair.sign(message)?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::ShulginSigning(signature)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::ShulginSigning(Box::new(signature))))
             },
             // TODO: Context Parsing; Should support keeping context in struct
             Slug20SecretKey::AbsolveSigning(keypair) => {
                 let signature: AbsolveSignature = keypair.sign_with_context(message, context)?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::AbsolveSigning(signature)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::AbsolveSigning(Box::new(signature))))
             },
             Slug20SecretKey::EsphandSigning(keypair) => {
                 let signature: EsphandSignature = keypair.sign(message)?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::EsphandSigning(signature)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::EsphandSigning(Box::new(signature))))
             },
             Slug20SecretKey::BLS(key) => {
                 let signature: BLSSignature = key.sign(message)?;
@@ -230,11 +230,11 @@ impl OpenInternetSigner for OpenInternetCryptographySecretKey {
                 if signature.is_err() {
                     return Err(libslug::prelude::core::SlugErrors::Other(String::from("Signing with Falcon failed")));
                 }
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::Falcon(signature.unwrap())))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::Falcon(Box::new(signature.unwrap()))))
             },
             Slug20SecretKey::MLDSA(key) => {
                 let signature: MLDSA3Signature = key.sign(message, context)?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::MLDSA(signature)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::MLDSA(Box::new(signature))))
             },
             Slug20SecretKey::Schnorr(key) => {
                 let signature = key.sign_with_context(message, context);
@@ -246,7 +246,7 @@ impl OpenInternetSigner for OpenInternetCryptographySecretKey {
             },
             Slug20SecretKey::SPHINCSPlus(key) => {
                 let signature: SPHINCSSignature = key.sign(message)?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::SPHINCSPlus(signature)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::SPHINCSPlus(Box::new(signature))))
             },
             _ => Err(libslug::prelude::core::SlugErrors::Other(String::from("Unsupported algorithm for signing with context")))
         }
@@ -258,44 +258,44 @@ impl OpenInternetSigner for OpenInternetCryptographySecretKey {
 
 impl OpenInternetVerifier for OpenInternetCryptographyPublicKey {
     fn verify_with_context<T: AsRef<[u8]>>(&self, message: T, context: T, signature: &OpenInternetCryptographySignature) -> Result<bool, SlugErrors> {
-        match &self.key {
+        match &*self.key {
             Slug20PublicKey::ShulginSigning(keypair) => {
-                if let Slug20Signature::ShulginSigning(sig) = &signature.signature {
+                if let Slug20Signature::ShulginSigning(sig) = &*signature.signature {
                     keypair.verify(message.as_ref(), sig)
                 } else {
                     Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for ShulginSigning")))
                 }
             },
             Slug20PublicKey::AbsolveSigning(keypair) => {
-                if let Slug20Signature::AbsolveSigning(sig) = &signature.signature {
-                    keypair.verify(message.as_ref(), sig.to_owned())
+                if let Slug20Signature::AbsolveSigning(sig) = &*signature.signature {
+                    keypair.verify(message.as_ref(), *sig.to_owned())
                 } else {
                     Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for AbsolveSigning")))
                 }
             },
             Slug20PublicKey::EsphandSigning(keypair) => {
-                if let Slug20Signature::EsphandSigning(sig) = &signature.signature {
+                if let Slug20Signature::EsphandSigning(sig) = &*signature.signature {
                     keypair.verify(message, sig)
                 } else {
                     Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for EsphandSigning")))
                 }
             },
             Slug20PublicKey::BLS(key) => {
-                if let Slug20Signature::BLS(sig) = &signature.signature {
+                if let Slug20Signature::BLS(sig) = &*signature.signature {
                     key.verify(message, sig)
                 } else {
                     Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for BLS")))
                 }
              },
             Slug20PublicKey::ECDSA(key) => {
-                if let Slug20Signature::ECDSA(sig) = &signature.signature {
+                if let Slug20Signature::ECDSA(sig) = &*signature.signature {
                     key.verify(message, sig.clone())
                 } else {
                     Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for ECDSA")))
                 }
              },
             Slug20PublicKey::Ed25519(key) => {
-                if let Slug20Signature::Ed25519(sig) = &signature.signature {
+                if let Slug20Signature::Ed25519(sig) = &*signature.signature {
                     let x = key.verify(sig.to_owned(), message.as_ref())?;
                     return Ok(x)
                 } else {
@@ -303,14 +303,14 @@ impl OpenInternetVerifier for OpenInternetCryptographyPublicKey {
                 }
             },
             Slug20PublicKey::Ed448(key) => {
-                if let Slug20Signature::Ed448(sig) = &signature.signature {
+                if let Slug20Signature::Ed448(sig) = &*signature.signature {
                     key.verify(message, sig.clone())
                 } else {
                     Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for Ed448")))
                 }
             }
             Slug20PublicKey::Falcon(key) => {
-                if let Slug20Signature::Falcon(sig) = &signature.signature {
+                if let Slug20Signature::Falcon(sig) = &*signature.signature {
                     let x = key.verify(message, sig);
 
                     if x.is_err() {
@@ -322,7 +322,7 @@ impl OpenInternetVerifier for OpenInternetCryptographyPublicKey {
                 }
             },
             Slug20PublicKey::MLDSA(key) => {
-                if let Slug20Signature::MLDSA(sig) = &signature.signature {
+                if let Slug20Signature::MLDSA(sig) = &*signature.signature {
                     let x = key.verify(message.as_ref(), context.as_ref(), sig);
                     if x.is_err() {
                         return Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for MLDSA")));
@@ -333,7 +333,7 @@ impl OpenInternetVerifier for OpenInternetCryptographyPublicKey {
                 }
             },
             Slug20PublicKey::Schnorr(key) => {
-                if let Slug20Signature::Schnorr(sig) = &signature.signature {
+                if let Slug20Signature::Schnorr(sig) = &*signature.signature {
                     let x = key.verify_with_context(message, context, sig.clone());
                     if x.is_err() {
                         return Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for Schnorr")));
@@ -346,8 +346,8 @@ impl OpenInternetVerifier for OpenInternetCryptographyPublicKey {
                 }
             },
             Slug20PublicKey::SPHINCSPlus(key) => {
-                if let Slug20Signature::SPHINCSPlus(sig) = &signature.signature {
-                    let x = key.verify(message, sig.clone());
+                if let Slug20Signature::SPHINCSPlus(sig) = &*signature.signature {
+                    let x = key.verify(message, *sig.clone());
 
                     if x.is_err() {
                         return Err(libslug::prelude::core::SlugErrors::Other(String::from("Signature type mismatch for SPHINCSPlus")));
@@ -370,7 +370,7 @@ impl OpenInternetVerifier for OpenInternetCryptographyPublicKey {
 // TODO: Keypairs
 impl OpenInternetIntoStandardPEM for OpenInternetCryptographySecretKey {
     fn into_standard_pem(&self) -> Result<String, SlugErrors> {
-        match &self.key {
+        match &*self.key {
             Slug20SecretKey::ShulginSigning(keypair) => keypair.into_standard_pem(),
             Slug20SecretKey::AbsolveSigning(keypair) => keypair.into_standard_pem(),
             Slug20SecretKey::EsphandSigning(keypair) => keypair.into_standard_pem(),
@@ -385,7 +385,7 @@ impl OpenInternetIntoStandardPEM for OpenInternetCryptographySecretKey {
         }
     }
     fn as_standard_pem_label(&self) -> String {
-        match &self.key {
+        match &*self.key {
             Slug20SecretKey::ShulginSigning(keypair) => ShulginKeypair::label_for_standard_pem_secret(),
             Slug20SecretKey::AbsolveSigning(keypair) => AbsolveKeypair::label_for_standard_pem_secret(),
             Slug20SecretKey::EsphandSigning(keypair) => EsphandKeypair::label_for_standard_pem_secret(),
@@ -403,7 +403,7 @@ impl OpenInternetIntoStandardPEM for OpenInternetCryptographySecretKey {
 
 impl OpenInternetIntoStandardPEM for OpenInternetCryptographyPublicKey {
     fn into_standard_pem(&self) -> Result<String, SlugErrors> {
-        match &self.key {
+        match &*self.key {
             Slug20PublicKey::ShulginSigning(keypair) => keypair.into_standard_pem(),
             Slug20PublicKey::AbsolveSigning(keypair) => keypair.into_standard_pem(),
             Slug20PublicKey::EsphandSigning(keypair) => keypair.into_standard_pem(),
@@ -418,7 +418,7 @@ impl OpenInternetIntoStandardPEM for OpenInternetCryptographyPublicKey {
         }
     }
     fn as_standard_pem_label(&self) -> String {
-        match &self.key {
+        match &*self.key {
             Slug20PublicKey::ShulginSigning(keypair) => ShulginKeypair::label_for_standard_pem(),
             Slug20PublicKey::AbsolveSigning(keypair) => AbsolveKeypair::label_for_standard_pem(),
             Slug20PublicKey::EsphandSigning(keypair) => EsphandKeypair::label_for_standard_pem(),
@@ -435,7 +435,7 @@ impl OpenInternetIntoStandardPEM for OpenInternetCryptographyPublicKey {
 }
 impl OpenInternetIntoStandardPEM for OpenInternetCryptographySignature {
     fn into_standard_pem(&self) -> Result<String, SlugErrors> {
-        match &self.signature {
+        match &*self.signature {
             Slug20Signature::ShulginSigning(sig) => sig.into_standard_pem(),
             Slug20Signature::AbsolveSigning(sig) => sig.into_standard_pem(),
             Slug20Signature::EsphandSigning(sig) => sig.into_standard_pem(),
@@ -450,7 +450,7 @@ impl OpenInternetIntoStandardPEM for OpenInternetCryptographySignature {
         }
     }
     fn as_standard_pem_label(&self) -> String {
-        match &self.signature {
+        match &*self.signature {
             Slug20Signature::ShulginSigning(sig) => ShulginSignature::label_for_standard_pem(),
             Slug20Signature::AbsolveSigning(sig) => AbsolveSignature::label_for_standard_pem(),
             Slug20Signature::EsphandSigning(sig) => EsphandSignature::label_for_standard_pem(),
@@ -473,47 +473,47 @@ impl OpenInternetFromStandardPEM for OpenInternetCryptographySecretKey {
         match alg {
             Slug20Algorithm::ShulginSigning => {
                 let keypair: ShulginKeypair = ShulginKeypair::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::ShulginSigning(keypair) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::ShulginSigning(Box::new(keypair))))
             },
             Slug20Algorithm::AbsolveSigning => {
                 let keypair: AbsolveKeypair = AbsolveKeypair::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::AbsolveSigning(keypair) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::AbsolveSigning(Box::new(keypair))))
             },
             Slug20Algorithm::EsphandSigning => {
                 let keypair: EsphandKeypair = EsphandKeypair::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::EsphandSigning(keypair) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::EsphandSigning(Box::new(keypair))))
             },
             Slug20Algorithm::Ed25519 => {
                 let secret_key: ED25519SecretKey = ED25519SecretKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::Ed25519(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Ed25519(secret_key)))
             },
             Slug20Algorithm::Ed448 => {
                 let secret_key: Ed448SecretKey = Ed448SecretKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::Ed448(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Ed448(secret_key)))
             },
             Slug20Algorithm::ECDSA => {
                 let secret_key: ECDSASecretKey = ECDSASecretKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::ECDSA(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::ECDSA(secret_key)))
             },
             Slug20Algorithm::Falcon => {
                 let secret_key: Falcon1024SecretKey = Falcon1024SecretKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::Falcon(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Falcon(Box::new(secret_key))))
             },
             Slug20Algorithm::MLDSA => {
                 let secret_key: MLDSA3SecretKey = MLDSA3SecretKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::MLDSA(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::MLDSA(Box::new(secret_key))))
             },
             Slug20Algorithm::Schnorr => {
                 let secret_key: SchnorrSecretKey = SchnorrSecretKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::Schnorr(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Schnorr(secret_key)))
             },
             Slug20Algorithm::SPHINCSPlus => {
                 let secret_key: SPHINCSSecretKey = SPHINCSSecretKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::SPHINCSPlus(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::SPHINCSPlus(secret_key)))
             },
             Slug20Algorithm::BLS => {
                 let secret_key: BLSSecretKey = BLSSecretKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySecretKey { key: Slug20SecretKey::BLS(secret_key) })
+                Ok(OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::BLS(secret_key)))
             },
         }
     }
@@ -574,47 +574,47 @@ impl OpenInternetFromStandardPEM for OpenInternetCryptographyPublicKey {
         match alg {
             Slug20Algorithm::ShulginSigning => {
                 let x = ShulginKeypair::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::ShulginSigning(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::ShulginSigning(Box::new(x))))
             },
             Slug20Algorithm::AbsolveSigning => {
                 let x = AbsolveKeypair::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::AbsolveSigning(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::AbsolveSigning(Box::new(x))))
             },
             Slug20Algorithm::EsphandSigning => {
                 let x = EsphandKeypair::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::EsphandSigning(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::EsphandSigning(Box::new(x))))
             }
             Slug20Algorithm::BLS => {
                 let x = BLSPublicKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::BLS(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::BLS(x)))
             }
             Slug20Algorithm::ECDSA => {
                 let x = ECDSAPublicKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::ECDSA(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::ECDSA(x)))
             }
             Slug20Algorithm::Ed25519 => {
                 let x = ED25519PublicKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::Ed25519(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::Ed25519(x)))
             }
             Slug20Algorithm::Ed448 => {
                 let x = Ed448PublicKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::Ed448(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::Ed448(x)))
             }
             Slug20Algorithm::Falcon => {
                 let x = Falcon1024PublicKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::Falcon(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::Falcon(Box::new(x))))
             }
             Slug20Algorithm::MLDSA => {
                 let x = MLDSA3PublicKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::MLDSA(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::MLDSA(Box::new(x))))
             }
             Slug20Algorithm::Schnorr => {
                 let x = SchnorrPublicKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::Schnorr(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::Schnorr(x)))
             }
             Slug20Algorithm::SPHINCSPlus => {
                 let x = SPHINCSPublicKey::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographyPublicKey { key: Slug20PublicKey::SPHINCSPlus(x) })
+                Ok(OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::SPHINCSPlus(x)))
             }
             _ => panic!("OpenInternetCryptographyPublicKey::from_standard_pem_with_algorithm: algorithm not supported"),
         }
@@ -636,7 +636,7 @@ impl OpenInternetFromStandardPEM for OpenInternetCryptographyPublicKey {
         }
     }
     fn get_standard_pem_label(&self) -> String {
-        match &self.key {
+        match &*self.key {
             Slug20PublicKey::ShulginSigning(x) => ShulginKeypair::label_for_standard_pem(),
             Slug20PublicKey::AbsolveSigning(x) => AbsolveKeypair::label_for_standard_pem(),
             Slug20PublicKey::EsphandSigning(x) => EsphandKeypair::label_for_standard_pem(),
@@ -687,15 +687,15 @@ impl OpenInternetFromStandardPEM for OpenInternetCryptographySignature {
         match alg {
             Slug20Algorithm::ShulginSigning => {
                 let x: ShulginSignature = ShulginSignature::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::ShulginSigning(x)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::ShulginSigning(Box::new(x))))
             }
             Slug20Algorithm::AbsolveSigning => {
                 let x: AbsolveSignature = AbsolveSignature::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::AbsolveSigning(x)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::AbsolveSigning(Box::new(x))))
             }
             Slug20Algorithm::EsphandSigning => {
                 let x: EsphandSignature = EsphandSignature::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::EsphandSigning(x)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::EsphandSigning(Box::new(x))))
             }
             Slug20Algorithm::BLS => {
                 let x: BLSSignature = BLSSignature::from_standard_pem(pem.as_ref())?;
@@ -715,11 +715,11 @@ impl OpenInternetFromStandardPEM for OpenInternetCryptographySignature {
             }
             Slug20Algorithm::Falcon => {
                 let x: Falcon1024Signature = Falcon1024Signature::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::Falcon(x)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::Falcon(Box::new(x))))
             }
             Slug20Algorithm::MLDSA => {
                 let x: MLDSA3Signature = MLDSA3Signature::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::MLDSA(x)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::MLDSA(Box::new(x))))
             }
             Slug20Algorithm::Schnorr => {
                 let x: SchnorrSignature = SchnorrSignature::from_standard_pem(pem.as_ref())?;
@@ -727,12 +727,12 @@ impl OpenInternetFromStandardPEM for OpenInternetCryptographySignature {
             }
             Slug20Algorithm::SPHINCSPlus => {
                 let x: SPHINCSSignature = SPHINCSSignature::from_standard_pem(pem.as_ref())?;
-                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::SPHINCSPlus(x)))
+                Ok(OpenInternetCryptographySignature::from_slug20_signature(Slug20Signature::SPHINCSPlus(Box::new(x))))
             }
         }
     }
     fn get_standard_pem_label(&self) -> String {
-        match &self.signature {
+        match &*self.signature {
             Slug20Signature::ShulginSigning(_) => ShulginSignature::label_for_standard_pem(),
             Slug20Signature::AbsolveSigning(_) => AbsolveSignature::label_for_standard_pem(),
             Slug20Signature::EsphandSigning(_) => EsphandSignature::label_for_standard_pem(),
@@ -794,19 +794,19 @@ fn generate_with_algorithm(alg: Slug20Algorithm) -> Result<OpenInternetCryptogra
         match alg {
             Slug20Algorithm::ShulginSigning => {
                 let sk: ShulginKeypair = ShulginKeypair::generate();
-                let pk = sk.into_public_key();
+                let pk: ShulginKeypair = sk.into_public_key();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::ShulginSigning(pk)); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::ShulginSigning(sk));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::ShulginSigning(Box::new(pk))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::ShulginSigning(Box::new(sk)));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             }
             Slug20Algorithm::AbsolveSigning => {
                 let sk: AbsolveKeypair = AbsolveKeypair::generate();
-                let pk = sk.into_public_key();
+                let pk: AbsolveKeypair = sk.into_public_key();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::AbsolveSigning(pk)); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::AbsolveSigning(sk));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::AbsolveSigning(Box::new(pk))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::AbsolveSigning(Box::new(sk)));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             }
@@ -814,8 +814,8 @@ fn generate_with_algorithm(alg: Slug20Algorithm) -> Result<OpenInternetCryptogra
                 let sk: EsphandKeypair = EsphandKeypair::generate();
                 let pk: EsphandKeypair = sk.into_public_key();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::EsphandSigning(pk)); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::EsphandSigning(sk));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::EsphandSigning(Box::new(pk))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::EsphandSigning(Box::new(sk)));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             }
@@ -857,8 +857,8 @@ fn generate_with_algorithm(alg: Slug20Algorithm) -> Result<OpenInternetCryptogra
             Slug20Algorithm::Falcon => {
                 let (pk,sk) = SlugFalcon1024::generate();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::Falcon(pk)); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Falcon(sk));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::Falcon(Box::new(pk))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Falcon(Box::new(sk)));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             }
@@ -868,8 +868,8 @@ fn generate_with_algorithm(alg: Slug20Algorithm) -> Result<OpenInternetCryptogra
                 let pk = keypair.public_key();
                 let sk = keypair.secret_key();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::MLDSA(pk.clone())); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::MLDSA(sk.to_owned()));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::MLDSA(Box::new(pk.clone()))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::MLDSA(Box::new(sk.to_owned())));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             },
@@ -900,8 +900,8 @@ impl OpenInternetAPIGeneration for OpenInternetCryptographyAPI {
                 let sk: ShulginKeypair = ShulginKeypair::generate();
                 let pk = sk.into_public_key();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::ShulginSigning(pk)); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::ShulginSigning(sk));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::ShulginSigning(Box::new(pk))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::ShulginSigning(Box::new(sk)));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             }
@@ -909,8 +909,8 @@ impl OpenInternetAPIGeneration for OpenInternetCryptographyAPI {
                 let sk: AbsolveKeypair = AbsolveKeypair::generate();
                 let pk = sk.into_public_key();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::AbsolveSigning(pk)); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::AbsolveSigning(sk));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::AbsolveSigning(Box::new(pk))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::AbsolveSigning(Box::new(sk)));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             }
@@ -918,8 +918,8 @@ impl OpenInternetAPIGeneration for OpenInternetCryptographyAPI {
                 let sk: EsphandKeypair = EsphandKeypair::generate();
                 let pk: EsphandKeypair = sk.into_public_key();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::EsphandSigning(pk)); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::EsphandSigning(sk));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::EsphandSigning(Box::new(pk))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::EsphandSigning(Box::new(sk)));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             }
@@ -961,8 +961,8 @@ impl OpenInternetAPIGeneration for OpenInternetCryptographyAPI {
             Slug20Algorithm::Falcon => {
                 let (pk,sk) = SlugFalcon1024::generate();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::Falcon(pk)); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Falcon(sk));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::Falcon(Box::new(pk))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::Falcon(Box::new(sk)));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             }
@@ -972,8 +972,8 @@ impl OpenInternetAPIGeneration for OpenInternetCryptographyAPI {
                 let pk = keypair.public_key();
                 let sk = keypair.secret_key();
 
-                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::MLDSA(pk.clone())); 
-                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::MLDSA(sk.to_owned()));
+                let pk_output: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(Slug20PublicKey::MLDSA(Box::new(pk.clone()))); 
+                let sk_output: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_slug20_secret_key(Slug20SecretKey::MLDSA(Box::new(sk.to_owned())));
 
                 Ok(OpenInternetCryptographyKeypair { public_key: pk_output, secret_key: sk_output })
             },

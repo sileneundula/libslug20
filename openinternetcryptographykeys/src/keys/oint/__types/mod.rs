@@ -30,14 +30,14 @@ pub struct PemEncodingSuites {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20PublicKey {
-    ShulginSigning(ShulginKeypair),
-    AbsolveSigning(AbsolveKeypair),
-    EsphandSigning(EsphandKeypair),
+    ShulginSigning(Box<ShulginKeypair>),
+    AbsolveSigning(Box<AbsolveKeypair>),
+    EsphandSigning(Box<EsphandKeypair>),
     Ed25519(ED25519PublicKey),
     Ed448(Ed448PublicKey),
     ECDSA(ECDSAPublicKey),
-    Falcon(Falcon1024PublicKey),
-    MLDSA(MLDSA3PublicKey),
+    Falcon(Box<Falcon1024PublicKey>),
+    MLDSA(Box<MLDSA3PublicKey>),
     Schnorr(SchnorrPublicKey),
     SPHINCSPlus(SPHINCSPublicKey),
     BLS(BLSPublicKey),
@@ -45,14 +45,14 @@ pub enum Slug20PublicKey {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20SecretKey {
-    ShulginSigning(ShulginKeypair),
-    AbsolveSigning(AbsolveKeypair),
-    EsphandSigning(EsphandKeypair),
+    ShulginSigning(Box<ShulginKeypair>),
+    AbsolveSigning(Box<AbsolveKeypair>),
+    EsphandSigning(Box<EsphandKeypair>),
     Ed25519(ED25519SecretKey), // derive public key
     Ed448(Ed448SecretKey), 
     ECDSA(ECDSASecretKey),
-    Falcon(Falcon1024SecretKey),
-    MLDSA(MLDSA3SecretKey),
+    Falcon(Box<Falcon1024SecretKey>),
+    MLDSA(Box<MLDSA3SecretKey>),
     Schnorr(SchnorrSecretKey),
     SPHINCSPlus(SPHINCSSecretKey),
     BLS(BLSSecretKey),
@@ -60,16 +60,16 @@ pub enum Slug20SecretKey {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20Signature {
-    ShulginSigning(ShulginSignature),
-    AbsolveSigning(AbsolveSignature),
-    EsphandSigning(EsphandSignature),
+    ShulginSigning(Box<ShulginSignature>),
+    AbsolveSigning(Box<AbsolveSignature>),
+    EsphandSigning(Box<EsphandSignature>),
     Ed25519(ED25519Signature),
     Ed448(Ed448Signature),
     ECDSA(ECDSASignature),
-    Falcon(Falcon1024Signature),
-    MLDSA(MLDSA3Signature),
+    Falcon(Box<Falcon1024Signature>),
+    MLDSA(Box<MLDSA3Signature>),
     Schnorr(SchnorrSignature),
-    SPHINCSPlus(SPHINCSSignature),
+    SPHINCSPlus(Box<SPHINCSSignature>),
     BLS(BLSSignature),
 }
 
@@ -321,13 +321,13 @@ impl PemEncodingSuites {
         }
     }
     pub fn get_algorithm(label: &str) -> (Slug20Algorithm,Slug20KeyType) {
-        let x = Self::new();
+        let x: PemEncodingSuites = Self::new();
 
         match label {
             //=====PUBLIC KEYS=====//
             "OpenInternetCryptographyProject/ShulginSigning-Public-Key" => (Slug20Algorithm::ShulginSigning,Slug20KeyType::Public),
             "OpenInternetCryptographyProject/AbsolveSigning-Public-Key" => (Slug20Algorithm::AbsolveSigning,Slug20KeyType::Public),
-            "OpenInternetCryptographyProject/EsphandSigature-Public-Key" => (Slug20Algorithm::EsphandSigning,Slug20KeyType::Public),
+            "OpenInternetCryptographyProject/EsphandSignature-Public-Key" => (Slug20Algorithm::EsphandSigning,Slug20KeyType::Public),
             "OpenInternetCryptographyProject/ED25519-Public-Key" => (Slug20Algorithm::Ed25519,Slug20KeyType::Public),
             "OpenInternetCryptographyProject/ED448-PUBLIC-KEY" => (Slug20Algorithm::Ed448,Slug20KeyType::Public),
             "OpenInternetCryptographyProject/ECDSA-SECP256K1-Public-Key" => (Slug20Algorithm::ECDSA,Slug20KeyType::Public),
@@ -354,16 +354,21 @@ impl PemEncodingSuites {
             "OpenInternetCryptographyProject/SPHINCS+ SIGNATURE" => (Slug20Algorithm::SPHINCSPlus,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/ED25519-Signature" => (Slug20Algorithm::Ed25519,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/ED448-Signature" => (Slug20Algorithm::Ed448,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/ED448-SIGNATURE" => (Slug20Algorithm::Ed448,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/ECDSA-SECP256K1-Signature" => (Slug20Algorithm::ECDSA,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/FALCON1024-Signature" => (Slug20Algorithm::Falcon,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/FALCON1024-SIGNATURE" => (Slug20Algorithm::Falcon,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/MLDSA3-Signature" => (Slug20Algorithm::MLDSA,Slug20KeyType::Signature),
+            "OpenInternetCryptographyProject/MLDSA3-SIGNATURE" => (Slug20Algorithm::MLDSA,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/SCHNORR-Signature" => (Slug20Algorithm::Schnorr,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/BLS12-381-Signature" => (Slug20Algorithm::BLS,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/ShulginSigning-Signature" => (Slug20Algorithm::ShulginSigning,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/AbsolveSigning-Signature" => (Slug20Algorithm::AbsolveSigning,Slug20KeyType::Signature),
             "OpenInternetCryptographyProject/EsphandSignature-Signature" => (Slug20Algorithm::EsphandSigning,Slug20KeyType::Signature),
 
-            _ => panic!("PemEncodingSuites::get_algorithm: label not found")
+            _ => {
+                return (Slug20Algorithm::Schnorr,Slug20KeyType::Signature)
+            }
         }
     }
     pub fn enumerate_pem_labels(&self) {
