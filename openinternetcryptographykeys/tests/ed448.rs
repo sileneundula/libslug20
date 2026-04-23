@@ -2,19 +2,19 @@ use openinternetcryptographykeys::prelude::essentials::*;
 use openinternetcryptographykeys::prelude::essentials::{OpenInternetFromStandardPEM,OpenInternetGeneration,OpenInternetFromPemAny,OpenInternetIntoStandardPEM,OpenInternetSigner,OpenInternetVerifier};
 
 #[test]
-fn _0x00_generate_ed25519_keypair() {
+fn _0x00_generate_Ed448_keypair() {
     let keypair: OpenInternetCryptographyKeypair = OpenInternetCryptographyKeypair::generate_with_algorithm(Slug20Algorithm::Ed448).unwrap();
 }
 
 #[test]
-fn _0x01_generate_ed25519_and_sign_keypair() {
+fn _0x01_generate_Ed448_and_sign_keypair() {
     let keypair: OpenInternetCryptographyKeypair = OpenInternetCryptographyKeypair::generate_with_algorithm(Slug20Algorithm::Ed448).unwrap();
     let msg = "Example Message";
     let sig = keypair.as_secret_key().sign(msg).unwrap();
 }
 
 #[test]
-fn _0x02_generate_ed25519_and_sign_and_verify_keypair() {
+fn _0x02_generate_Ed448_and_sign_and_verify_keypair() {
     let keypair: OpenInternetCryptographyKeypair = OpenInternetCryptographyKeypair::generate_with_algorithm(Slug20Algorithm::Ed448).unwrap();
     let msg: &str = "Example Message";
     let sig: OpenInternetCryptographySignature = keypair.as_secret_key().sign(msg).unwrap();
@@ -23,7 +23,7 @@ fn _0x02_generate_ed25519_and_sign_and_verify_keypair() {
 }
 
 #[test]
-fn _0x03_generate_ed25519_and_sign_and_verify_with_invalid_message() {
+fn _0x03_generate_Ed448_and_sign_and_verify_with_invalid_message() {
     let keypair: OpenInternetCryptographyKeypair = OpenInternetCryptographyKeypair::generate_with_algorithm(Slug20Algorithm::Ed448).unwrap();
     let msg: &str = "Example Message";
     let invalid_msg: &str = "Invalid Message";
@@ -33,16 +33,16 @@ fn _0x03_generate_ed25519_and_sign_and_verify_with_invalid_message() {
 }
 
 #[test]
-fn _0x04_from_and_into_standard_pem_ed25519() {
+fn _0x04_from_and_into_standard_pem_ed448() {
     let keypair: OpenInternetCryptographyKeypair = OpenInternetCryptographyKeypair::generate_with_algorithm(Slug20Algorithm::Ed448).unwrap();
     let keypair_pem: String = keypair.as_public_key().into_standard_pem().unwrap();
-    let keypair_from_pem: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_standard_pem_with_algorithm(keypair_pem.as_str(),Slug20Algorithm::Ed25519).unwrap();
+    let keypair_from_pem: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_standard_pem_with_algorithm(keypair_pem.as_str(),Slug20Algorithm::Ed448).unwrap();
 
     assert_eq!(keypair.as_public_key().to_owned(),keypair_from_pem);
 }
 
 #[test]
-fn _0x05_from_and_into_standard_pem_ed25519_secret() {
+fn _0x05_from_and_into_standard_pem_Ed448_secret() {
     let keypair: OpenInternetCryptographyKeypair = OpenInternetCryptographyKeypair::generate_with_algorithm(Slug20Algorithm::Ed448).unwrap();
     let keypair_pem: String = keypair.as_secret_key().into_standard_pem().unwrap();
     let keypair_from_pem: OpenInternetCryptographySecretKey = OpenInternetCryptographySecretKey::from_standard_pem_with_algorithm(keypair_pem.as_str(),Slug20Algorithm::Ed448).unwrap();
@@ -51,7 +51,7 @@ fn _0x05_from_and_into_standard_pem_ed25519_secret() {
 }
 
 #[test]
-fn _0x06_from_and_into_standard_pem_ed25519_signature() {
+fn _0x06_from_and_into_standard_pem_Ed448_signature() {
     let keypair: OpenInternetCryptographyKeypair = OpenInternetCryptographyKeypair::generate_with_algorithm(Slug20Algorithm::Ed448).unwrap();
     let msg: &str = "Example Message";
     let sig: OpenInternetCryptographySignature = keypair.as_secret_key().sign(msg).unwrap();
