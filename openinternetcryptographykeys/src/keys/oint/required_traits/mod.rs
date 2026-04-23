@@ -6,10 +6,23 @@
 //! 
 //! ## Traits
 //! 
+//! ### Core
+//! 
 //! - [X] `OpenInternetSigner`: Trait for signing messages with a context to produce a signature.
 //! - [X] `OpenInternetVerifier`: Trait for verifying signatures against messages and contexts.
 //! - [X] `OpenInternetPublicKeyDerive`: Trait for deriving a public key from a secret key.
 //! - [X] `OpenInternetGeneration`: Trait for generating keys based on a provided string input.
+//! - [X] `OpenInternetAPIGeneration`: Trait for generating keys based on a provided API input.
+//! 
+//! ### Encoding
+//! 
+//! - [X] `OpenInternetIntoStandardPEM`: Trait for converting a key to a standard PEM format.
+//! - [X] `OpenInternetFromStandardPEM`: Trait for converting a standard PEM format to a key type.
+//! - [X] `OpenInternetFromPemAny`: Trait for converting a standard PEM format to a key type.
+//! 
+//! ## Usage
+//! 
+//! These traits are used to implement the Open Internet Cryptography Keys (OICK) library, allowing for signing, verifying, key derivation, and generation of keys.
 
 use fixedstr::str192;
 use libslug::errors::SlugErrors;
@@ -22,7 +35,13 @@ use crate::{keys::oint::{__types::{FromPemAny, Slug20Algorithm}, usage::{OpenInt
 /// 
 /// This trait implements signing functionality for the Open Internet Cryptography Keys (OICK) library, allowing for signing messages with a context to produce a signature.
 pub trait OpenInternetSigner: Sized {
+    /// # Sign With Context
+    /// 
+    /// Allows Signing of Data as Bytes with a Context.
     fn sign_with_context<T: AsRef<[u8]>>(&self, message: T, context: T) -> Result<OpenInternetCryptographySignature, SlugErrors>;
+    /// # Sign
+    /// 
+    /// Allows Signing of Data as Bytes. Defaults to `OpenInternetCryptographyStandardContext`
     fn sign<T: AsRef<[u8]>>(&self, message: T) -> Result<OpenInternetCryptographySignature, SlugErrors> {
         self.sign_with_context(message.as_ref(), "OpenInternetCryptographyStandardContext".as_bytes())
     }
@@ -53,12 +72,17 @@ pub trait OpenInternetGeneration: Sized {
 }
 
 //=====OPENINTERNETCRYPTOGRAPHYKEYS OINT REQUIRED TRAITS END=====
-
+/// # OpenInternetIntoStandardPEM Trait
+/// 
+/// This trait implements conversion to a standard PEM format for the Open Internet Cryptography Keys (OICK) library.
 pub trait OpenInternetIntoStandardPEM {
     fn into_standard_pem(&self) -> Result<String, SlugErrors>;
     fn as_standard_pem_label(&self) -> String;
 }
 
+/// # OpenInternetFromStandardPEM Trait
+/// 
+/// This trait implements conversion from a standard PEM format for the Open Internet Cryptography Keys (OICK) library.
 pub trait OpenInternetFromStandardPEM: Sized {
     /// # From Standard PEM (With Algorithm)
     /// 
@@ -75,10 +99,16 @@ pub trait OpenInternetFromStandardPEM: Sized {
     fn enumerate_standard_pem_labels() -> Vec<String>;
 }
 
+/// # OpenInternetFromPemAny Trait
+/// 
+/// This trait implements conversion from a standard PEM format for the Open Internet Cryptography Keys (OICK) library.
 pub trait OpenInternetFromPemAny: Sized {
     fn from_pem<T: AsRef<str>>(pem: T) -> Result<FromPemAny, SlugErrors>;
 }
 
+/// # OpenInternetAPIGeneration Trait
+/// 
+/// This trait implements key generation functionality for the Open Internet Cryptography Keys (OICK) library, allowing for generating keys based on a provided string input.
 pub trait OpenInternetAPIGeneration: Sized {
     fn generate_with_algorithm(alg: Slug20Algorithm) -> Result<OpenInternetCryptographyKeypair, SlugErrors>;
 }

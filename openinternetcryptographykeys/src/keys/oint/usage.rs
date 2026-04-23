@@ -1,3 +1,50 @@
+//! # OpenInternetCryptographyKeysProject (OICKP) - OINT Usage
+//! 
+//! ## Description
+//! 
+//! This module provides the implementation for the Open Internet Cryptography Keys (OICK) library, allowing for signing, verifying, key derivation, and generation of keys.
+//! 
+//! ## Example Usage
+//! 
+//! ```rust
+//! use openinternetcryptographykeys::prelude::essentials::*;
+//! use openinternetcryptographykeys::prelude::essentials::{OpenInternetAPIGeneration, OpenInternetCryptographyKeypair, OpenInternetCryptographySecretKey, OpenInternetFromPemAny, Slug20Algorithm};
+//! 
+//! fn main() {
+//! 
+//! }
+//! 
+//! ```
+//! 
+//! 
+//! ## Features
+//! 
+//! - [X] Generation
+//! - [X] Signing
+//! - [X] Verifying
+//! - [X] Export As Pem
+//! - [X] Import From Pem
+//! - [ ] Alternative Exports
+//! - [ ] Address Deriviation
+//! 
+//! ## Algorithms
+//! 
+//! - [X] ShulginSigning (ED25519 + SPHINCS+ using SHAKE256)
+//! - [X] EsphandSigning (ED25519 + FALCON1024)
+//! - [X] AbsolveSigning (ED25519 + ML-DSA3)
+//! - [X] ED25519
+//! - [X] ED448
+//! - [X] SCHNORR
+//! - [X] BLS12-381
+//! - [X] SLH-DSA5 (SPHINCS+ using SHAKE256)
+//! - [X] ML-DSA3 (Dilithium65)
+//! - [X] FALCON1024
+//! 
+//! ## Info
+//! 
+//! ### Standards
+//! 
+//! **Context For Signing:** `OpenInternetCryptographyStandardContext`
 use fixedstr::str192;
 use libslug::errors::SlugErrors;
 use libslug::prelude::SlugSphincsPlus;

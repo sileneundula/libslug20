@@ -3652,7 +3652,7 @@ version = "0.1.0"
 dependencies = [
  "dirs",
  "libslug 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "openinternetcryptographykeys 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openinternetcryptographykeys 0.1.0",
  "semver",
  "serde",
  "serde_json",
@@ -3669,6 +3669,8 @@ version = "0.1.0"
 [[package]]
 name = "openinternetcryptographykeys"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb8ae069f42809cc2dd2305ed974a8feeb8f9cf5d2262164eed10afa5df98725"
 dependencies = [
  "fixedstr",
  "libslug 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3678,9 +3680,7 @@ dependencies = [
 
 [[package]]
 name = "openinternetcryptographykeys"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb8ae069f42809cc2dd2305ed974a8feeb8f9cf5d2262164eed10afa5df98725"
+version = "0.2.0"
 dependencies = [
  "fixedstr",
  "libslug 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -1,3 +1,32 @@
+//! # OpenInternetCryptographyProject Key Types
+//! 
+//! This module contains the core key types used in the OpenInternetCryptographyProject library.
+//! 
+//! ## Key Types
+//! 
+//! - `OpenInternetCryptographyPublicKey`: The public key type for the OpenInternetCryptographyProject library.
+//! - `OpenInternetCryptographySecretKey`: The secret key type for the OpenInternetCryptographyProject library.
+//! - `OpenInternetCryptographySignature`: The signature type for the OpenInternetCryptographyProject library.
+//! - `OpenInternetCryptographyCipherSuite`: The cipher suite type for the OpenInternetCryptographyProject library.
+//! - `OpenInternetCryptographyKeyType`: The key type type for the OpenInternetCryptographyProject library.
+//! 
+//! ## Usage
+//! 
+//! These key types are used to represent public keys, secret keys, signatures, cipher suites, and key types in the OpenInternetCryptographyProject library.
+//! 
+//! ## Example
+//! 
+//! ```rust
+//! use openinternetcryptographykeys::keys::oint::usage::OpenInternetCryptographyPublicKey;
+//! 
+//! fn main() {
+//!     let public_key: OpenInternetCryptographyPublicKey = OpenInternetCryptographyPublicKey::from_slug20_public_key(...);
+//! 
+//!     // ...
+//! }
+//! 
+//! ```
+
 use libslug::errors::SlugErrors;
 use serde::{Serialize, Deserialize};
 use zeroize::{Zeroize,ZeroizeOnDrop};
@@ -21,6 +50,22 @@ use libslug::slugcrypt::internals::signature::{
 
 use crate::prelude::essentials::{OpenInternetCryptographyPublicKey, OpenInternetCryptographySecretKey, OpenInternetCryptographySignature};
 
+/// # PemEncodingSuites
+/// 
+/// This struct contains the PEM encoding suites for the OpenInternetCryptographyProject library.
+/// 
+/// ## Usage
+/// 
+/// This struct is used to represent the PEM encoding suites for the OpenInternetCryptographyProject library.
+/// 
+/// ## Example
+/// 
+/// ```rust
+/// use openinternetcryptographykeys::keys::oint::usage::PemEncodingSuites;
+/// 
+/// fn main() {    
+///     let pem_encoding_suites: PemEncodingSuites = PemEncodingSuites::new();
+/// }
 #[derive(Debug,Clone,Serialize,Deserialize)]
 pub struct PemEncodingSuites {
     pub public_key: Vec<String>,
@@ -28,6 +73,26 @@ pub struct PemEncodingSuites {
     pub signatures: Vec<String>,
 }
 
+/// # Slug20PublicKey
+/// 
+/// This enum represents the public key type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Usage
+/// 
+/// This enum is used to represent the public key type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Example
+/// 
+/// ```rust
+/// use openinternetcryptographykeys::keys::oint::usage::Slug20PublicKey;
+/// 
+/// fn main() {
+///     let public_key: Slug20PublicKey = Slug20PublicKey::Ed25519(...);
+/// 
+///     // ...
+/// }
+/// 
+/// ```
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20PublicKey {
     ShulginSigning(Box<ShulginKeypair>),
@@ -43,6 +108,27 @@ pub enum Slug20PublicKey {
     BLS(BLSPublicKey),
 }
 
+/// # Slug20SecretKey
+/// 
+/// This enum represents the secret key type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Usage
+/// 
+/// This enum is used to represent the secret key type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Example
+/// 
+/// 
+/// ```rust
+/// use openinternetcryptographykeys::prelude::essentials::*;
+/// use openinternetcryptographykeys::prelude::essentials::{OpenInternetAPIGeneration, OpenInternetCryptographyKeypair, OpenInternetCryptographySecretKey, OpenInternetFromPemAny, Slug20Algorithm, OpenInternetCryptographyPublicKey, OpenInternetCryptographySecretKey, OpenInternetCryptographySignature, OpenInternetFromPemAny, Slug20Algorithm};
+/// 
+/// 
+/// fn main() {
+///     let secret_key: Slug20SecretKey = Slug20SecretKey::Ed25519(ED25519SecretKey::generate());
+/// }
+/// 
+/// ```
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20SecretKey {
     ShulginSigning(Box<ShulginKeypair>),
@@ -58,6 +144,27 @@ pub enum Slug20SecretKey {
     BLS(BLSSecretKey),
 }
 
+/// # Slug20Signature
+/// 
+/// This enum represents the signature type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Usage
+/// 
+/// This enum is used to represent the signature type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Example
+/// 
+/// ```rust
+/// 
+/// use openinternetcryptographykeys::keys::oint::usage::Slug20Signature;
+/// 
+/// fn main() {
+///     let signature: Slug20Signature = Slug20Signature::Ed25519(...);
+/// 
+///     // ...
+/// }
+/// 
+/// ```
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20Signature {
     ShulginSigning(Box<ShulginSignature>),
@@ -73,6 +180,27 @@ pub enum Slug20Signature {
     BLS(BLSSignature),
 }
 
+/// # Key Type
+/// 
+/// This enum represents the key type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Usage
+/// 
+/// This enum is used to represent the key type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Example
+/// 
+/// ```rust
+/// 
+/// use openinternetcryptographykeys::keys::oint::usage::Slug20KeyType;
+/// 
+/// fn main() {
+///     let key_type: Slug20KeyType = Slug20KeyType::Public;
+/// 
+///     // ...
+/// }
+/// 
+/// ```
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20KeyType {
     Public,
@@ -81,6 +209,27 @@ pub enum Slug20KeyType {
     Keypair,
 }
 
+/// # FromPemAny
+/// 
+/// This enum lets you decode from any PEM-encoded types and retrieve the correct type.
+/// 
+/// ## Usage
+/// 
+/// This enum is used to let you decode from any PEM-encoded types and retrieve the correct type.
+/// 
+/// ## Example
+/// 
+/// ```rust
+/// 
+/// use openinternetcryptographykeys::keys::oint::usage::FromPemAny;
+/// 
+/// fn main() {
+///     let from_pem_any: FromPemAny = FromPemAny::PublicKey(...);
+/// 
+///     // ...
+/// }
+/// 
+/// ```
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum FromPemAny {
     PublicKey(OpenInternetCryptographyPublicKey),
@@ -88,6 +237,28 @@ pub enum FromPemAny {
     Signature(OpenInternetCryptographySignature),
 }
 
+
+/// # Slug20Algorithm
+/// 
+/// This enum represents the algorithm type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Usage
+/// 
+/// This enum is used to represent the algorithm type for the OpenInternetCryptographyProject library.
+/// 
+/// ## Example
+/// 
+/// ```rust
+/// 
+/// use openinternetcryptographykeys::keys::oint::usage::Slug20Algorithm;
+/// 
+/// fn main() {
+///     let algorithm: Slug20Algorithm = Slug20Algorithm::Ed25519;
+/// 
+///     // ...
+/// }
+/// 
+/// ```
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd, Hash, Zeroize, ZeroizeOnDrop)]
 pub enum Slug20Algorithm {
     ShulginSigning,
